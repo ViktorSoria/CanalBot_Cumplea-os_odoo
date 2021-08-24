@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates id="template" xml:space="preserve">
+    <t t-name="ActionpadWidgetControl" t-inherit="point_of_sale.ActionpadWidget" t-inherit-mode="extension" owl="1">
+        <xpath expr="//button[hasclass('pay')]" position="replace">
+            <button class="button pay" t-on-click="trigger('click-pay')" t-att-disabled="!userpay"
+                    t-att-class="{'disabled-mode': !userpay}">
+                <div class="pay-circle">
+                    <i class="fa fa-chevron-right" role="img" aria-label="Pay" title="Pay"/>
+                </div>
+                Pagos
+            </button>
+        </xpath>
+    </t>
+    <t t-name="SendOrder" owl="1">
+        <div class="ticket-button" t-on-click="onClick">
+            <i class="fa fa-send"/>
+            Enviar Pedido
+        </div>
+    </t>
+    <t t-name="ResOrder" owl="1">
+        <div class="ticket-button" t-on-click="onClick">
+            <i class="fa fa-get-pocket"/>
+        </div>
+    </t>
+    <t t-name="Chrome" t-inherit="point_of_sale.Chrome" t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[hasclass('pos-branding')]" position="inside">
+            <ResOrder/>
+            <SendOrder/>
+        </xpath>
+    </t>
+
+    <t t-name="PaymentMethodButton" t-inherit="point_of_sale.PaymentMethodButton" t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[hasclass('payment-name')]" position="inside">
+            <t t-if="props.paymentMethod.cargo &gt; 0">
+                <t t-esc="' + '+props.paymentMethod.cargo+ '%'"/>
+            </t>
+        </xpath>
+    </t>
+
+    <t t-name="PaymentScreenPaymentLines" t-inherit="point_of_sale.PaymentScreenPaymentLines" t-inherit-mode="extension"
+       owl="1">
+        <xpath expr="//div[@t-att-class='selectedLineClass(line)']/div" position="inside">
+            <t t-if="line.payment_method.cargo &gt; 0">
+                <t t-esc="' + '+line.payment_method.cargo+ '%'"/>
+            </t>
+        </xpath>
+        <xpath expr="//div[@t-att-class='unselectedLineClass(line)']/div" position="inside">
+            <t t-if="line.payment_method.cargo &gt; 0">
+                <t t-esc="' + '+line.payment_method.cargo+ '%'"/>
+            </t>
+        </xpath>
+    </t>
+
+    <t t-name="PaymentScreen" t-inherit="point_of_sale.PaymentScreen" t-inherit-mode="extension">
+        <xpath expr="//t[@t-foreach='payment_methods_from_config']" position="replace">
+            <t t-foreach="payment_methods_from_config" t-as="paymentMethod"
+               t-key="paymentMethod.id">
+                <t t-if="!paymentMethod.es_puntos">
+                    <PaymentMethodButton paymentMethod="paymentMethod"/>
+                </t>
+            </t>
+        </xpath>
+        <xpath expr="//div[@class='customer-button']" position="before">
+            <t t-if="puntos">
+                <div class="button" style="margin-bottom: 10px;" t-on-click="pay_electronic">
+                    <i class="fa fa-money" role="img"/>
+                    <span t-esc="'Puntos: '+puntos"/>
+                </div>
+            </t>
+        </xpath>
+    </t>
+
+    <t t-name="Buttonsend" owl="1">
+       <div role="dialog" class="modal-dialog">
+           <div class="popup">
+                <div class="title">
+                   <p><t t-esc="props.title"/></p>
+                    <input type="text" t-model="state.name" t-ref="session" disabled="1"
+                           style="box-shadow: 0px 0px 0px 3px #6EC89B;"/>
+               </div>
+               <div class="body" style="overflow: auto; height: 250px;">
+                   <div class="row">
+                       <t t-foreach="props.sessions" t-as="s" t-key="props.sessions">
+                           <div class="session-dis" t-att-session-id="s.id" t-on-click="selection"
+                                t-att-sname="s.config_id[1]">
+                               <i class="fa fa-desktop" style="font-size: 300%" t-att-session-id="s.id"
+                                  t-att-sname="s.config_id[1]"/>
+                               <hr/>
+                               <t t-esc="s.config_id[1]" t-att-session-id="s.id" t-att-sname="s.config_id[1]"/>
+                           </div>
+                       </t>
+                   </div>
+               </div>
+               <div class="footer">
+                   <div class="button" t-on-click="confirm">
+                       <t t-esc="props.confirmText"/>
+                   </div>
+                   <div class="button cancel" t-on-click="cancel">
+                       <t t-esc="props.cancelText"/>
+                   </div>
+               </div>
+           </div>
+       </div>
+   </t>
+
+    <t t-name="OrderReceipt" t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension" owl="1">
+        <xpath expr="//t[@t-if='receipt.cashier']" position="after">
+            <div class="cashier" t-if="cliente">
+                <div>Para <t t-esc="cliente.name"/></div>
+            </div>
+        </xpath>
+        <xpath expr="//div[@class='pos-receipt-order-data']" position="after">
+            <br/>
+            <div class="pos-receipt-order-data">
+                <div><t t-esc="ubicacion[0]" /></div>
+                <div><t t-esc="ubicacion[1]" /></div>
+                <div><t t-esc="ubicacion[2]" /></div>
+            </div>
+        </xpath>
+        <xpath expr="//t[@t-if='receipt.total_discount']" position="after">
+            <div t-if="puntos">
+                Puntos Acomulados:
+                <span t-esc="puntos" class="pos-receipt-right-align"/>
+            </div>
+        </xpath>
+        <xpath expr="//t[@t-if='isTaxIncluded']" position="replace">
+            <div>
+                Total de Impuestos
+                <span t-esc="env.pos.format_currency(receipt.total_tax)" class="pos-receipt-right-align"/>
+            </div>
+        </xpath>
+    </t>
+
+    <t t-name="OrderSummary" t-inherit="point_of_sale.OrderSummary" t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[@class='entry total']" position="after">
+            <div class="subentry">
+                Puntos:
+                <span class="value" t-esc="puntos"/>
+            </div>
+        </xpath>
+    </t>
+
+</templates>
+

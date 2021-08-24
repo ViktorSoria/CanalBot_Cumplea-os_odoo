@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates id="template" xml:space="preserve">
+    <t t-name="ProductItem2" t-inherit="point_of_sale.ProductItem" t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[hasclass('product-img')]" position="inside">
+            <t t-if="product_type == 'product'">
+                <button t-attf-class="qty-tag" t-on-click="trigger('click-available', props.product)">
+                    <t t-esc="rounded_qty"/>
+                </button>
+            </t>
+        </xpath>
+    </t>
+    <t t-name="StockProductPopup" owl="1">
+       <div role="dialog" class="modal-dialog">
+           <div class="popup">
+                <p class="title">
+                   <t t-esc="props.title"/>
+               </p>
+               <div class="body" style="overflow: auto; height: 250px;">
+                   <table class="table">
+                       <tr>
+                           <th>Almacen</th>
+                           <th>Cantidad</th>
+                       </tr>
+                   <t t-foreach="props.stock" t-as="s" t-key="props.title">
+                       <tr>
+                           <td t-esc="s[0]"/>
+                           <td t-esc="s[1]"/>
+                       </tr>
+                   </t>
+                   </table>
+               </div>
+               <div class="footer">
+                   <div class="button" t-on-click="confirm">
+                       <t t-esc="props.confirmText"/>
+                   </div>
+               </div>
+           </div>
+       </div>
+   </t>
+        </templates>
+

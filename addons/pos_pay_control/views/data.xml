@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <template id="assets_backend" name="pos assets" inherit_id="point_of_sale.assets">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/pos_pay_control/static/src/js/pos_button_pay.js"/>
+            <script type="text/javascript" src="/pos_pay_control/static/src/js/price.js"/>
+            <script type="text/javascript" src="/pos_pay_control/static/src/js/cargo.js"/>
+            <script type="text/javascript" src="/pos_pay_control/static/src/js/Buttonsend.js"/>
+            <script type="text/javascript" src="/pos_pay_control/static/src/js/OrderReceipt.js"/>
+            <script type="text/javascript" src="/pos_pay_control/static/src/js/envio.js"/>
+            <script type="text/javascript" src="/pos_pay_control/static/src/js/recibe.js"/>
+            <script type="text/javascript" src="/pos_pay_control/static/src/js/OrderSummary.js"/>
+        </xpath>
+        <xpath expr="//link[@id='pos-stylesheet']" position="after">
+            <link rel="stylesheet" href="/pos_pay_control/static/src/css/pos.css"/>
+        </xpath>
+    </template>
+</odoo>

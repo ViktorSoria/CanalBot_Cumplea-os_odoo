@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="product_price_form_view" model="ir.ui.view">
+        <field name="name">product.price.form.view</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='sales']" position="after">
+                <page name="price" string="Precios">
+                    <field name="line_ids">
+                        <tree>
+                            <field name="name"/>
+                            <field name="precio"/>
+                            <button class="fa fa-external-link" name="edit_line" type="object"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_price_transientform_view" model="ir.ui.view">
+        <field name="name">product.price.transient.form.view</field>
+        <field name="model">product.price.transient</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" readonly="True"/>
+                            <field name="precio"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button type="object" name="change_price" string="Establecer Precio" class="oe_highlight"/>
+                        <button class="oe_link" string="Cancelar" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

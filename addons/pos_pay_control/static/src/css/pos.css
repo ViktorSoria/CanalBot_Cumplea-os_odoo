@@ -1,0 +1,16 @@
+.pos .actionpad .disabled-mode, .pos .actionpad .disabled-mode:hover {
+    background: #c7c7c7;
+    color: #a5a1a1;
+    cursor: not-allowed;
+}
+.pos .session-dis{
+    border: black solid 2px;
+    border-radius: 5px;
+    width: 40%;
+    margin: 1%;
+    padding: 10px;
+    float: left;
+}
+.pos .selec{
+    background-color: #7fffca;
+}

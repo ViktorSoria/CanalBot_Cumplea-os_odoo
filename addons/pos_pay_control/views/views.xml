@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="pos_user_form_view" model="ir.ui.view">
+        <field name="name">pos.user.form.view</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Punto de venta">
+                    <group>
+                        <group>
+                            <field name="user_pay"/>
+                            <field name="clave" groups="base.group_no_one"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="pos_pricelist_form_view" model="ir.ui.view">
+        <field name="name">pos.pricelist.form.view</field>
+        <field name="model">product.pricelist</field>
+        <field name="inherit_id" ref="product.product_pricelist_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='pricelist_config']/group" position="inside">
+                <group string="Punto de venta">
+                    <field name="autorizacion"/>
+                    <field name="visible"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="res_partner_puntos_form_view" model="ir.ui.view">
+        <field name="name">res.partner.puntos.form.view</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="point_of_sale.view_partner_property_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='barcode']" position="after">
+                <field name="acomula_puntos"/>
+                <field name="puntos" attrs="{'invisible': [('acomula_puntos','=',False)],'readonly':[('no_editable','=',True)]}"/>
+                <field name="no_editable" invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

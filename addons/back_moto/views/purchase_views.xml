@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="purchase_order_form_view" model="ir.ui.view">
+        <field name="name">purchase.order.form.view</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='button_done']" position="after">
+                <button name="load_lines" type="object" string="Cargar Lineas" states="draft"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="purchase_order_load_form_view" model="ir.ui.view">
+        <field name="name">purchase.order.load.form.view</field>
+        <field name="model">purchase.order.lines.load</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <field name="purchase_id" invisible="1"/>
+                    <group>
+                        <group>
+                            <field name="file_type" widget="radio"/>
+                        </group>
+                        <group>
+                            <field name="file"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="product" widget="radio"/>
+                        </group>
+                        <group>
+                            <field name="detalles" widget="radio"/>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <footer>
+                        <button name="generate_lines" type="object" class="oe_highlight" string="Aceptar"/>
+                        <button class="oe_link" string="Cancelar" special="cancel"/>
+                    </footer>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+        <record id="sh_message_wizard" model="ir.ui.view">
+        <field name="name">sh.message.wizard</field>
+        <field name="model">message.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Message">
+                <script>
+                    $(document).ready(function(){
+                    $('.modal-dialog').css({'width': '40%', });
+                    });
+                </script>
+                <field name="name"/>
+                <footer>
+                    <button string="OK" class="btn-primary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+</odoo>
