@@ -60,5 +60,4 @@ class ParticularReport(models.AbstractModel):
         _logger.warning(docids)
         _logger.warning(data)
         # return a custom rendering context
-        return {
-        }
+        return data
