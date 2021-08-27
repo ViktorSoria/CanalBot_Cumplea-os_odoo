@@ -10,5 +10,6 @@
              "views/purchase_views.xml",
              "views/product_view.xml",
              "views/report_view.xml",
+             "report/report.xml",
              ],
 }
