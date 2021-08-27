@@ -5,20 +5,51 @@
         <t t-call="web.html_container">
 <!--            <div class="header" style="border-bottom: 1px solid black;">-->
 <!--                <h3 class="text-center">Sales Summary Report-->
-<!--                    <span style="font-size: 14px;"><strong>From</strong>: <t t-esc="date_start"/> <strong>To</strong>: <t t-esc="date_end"/></span>-->
+<!--                    <span style="font-size: 14px;"><strong>From</strong>: <t t-field="date_start"/> <strong>To</strong>: <t t-field="date_end"/></span>-->
 <!--                </h3>-->
 <!--            </div>-->
             <t t-call="web.external_layout">
                 <div class="page">
                     <div class="oe_structure"/>
-                        <br/>
                         <span style="font-size: 30px;">Resumen POS</span>
                         <table class="table table-condensed table-bordered">
                             <thead>
-                                <th class="text-center" style="width: 30%">Diario</th>
-                                <th class="text-center" style="width: 70%">Monto</th>
+                                <th class="text-center" style="width: 20%">Referencia</th>
+                                <th class="text-center" style="width: 30%">Cliente</th>
+                                <th class="text-center" style="width: 20%">Importe</th>
+                                <th class="text-center" style="width: 30%">Metodo de pago</th>
                             </thead>
                             <tbody>
+                                <t t-foreach="pos['facturado']" t-as="fact">
+                                    <tr>
+                                        <td><span t-field="fact.name"/></td>
+                                        <td><span t-field="fact.partner_id.display_name"/></td>
+                                        <td class="text-center">
+                                            <span t-field="fact.amount_total"/>
+                                        </td>
+                                        <td><span>---</span></td>
+                                    </tr>
+                                </t>
+                                <t t-foreach="pos['no_facturado']" t-as="no_fact">
+                                    <tr>
+                                        <td><span t-field="no_fact.name"/></td>
+                                        <td><span t-field="no_fact.partner_id.display_name"/></td>
+                                        <td class="text-center">
+                                            <span t-field="no_fact.amount_total"/>
+                                        </td>
+                                        <td><span>---</span></td>
+                                    </tr>
+                                </t>
+                                <t t-foreach="pos['devoluciones']" t-as="devol">
+                                    <tr>
+                                        <td><span t-field="devol.name"/></td>
+                                        <td><span t-field="devol.partner_id.display_name"/></td>
+                                        <td class="text-center">
+                                            <span t-field="devol.amount_total"/>
+                                        </td>
+                                        <td><span>---</span></td>
+                                    </tr>
+                                </t>
                             </tbody>
                         </table>
 
@@ -35,6 +66,16 @@
                                 <th class="text-center" style="width: 30%">Metodo de pago</th>
                             </thead>
                             <tbody>
+                                <t t-foreach="sale['facturas']" t-as="sale">
+                                    <tr>
+                                        <td><span t-field="sale.name"/></td>
+                                        <td><span t-field="sale.partner_id.display_name"/></td>
+                                        <td class="text-center">
+                                            <span t-field="sale.amount_total"/>
+                                        </td>
+                                        <td><span>---</span></td>
+                                    </tr>
+                                </t>
                             </tbody>
                         </table>
                         <span style="font-size: 30px;">
@@ -50,6 +91,16 @@
                                 <th class="text-center" style="width: 30%">Metodo de pago</th>
                             </thead>
                             <tbody>
+                                <t t-foreach="sale['nc']" t-as="sale_nc">
+                                    <tr>
+                                        <td><span t-field="sale_nc.name"/></td>
+                                        <td><span t-field="sale_nc.partner_id.display_name"/></td>
+                                        <td class="text-center">
+                                            <span t-field="sale_nc.amount_total"/>
+                                        </td>
+                                        <td><span>---</span></td>
+                                    </tr>
+                                </t>
                             </tbody>
                         </table>
                         <span style="font-size: 30px;">
@@ -63,6 +114,16 @@
                                 <th class="text-center" style="width: 30%">Metodo de pago</th>
                             </thead>
                             <tbody>
+<!--                                <t t-foreach="sale['gastos']" t-as="gasto">-->
+<!--                                    <tr>-->
+<!--                                        <td><span t-field="gasto.name"/></td>-->
+<!--                                        <td><span t-field="gasto.partner_id.display_name"/></td>-->
+<!--                                        <td class="text-center">-->
+<!--                                            <span t-field="gasto.amount_total" t-options='{"widget": "monetary"}'/>-->
+<!--                                        </td>-->
+<!--                                        <td><span>-&#45;&#45;</span></td>-->
+<!--                                    </tr>-->
+<!--                                </t>-->
                             </tbody>
                         </table>
                         <span style="font-size: 30px;">
@@ -108,7 +169,7 @@
         <field name="margin_right">7</field>
         <field name="margin_left">7</field>
         <field name="header_line" eval="True"/>
-        <field name="header_spacing">15</field>
+        <field name="header_spacing">25</field>
     </record>
 
     <report id="report_consolidado"
