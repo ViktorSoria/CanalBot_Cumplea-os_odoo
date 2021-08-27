@@ -13,5 +13,5 @@
     </record>
 
     <report id="report_consolidado" model="report.order" string="Reporte Consolidado" report_type="qweb-pdf"
-            name="backmoto.template_consolidado" paperformat="backmoto.paperformat_consolidation_report" menu="False"/>
+            name="back_moto.template_consolidado" paperformat="back_moto.paperformat_consolidation_report" menu="False"/>
 </odoo>

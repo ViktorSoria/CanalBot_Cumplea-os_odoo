@@ -50,11 +50,11 @@ class Report_order(models.TransientModel):
 
     def generate_report(self):
         data = {'date_start': self.start_date, 'date_stop': self.end_date, 'config_ids': self.pos_config_ids.ids}
-        return self.env.ref('back_moto.reporte_consolidado').report_action([], data=data)
+        return self.env.ref('back_moto.report_consolidado').report_action([], data=data)
 
 
 class ParticularReport(models.AbstractModel):
-    _name = 'report.back_moto.reporte_consolidado'
+    _name = 'report.back_moto.report_consolidado'
 
     def _get_report_values(self, docids, data=None):
         _logger.warning(docids)
