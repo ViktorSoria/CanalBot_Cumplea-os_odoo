@@ -1,13 +1,108 @@
-<odoo>
+<?xml version="1.0" encoding="UTF-8" ?>
+    <odoo>
+
     <template id="template_consolidado">
         <t t-call="web.html_container">
-            <span>hola</span>
+<!--            <div class="header" style="border-bottom: 1px solid black;">-->
+<!--                <h3 class="text-center">Sales Summary Report-->
+<!--                    <span style="font-size: 14px;"><strong>From</strong>: <t t-esc="date_start"/> <strong>To</strong>: <t t-esc="date_end"/></span>-->
+<!--                </h3>-->
+<!--            </div>-->
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <div class="oe_structure"/>
+                        <br/>
+                        <span style="font-size: 30px;">Resumen POS</span>
+                        <table class="table table-condensed table-bordered">
+                            <thead>
+                                <th class="text-center" style="width: 30%">Diario</th>
+                                <th class="text-center" style="width: 70%">Monto</th>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+
+                        <span style="font-size: 30px;">
+                            Resumen Ventas (Totalmente Facturado)
+                            <br/>
+                            Back Office:
+                        </span>
+                        <table class="table table-condensed table-bordered">
+                            <thead>
+                                <th class="text-center" style="width: 20%">Referencia</th>
+                                <th class="text-center" style="width: 30%">Cliente</th>
+                                <th class="text-center" style="width: 20%">Importe</th>
+                                <th class="text-center" style="width: 30%">Metodo de pago</th>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                        <span style="font-size: 30px;">
+                            Resumen Ventas (Notas de Credito)
+                            <br/>
+                            Back Office:
+                        </span>
+                        <table class="table table-condensed table-bordered">
+                            <thead>
+                                <th class="text-center" style="width: 20%">Referencia</th>
+                                <th class="text-center" style="width: 30%">Cliente</th>
+                                <th class="text-center" style="width: 20%">Importe</th>
+                                <th class="text-center" style="width: 30%">Metodo de pago</th>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                        <span style="font-size: 30px;">
+                            Resumen de Gastos
+                        </span>
+                        <table class="table table-condensed table-bordered">
+                            <thead>
+                                <th class="text-center" style="width: 20%">Referencia</th>
+                                <th class="text-center" style="width: 30%">Cliente</th>
+                                <th class="text-center" style="width: 20%">Importe</th>
+                                <th class="text-center" style="width: 30%">Metodo de pago</th>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                        <span style="font-size: 30px;">
+                            TOTALES GENERALES
+                        </span>
+                        <table class="table table-condensed table-bordered">
+                            <thead>
+                                <th class="text-center" style="width: 70%">Diario</th>
+                                <th class="text-center" style="width: 30%">Monto</th>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                </div>
+                <div class="footer o_standard_footer" style="border-top: 1px solid black;">
+                    <div class="row text-center">
+                        <div class="col col-12 text-center">
+                            <ul class="list-inline">
+                                <li class="list-inline-item">Page:</li>
+                                <li class="list-inline-item">
+                                    <span class="page"/>
+                                </li>
+                                <li class="list-inline-item">/</li>
+                                <li class="list-inline-item">
+                                    <span class="topage"/>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </t>
         </t>
     </template>
 
     <record id="paperformat_consolidation_report" model="report.paperformat">
         <field name="name">Reporte Consolidado</field>
         <field name="default" eval="False"/>
+        <field name="format">A4</field>
+        <field name="orientation">Portrait</field>
         <field name="margin_top">30</field>
         <field name="margin_bottom">28</field>
         <field name="margin_right">7</field>
@@ -16,6 +111,12 @@
         <field name="header_spacing">15</field>
     </record>
 
-    <report id="report_consolidado" model="report.order" string="Reporte Consolidado" report_type="qweb-pdf"
-            name="back_moto.template_consolidado" paperformat="back_moto.paperformat_consolidation_report" menu="False"/>
+    <report id="report_consolidado"
+    model="report.order"
+    string="Reporte Consolidado"
+    report_type="qweb-pdf"
+    name="back_moto.template_consolidado"
+    paperformat="back_moto.paperformat_consolidation_report"
+    menu="False"/>
+
 </odoo>
