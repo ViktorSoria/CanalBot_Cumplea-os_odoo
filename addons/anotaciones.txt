@@ -1,0 +1,26 @@
+Edicion de precios desde producto
+
+//columnas carga masiva
+//cambiar precio desde producto
+//4 % monedero electornico no acomula este metodo, los demas si
+//tarifas solo por cliente
+//codigo de producto en ticket
+
+ **Mostrar stock dentro del punto de venta, al dar click sobre la cantidad mostrar existencias de todos los almacenes
+Enviar pedidos a caja, permisos especiales de cobro por usuario
+***Monedero Electrónico: acumulacion de puntos en tarjeta de clientes especiales, nueva forma de pago en el punto de venta.
+***Promociones en el punto de venta
+**Cargo del 3% a Pagos con Tarjeta de Crédito
+**Ajustes al ticket de Pos.
+**Reimpresión de tickets.
+**Autorización para ventas a mayoreo
+**En ficha de productos: Visualizar precios de las listas a las que pertenece, Mostrar proveedores.
+**Carga Masiva de Pedidos de Compra
+Reporte de ventas por sucursal (ḿodulo de ventas y punto de venta en el mismo reporte)
+
+
+total resumen pos
+metodo de pago
+
+bloqueo por credito
+cobrar desde el pos

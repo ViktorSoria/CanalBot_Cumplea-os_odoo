@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="view_pos_report_order" model="ir.ui.view">
+        <field name="name">pos.report.order.form</field>
+        <field name="model">report.order</field>
+        <field name="arch" type="xml">
+            <form string="Sales Details">
+                <group>
+                    <field name="start_date"/>
+                    <field name="end_date"/>
+                </group>
+                <group>
+                    <field name="pos_config_ids" mode="tree" colspan="4" nolabel="1"/>
+                </group>
+                <footer>
+                    <button name="generate_report" string="Imprimir" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_report_order" model="ir.actions.act_window">
+        <field name="name">Reporte Consolidado</field>
+        <field name="res_model">report.order</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_report_order" name="Reporte Consolidado" action="action_report_order"
+              parent="point_of_sale.menu_point_rep" sequence="10"/>
+
+</odoo>
