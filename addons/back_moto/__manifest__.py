@@ -4,7 +4,7 @@
     "summary": """Acondicionamineto Motopartes""",
     "version": "14.0",
     "application": False,
-    "depends": ["purchase","sale"],
+    "depends": ["purchase","sale",'crm'],
     "data": ["security/security.xml",
              "security/ir.model.access.csv",
              "views/purchase_views.xml",
