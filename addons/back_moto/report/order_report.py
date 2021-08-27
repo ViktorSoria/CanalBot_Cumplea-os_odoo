@@ -54,7 +54,7 @@ class Report_order(models.TransientModel):
 
 
 class ParticularReport(models.AbstractModel):
-    _name = 'report.back_moto.report_consolidado'
+    _name = 'report.back_moto.template_consolidado'
 
     def _get_report_values(self, docids, data=None):
         _logger.warning(docids)
