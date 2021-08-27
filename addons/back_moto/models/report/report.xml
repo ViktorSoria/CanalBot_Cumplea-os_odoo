@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+    <odoo>
+
+    <template id="template_consolidado" >
+
+    </template>
+
+    <record id="paperformat_consolidation_report" model="report.paperformat">
+        <field name="name">Reporte Consolidado</field>
+        <field name="default" eval="False"/>
+        <field name="margin_top">30</field>
+        <field name="margin_bottom">28</field>
+        <field name="margin_right">7</field>
+        <field name="margin_left">7</field>
+        <field name="header_line" eval="True"/>
+        <field name="header_spacing">15</field>
+    </record>
+
+    <report id="report_consolidado"
+    model="report.order"
+    string="Reporte Consolidado"
+    report_type="qweb-pdf"
+    name="backmoto.template_consolidado"
+    paperformat="backmoto.paperformat_consolidation_report"
+    menu="False"/>
+
+
+</odoo>
