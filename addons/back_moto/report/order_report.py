@@ -60,5 +60,5 @@ class ParticularReport(models.AbstractModel):
         _logger.warning(docids)
         _logger.warning(data)
 
-        raise
-        # return data
+        # raise
+        return data
