@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="pos_discount_tree_view" model="ir.ui.view">
+        <field name="name">pos.discount.tree.view</field>
+        <field name="model">price.discount</field>
+        <field name="arch" type="xml">
+            <tree decoration-muted="active==False">
+                <field name="name"/>
+                <field name="desc"/>
+                <field name="value"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="pos_discount_form_view" model="ir.ui.view">
+        <field name="name">pos.discount.form.view</field>
+        <field name="model">price.discount</field>
+        <field name="arch" type="xml">
+            <form>
+                <field name="active" invisible="True"/>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button string="Archivar" name="archive_applicant" icon="fa-archive" type="object" attrs="{'invisible': [('active', '=', False)]}"/>
+                        <button string="Activar" name="toggle_active" icon="fa-archive" type="object" attrs="{'invisible': [('active', '=', True)]}"/>
+                    </div>
+                    <group string="Descuento">
+                        <field name="name" required="1"/>
+                        <group>
+                            <field name="desc" required="1"/>
+                            <field name="value" required="1"/>
+                        </group>
+                        <group>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Detalles">
+                            <group>
+                                <group>
+                                    <field name="day_ids" widget="many2many_tags" required="1"
+                                           options="{'no_create':True}"/>
+                                    <field name="fil_cliente"/>
+                                    <field name="etiqueta_ids" widget="many2many_tags" attrs="{'invisible':[('fil_cliente','=',False)],'required':[('fil_cliente','=',True)]}"
+                                           options="{'no_create':True}"/>
+                                </group>
+                                <group>
+                                    <field name="start_hour" widget="float_time"/>
+                                    <field name="end_hour" widget="float_time"/>
+                                </group>
+                                <field name="descrip"/>
+                            </group>
+                        </page>
+                        <page string="Punto de venta">
+                            <group>
+                                <field name="pos_ids" widget="many2many_tags" required="1"
+                                       options="{'no_create':True}"/>
+                            </group>
+                        </page>
+                        <page string="Categorias">
+                            <group>
+                                <field name="categ_ids" widget="many2many_tags" options="{'no_create':True}"/>
+                            </group>
+                        </page>
+                        <page string="Productos">
+                            <group string="Productos adicionales">
+                                <field name="product_ids" widget="many2many_tags" options="{'no_create':True}"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="pos_discount_action" model="ir.actions.act_window">
+        <field name="name">Descuentos</field>
+        <field name="res_model">price.discount</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Crea el primer descuento</p>
+        </field>
+        <field name="domain">[('active','in',[False,True])]</field>
+    </record>
+
+    <menuitem name="Descuentos" id="pos_discount_menu" action="pos_discount_action"
+              parent="point_of_sale.pos_config_menu_catalog" sequence="20" groups="point_of_sale.group_pos_manager"/>
+
+    <record id="lunes" model="day.week">
+        <field name="name">Lunes</field>
+        <field name="value">0</field>
+    </record>
+    <record id="martes" model="day.week">
+        <field name="name">Martes</field>
+        <field name="value">1</field>
+    </record>
+    <record id="Miercoles" model="day.week">
+        <field name="name">Miercoles</field>
+        <field name="value">2</field>
+    </record>
+    <record id="jueves" model="day.week">
+        <field name="name">Jueves</field>
+        <field name="value">3</field>
+    </record>
+    <record id="viernes" model="day.week">
+        <field name="name">Viernes</field>
+        <field name="value">4</field>
+    </record>
+    <record id="sabado" model="day.week">
+        <field name="name">Sabado</field>
+        <field name="value">5</field>
+    </record>
+    <record id="domingo" model="day.week">
+        <field name="name">Domingo</field>
+        <field name="value">6</field>
+    </record>
+</odoo>

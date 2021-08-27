@@ -47,13 +47,11 @@ class ProducPrice(models.TransientModel):
     product_id = fields.Many2one("product.template")
 
     def change_price(self):
-        if self.item_id:
+        if self.item_id and self.item_id.product_tmpl_id.id == self.product_id.id:
             self.item_id.write({'compute_price':'fixed','fixed_price':self.precio})
         elif self.list_price_id:
             self.list_price_id.write({'item_ids':[(0,0,{'compute_price':'fixed','fixed_price':self.precio,'applied_on':'1_product','product_tmpl_id':self.product_id.id})]})
         else:
-            _logger.warning("producto")
-            _logger.warning(self.product_id)
             self.product_id.write({'list_price':self.precio})
 
     def edit_line(self):

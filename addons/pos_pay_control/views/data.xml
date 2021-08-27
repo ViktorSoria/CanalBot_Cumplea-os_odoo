@@ -10,6 +10,7 @@
             <script type="text/javascript" src="/pos_pay_control/static/src/js/envio.js"/>
             <script type="text/javascript" src="/pos_pay_control/static/src/js/recibe.js"/>
             <script type="text/javascript" src="/pos_pay_control/static/src/js/OrderSummary.js"/>
+            <script type="text/javascript" src="/pos_pay_control/static/src/js/discount.js"/>
         </xpath>
         <xpath expr="//link[@id='pos-stylesheet']" position="after">
             <link rel="stylesheet" href="/pos_pay_control/static/src/css/pos.css"/>

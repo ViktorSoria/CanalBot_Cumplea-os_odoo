@@ -35,6 +35,14 @@ odoo.define("pos_product_available.PosModel", function (require) {
                     args: [product, location],
                 });
             }
+
+            get price() {
+                const formattedUnitPrice = this.env.pos.format_currency(
+                    this.props.product.get_price(this.pricelist, 1),
+                    'Product Price'
+                );
+                return formattedUnitPrice;
+            }
         }
 
     const ProductScreen2 = (ProductScreen)=>

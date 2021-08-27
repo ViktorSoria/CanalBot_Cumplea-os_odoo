@@ -11,6 +11,7 @@
              "views/data.xml",
              "views/views.xml",
              "views/pos_views.xml",
+             "views/pos_discount.xml",
              ],
     "qweb": ["static/src/xml/pos.xml"],
     "post_load": None,

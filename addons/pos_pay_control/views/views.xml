@@ -27,7 +27,6 @@
             <xpath expr="//page[@name='pricelist_config']/group" position="inside">
                 <group string="Punto de venta">
                     <field name="autorizacion"/>
-                    <field name="visible"/>
                 </group>
             </xpath>
         </field>
