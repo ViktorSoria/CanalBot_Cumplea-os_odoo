@@ -59,5 +59,6 @@ class ParticularReport(models.AbstractModel):
     def _get_report_values(self, docids, data=None):
         _logger.warning(docids)
         _logger.warning(data)
-        # return a custom rendering context
-        return data
+
+        raise
+        # return data
