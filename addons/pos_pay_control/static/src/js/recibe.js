@@ -21,7 +21,7 @@ odoo.define("pos_pay_control.ResOrder", function (require) {
                         console.log(error);
                     }
                 }
-                setTimeout(loop, 30000);
+                setTimeout(loop, 10000);
             }
             loop();
         }
@@ -32,7 +32,7 @@ odoo.define("pos_pay_control.ResOrder", function (require) {
                 method: 'recibe',
                 args: [this.env.pos.pos_session.id]
             });
-            if (orders) {
+            if (orders && orders.length>0) {
                 orders.forEach(order => {
                     this.env.pos.import_orders(order);
                 });

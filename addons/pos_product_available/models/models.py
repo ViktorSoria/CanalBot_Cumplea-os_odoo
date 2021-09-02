@@ -32,7 +32,9 @@ class PosOrder(models.Model):
     @api.model
     def _order_fields(self, ui_order):
         vals = super()._order_fields(ui_order)
-        vals['l10n_mx_edi_usage'] = ui_order.get('l10n_mx_edi_usage')
+        vals['l10n_mx_edi_usage'] = ui_order.get('to_invoice')
+        vals['to_invoice'] = True if ui_order.get('to_invoice') else False
+        _logger.warning(vals)
         return vals
 
     payment_method_id = fields.Many2one('pos.payment.method', "Metodo de Pago", compute="get_payment_method",

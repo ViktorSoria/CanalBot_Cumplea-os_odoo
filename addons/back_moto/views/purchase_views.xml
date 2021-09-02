@@ -32,8 +32,14 @@
                             <field name="product" widget="radio"/>
                         </group>
                         <group>
-                            <field name="detalles" widget="radio"/>
+                            <field name="detalles" string="Cargar precios de" widget="radio"/>
                         </group>
+                    </group>
+                    <group>
+                        <h3>
+                            <p>Columnas del archivo:</p>
+                            <p>Producto | Cantidad | Precio</p>
+                        </h3>
                     </group>
                 </sheet>
                 <footer>

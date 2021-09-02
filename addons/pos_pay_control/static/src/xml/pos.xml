@@ -68,6 +68,20 @@
                 </div>
             </t>
         </xpath>
+        <xpath expr="//div[@class='payment-controls']" position="after">
+            <t t-if="currentOrder.is_to_invoice()">
+                <div class="text-center" style="margin-top:10px;">
+                    <select name="property_product_pricelist" style="width:325px;height:50px" id="method">
+                        <option value="G03">Gastos en general</option>
+                        <option value="G01">Adquisición de mercancías</option>
+                        <option value="G02">Devoluciones, descuentos o bonificaciones</option>
+                        <option value="I05">Dados, troqueles, moldes, matrices y herramental</option>
+                        <option value="I08">Otra maquinaria y equipo</option>
+                        <option value="P01">Por definir</option>
+                    </select>
+                </div>
+            </t>
+        </xpath>
     </t>
 
     <t t-name="Buttonsend" owl="1">

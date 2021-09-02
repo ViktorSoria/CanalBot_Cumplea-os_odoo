@@ -76,7 +76,7 @@ class PosSession(models.Model):
 
     def recibe(self):
         data = self.orders.mapped('json')
-        #self.orders.unlink()
+        self.orders.unlink()
         return data
 
 

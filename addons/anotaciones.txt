@@ -2,12 +2,14 @@ Edicion de precios desde producto
 
 //columnas carga masiva
 //cambiar precio desde producto
-//4 % monedero electornico no acomula este metodo, los demas si
-//tarifas solo por cliente
+//tarifas solo por cliente no editable
+//pedir autorizacion al pagar
 //codigo de producto en ticket
 
+//4 % monedero electornico no acomula este metodo, los demas si
+
  **Mostrar stock dentro del punto de venta, al dar click sobre la cantidad mostrar existencias de todos los almacenes
-Enviar pedidos a caja, permisos especiales de cobro por usuario
+***Enviar pedidos a caja, permisos especiales de cobro por usuario
 ***Monedero Electrónico: acumulacion de puntos en tarjeta de clientes especiales, nueva forma de pago en el punto de venta.
 ***Promociones en el punto de venta
 **Cargo del 3% a Pagos con Tarjeta de Crédito
@@ -16,7 +18,7 @@ Enviar pedidos a caja, permisos especiales de cobro por usuario
 **Autorización para ventas a mayoreo
 **En ficha de productos: Visualizar precios de las listas a las que pertenece, Mostrar proveedores.
 **Carga Masiva de Pedidos de Compra
-Reporte de ventas por sucursal (ḿodulo de ventas y punto de venta en el mismo reporte)
+**/Reporte de ventas por sucursal (ḿodulo de ventas y punto de venta en el mismo reporte)
 
 
 total resumen pos
@@ -24,3 +26,21 @@ metodo de pago
 
 bloqueo por credito
 cobrar desde el pos
+
+
+agrupacion de productos pos
+configuracion de puntos. ligar etiqueta de cliente
+
+
+Instalacion
+ubuntu server https://blogdesistemas.com/instalar-ubuntu-server-20-04/
+ssh https://voragine.net/linux/acceso-ssh-seguro-servidor-autenticacion-clave-publica
+odoo https://odooperu.org/?p=1413 https://rborja.net/como-instalar-odoo14-en-ubuntu/
+
+
+restringir cajas por almacen, agregar configuracion
+timbrar en el momento para la descarga timbrada
+agregar sello al final del ticket
+
+multiusr
+tek2101
