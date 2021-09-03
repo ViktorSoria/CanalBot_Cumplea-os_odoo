@@ -44,3 +44,5 @@ agregar sello al final del ticket
 
 multiusr
 tek2101
+
+rfc DERJ700707BZ5
