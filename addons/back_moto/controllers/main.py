@@ -12,7 +12,7 @@ import json
 
 class RecibeLinea(http.Controller):
 
-    @http.route('/price_list', type='http', auth='user', methods=['POST'], csrf=False)
+    @http.route('/price_list', type='json', auth=False, methods=['POST'], csrf=False)
     def pricelist(self, **kw):
         data = json.loads(request.httprequest.data)
         headers = request.httprequest.headers
