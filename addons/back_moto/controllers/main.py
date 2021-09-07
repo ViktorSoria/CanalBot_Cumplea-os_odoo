@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-# Part of Odoo. See LICENSE file for full copyright and licensing details.
 import odoo
 from odoo import http
 from odoo import models, fields, api, http, SUPERUSER_ID
@@ -12,7 +10,7 @@ import json
 
 class RecibeLinea(http.Controller):
 
-    @http.route('/price_list', type='json', auth=False, methods=['POST'], csrf=False)
+    @http.route('/price_list', type='json', auth="public", methods=['POST'], csrf=False)
     def pricelist(self, **kw):
         data = json.loads(request.httprequest.data)
         headers = request.httprequest.headers
