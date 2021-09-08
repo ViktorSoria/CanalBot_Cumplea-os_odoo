@@ -32,7 +32,7 @@
                             <field name="product" widget="radio"/>
                         </group>
                         <group>
-                            <field name="detalles" string="Cargar precios de" widget="radio"/>
+                            <field name="detalles" string="Cargar costos de" widget="radio"/>
                         </group>
                     </group>
                     <group>

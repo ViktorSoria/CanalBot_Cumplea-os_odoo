@@ -18,7 +18,7 @@ class ProductProduct(models.Model):
         quants = self.env['stock.quant']
         for l in location:
             quants += self.env['stock.quant']._gather(self, l)
-        return [(q.location_id.name, q.available_quantity) for q in quants]
+        return [(q.location_id.display_name, q.available_quantity) for q in quants]
 
 
 class PosPaymentMethod(models.Model):
@@ -35,7 +35,6 @@ class PosOrder(models.Model):
         vals = super()._order_fields(ui_order)
         vals['l10n_mx_edi_usage'] = ui_order.get('to_invoice')
         vals['to_invoice'] = True if ui_order.get('to_invoice') else False
-        _logger.warning(vals)
         return vals
 
     payment_method_id = fields.Many2one('pos.payment.method', "Metodo de Pago", compute="get_payment_method",
@@ -124,5 +123,5 @@ class PosConfig(models.Model):
         "Show Product Qtys", help="Show Product Qtys in POS", default=True
     )
     default_location_src_id = fields.Many2one(
-        "stock.location", related="picking_type_id.default_location_src_id"
+        "stock.location", related="picking_type_id.default_location_src_id",store=True
     )

@@ -19,39 +19,67 @@
                                 <th class="text-center" style="width: 30%">Metodo de pago</th>
                             </thead>
                             <tbody>
-                                <t t-foreach="pos['facturado']" t-as="fact">
+                                <t t-set="facturado" t-value="0"/>
+                                <t t-foreach="pos.get('facturado')" t-as="fact">
                                     <tr>
                                         <td><span t-field="fact.name"/></td>
                                         <td><span t-field="fact.partner_id.display_name"/></td>
                                         <td class="text-center">
-                                            <span t-field="fact.amount_total"/>
+                                            <span t-field="fact.amount_total" t-options='{"widget": "monetary"}'/>
                                         </td>
-                                        <td><span>---</span></td>
+                                        <td><span t-esc="fact.payment_method_id.name"/></td>
+                                        <t t-set="facturado" t-value="facturado +fact.amount_total"/>
                                     </tr>
                                 </t>
-                                <t t-foreach="pos['no_facturado']" t-as="no_fact">
+                                <tr>
+                                    <td colspan="2" style="text-align:right">Total</td>
+                                    <td class="text-center"><span t-esc="facturado" t-options='{"widget": "monetary","display_currency":currency}'/></td>
+                                    <td/>
+                                </tr>
+                                <tr><td colspan="4" class="text-center">NO Facturado</td></tr>
+                                <t t-set="no_facturado" t-value="0"/>
+                                <t t-foreach="pos.get('no_facturado')" t-as="no_fact">
                                     <tr>
                                         <td><span t-field="no_fact.name"/></td>
                                         <td><span t-field="no_fact.partner_id.display_name"/></td>
                                         <td class="text-center">
-                                            <span t-field="no_fact.amount_total"/>
+                                            <span t-field="no_fact.amount_total" t-options='{"widget": "monetary"}'/>
                                         </td>
-                                        <td><span>---</span></td>
+                                        <td><span t-esc="no_fact.payment_method_id.name"/></td>
+                                        <t t-set="no_facturado" t-value="no_facturado +no_fact.amount_total"/>
                                     </tr>
                                 </t>
-                                <t t-foreach="pos['devoluciones']" t-as="devol">
+                                <tr>
+                                    <td colspan="2" style="text-align:right">Total</td>
+                                    <td class="text-center"><span t-esc="no_facturado" t-options='{"widget": "monetary","display_currency":currency}'/></td>
+                                    <td/>
+                                </tr>
+                                <tr><td colspan="4" class="text-center">Devoluciones</td></tr>
+                                <t t-set="devoluciones" t-value="0"/>
+                                <t t-foreach="pos.get('devoluciones')" t-as="devol">
                                     <tr>
                                         <td><span t-field="devol.name"/></td>
                                         <td><span t-field="devol.partner_id.display_name"/></td>
                                         <td class="text-center">
-                                            <span t-field="devol.amount_total"/>
+                                            <span t-field="devol.amount_total" t-options='{"widget": "monetary"}'/>
                                         </td>
-                                        <td><span>---</span></td>
+                                        <td><span t-esc="devol.payment_method_id.name"/></td>
+                                        <t t-set="devoluciones" t-value="devoluciones +devol.amount_total"/>
                                     </tr>
                                 </t>
+                                <tr>
+                                    <td colspan="2" style="text-align:right">Total</td>
+                                    <td class="text-center"><span t-esc="devoluciones" t-options='{"widget": "monetary","display_currency":currency}'/></td>
+                                    <td/>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="text-align:right">Total General</td>
+                                    <td class="text-center"><span t-esc="facturado + no_facturado + devoluciones" t-options='{"widget": "monetary","display_currency":currency}'/></td>
+                                    <td/>
+                                </tr>
                             </tbody>
                         </table>
-
+                        <hr/>
                         <span style="font-size: 30px;">
                             Resumen Ventas (Totalmente Facturado)
                             <br/>
@@ -65,18 +93,26 @@
                                 <th class="text-center" style="width: 30%">Metodo de pago</th>
                             </thead>
                             <tbody>
-                                <t t-foreach="sale['facturas']" t-as="sale">
+                                <t t-set="facturas" t-value="0"/>
+                                <t t-foreach="sale.get('facturas')" t-as="sale_order">
                                     <tr>
-                                        <td><span t-field="sale.name"/></td>
-                                        <td><span t-field="sale.partner_id.display_name"/></td>
+                                        <td><span t-field="sale_order.name"/></td>
+                                        <td><span t-field="sale_order.partner_id.display_name"/></td>
                                         <td class="text-center">
-                                            <span t-field="sale.amount_total"/>
+                                            <span t-field="sale_order.amount_total" t-options='{"widget": "monetary"}'/>
                                         </td>
-                                        <td><span>---</span></td>
+                                        <td><span t-esc="sale_order.l10n_mx_edi_payment_method_id.name"/></td>
                                     </tr>
+                                    <t t-set="facturas" t-value="facturas + sale_order.amount_total"/>
                                 </t>
+                                <tr>
+                                    <td colspan="2" style="text-align:right">Total</td>
+                                    <td class="text-center"><span t-esc="facturas" t-options='{"widget": "monetary","display_currency":currency}'/></td>
+                                    <td/>
+                                </tr>
                             </tbody>
                         </table>
+                        <hr/>
                         <span style="font-size: 30px;">
                             Resumen Ventas (Notas de Credito)
                             <br/>
@@ -90,16 +126,23 @@
                                 <th class="text-center" style="width: 30%">Metodo de pago</th>
                             </thead>
                             <tbody>
-                                <t t-foreach="sale['nc']" t-as="sale_nc">
+                                <t t-set="nc" t-value="0"/>
+                                <t t-foreach="sale.get('nc')" t-as="sale_nc">
                                     <tr>
                                         <td><span t-field="sale_nc.name"/></td>
                                         <td><span t-field="sale_nc.partner_id.display_name"/></td>
                                         <td class="text-center">
-                                            <span t-field="sale_nc.amount_total"/>
+                                            <span t-field="sale_nc.amount_total" t-options='{"widget": "monetary"}'/>
                                         </td>
-                                        <td><span>---</span></td>
+                                        <td><span t-esc="sale_nc.l10n_mx_edi_payment_method_id.name"/></td>
+                                        <t t-set="nc" t-value="nc + sale_nc.amount_total"/>
                                     </tr>
                                 </t>
+                                <tr>
+                                    <td colspan="2" style="text-align:right">Total</td>
+                                    <td class="text-center"><span t-esc="nc" t-options='{"widget": "monetary","display_currency":currency}'/></td>
+                                    <td/>
+                                </tr>
                             </tbody>
                         </table>
                         <span style="font-size: 30px;">
@@ -113,18 +156,26 @@
                                 <th class="text-center" style="width: 30%">Metodo de pago</th>
                             </thead>
                             <tbody>
-<!--                                <t t-foreach="sale['gastos']" t-as="gasto">-->
-<!--                                    <tr>-->
-<!--                                        <td><span t-field="gasto.name"/></td>-->
-<!--                                        <td><span t-field="gasto.partner_id.display_name"/></td>-->
-<!--                                        <td class="text-center">-->
-<!--                                            <span t-field="gasto.amount_total" t-options='{"widget": "monetary"}'/>-->
-<!--                                        </td>-->
-<!--                                        <td><span>-&#45;&#45;</span></td>-->
-<!--                                    </tr>-->
-<!--                                </t>-->
+                                <t t-set="gs" t-value="0"/>
+                                <t t-foreach="gastos" t-as="gasto">
+                                    <tr>
+                                        <td><span t-field="gasto.name"/></td>
+                                        <td><span t-field="gasto.employee_id.display_name"/></td>
+                                        <td class="text-center">
+                                            <span t-field="gasto.total_amount" t-options='{"widget": "monetary"}'/>
+                                        </td>
+                                        <td><span t-esc="'Efectivo'"/></td>
+                                        <t t-set="gs" t-value="gs + gasto.total_amount"/>
+                                    </tr>
+                                </t>
+                                <tr>
+                                    <td colspan="2" style="text-align:right">Total</td>
+                                    <td class="text-center"><span t-esc="gs" t-options='{"widget": "monetary","display_currency":currency}'/></td>
+                                    <td/>
+                                </tr>
                             </tbody>
                         </table>
+                    <hr/>
                         <span style="font-size: 30px;">
                             TOTALES GENERALES
                         </span>
@@ -134,6 +185,12 @@
                                 <th class="text-center" style="width: 30%">Monto</th>
                             </thead>
                             <tbody>
+                                <t t-foreach="metodo" t-as="m">
+                                    <tr>
+                                        <th class="text-center"><span t-esc="m"/></th>
+                                        <th class="text-center"><span t-esc="m_value" t-options='{"widget": "monetary","display_currency":currency}'/></th>
+                                    </tr>
+                                </t>
                             </tbody>
                         </table>
                 </div>

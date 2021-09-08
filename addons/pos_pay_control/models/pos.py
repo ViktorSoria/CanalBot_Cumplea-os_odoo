@@ -53,7 +53,7 @@ class Posconfig(models.Model):
                                                                partner_id.city_id.name or partner_id.city or '',
                                                                partner_id.state_id.name or ''
                                                        )
-            telefono = "Tel: "+partner_id.phone
+            telefono = "Tel: "+(partner_id.phone or '')
             rec.datos_ubicacion = '/'.join([nombre,direccion,telefono])
 
 

@@ -14,7 +14,7 @@ odoo.define("pos_pay_control.SendOrder", function (require) {
             var sessions = await this.rpc({
                 model: 'pos.session',
                 method: 'search_read',
-                domain: [['state','=','opened'],['config_id','!=',this.env.pos.config_id]],
+                domain: [['state','=','opened'],['config_id','!=',this.env.pos.config_id],['config_id.default_location_src_id','=',this.env.pos.config.default_location_src_id[0]]],
                 fields: ['config_id','name']
             });
             const {confirmed, payload: payload} = await this.showPopup("Buttonsend", {'sessions':sessions});
