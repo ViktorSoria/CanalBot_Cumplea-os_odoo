@@ -154,5 +154,11 @@
         </xpath>
     </t>
 
+    <t t-name="ProductsWidgetControlPanel" t-inherit="point_of_sale.ProductsWidgetControlPanel" t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[@class='products-widget-control']" position="attributes">
+            <attribute name="style">overflow: auto;max-height: 120px;min-height: 60px;</attribute>
+        </xpath>
+    </t>
+
 </templates>
 

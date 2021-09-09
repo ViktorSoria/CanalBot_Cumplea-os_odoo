@@ -3,6 +3,7 @@ odoo.define("pos_pay_control.Discount", function (require) {
 
     const Registries = require('point_of_sale.Registries');
     const ProductScreen = require('point_of_sale.ProductScreen')
+    const NumberBuffer = require('point_of_sale.NumberBuffer');
     var exports = require("point_of_sale.models");
 
     exports.load_fields("product.pricelist", ["autorizacion"]);
@@ -10,6 +11,9 @@ odoo.define("pos_pay_control.Discount", function (require) {
     const ProductScreen2 = (ProductScreen) =>
         class extends ProductScreen {
             async _clickProduct(event) {
+                if(event.detail.type === 'product' && event.detail.qty_available<=0){
+                    return;
+                }
                 super._clickProduct(...arguments);
                 let product = event.detail.id;
                 let pos = this.env.pos.config_id;
@@ -46,6 +50,56 @@ odoo.define("pos_pay_control.Discount", function (require) {
                         line.set_discount(descuento);
                     }
                 }
+            }
+            async _onClickCustomer() {
+            // IMPROVEMENT: This code snippet is very similar to selectClient of PaymentScreen.
+                const currentClient = this.currentOrder.get_client();
+                const { confirmed, payload: newClient } = await this.showTempScreen(
+                    'ClientListScreen',
+                    { client: currentClient }
+                );
+                if (confirmed) {
+                    this.currentOrder.set_client(newClient);
+                    this.currentOrder.updatePricelist(newClient);
+                    let cliente = newClient ? newClient.id: null;
+                    await this.compute_discounts(cliente);
+                }
+            }
+            async compute_discounts(cliente) {
+                let order = this.currentOrder;
+                let lines = order.get_orderlines();
+                let pos = this.env.pos.config_id;
+                let product;
+                for (const line of lines) {
+                    product = line.get_product().id;
+                    let dis = await this.rpc({
+                        model: 'price.discount',
+                        method: 'get_discount',
+                        args: [null, product, cliente, pos],
+                    });
+                    if (dis.desc) {
+                        let descuento = 0;
+                        if (dis.desc === 'por') {
+                            descuento = dis.value;
+                        } else {
+                            let total = line.get_price_with_tax();
+                            descuento = dis.value * 100 / total;
+                        }
+                        line.set_discount(descuento);
+                    } else {
+                        line.set_discount(0);
+                    }
+                }
+            }
+            _setValue(val) {
+                if (this.currentOrder.get_selected_orderline()) {
+                    let product = this.currentOrder.get_selected_orderline().get_product();
+                    if(product.type==='product' && product.qty_available<val){
+                        val = product.qty_available;
+                        NumberBuffer.reset();
+                    }
+                }
+                super._setValue(val);
             }
         }
 

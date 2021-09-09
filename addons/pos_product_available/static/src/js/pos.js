@@ -43,30 +43,71 @@ odoo.define("pos_product_available.PosModel", function (require) {
                 );
                 return formattedUnitPrice;
             }
-        }
 
-    const ProductScreen2 = (ProductScreen)=>
-        class extends ProductScreen{
-            constructor() {
-                super(...arguments);
-                useListener('click-available', this._clickProductAvailable);
-            }
-
-            async _clickProductAvailable(event){
+            async _clickProductAvailable(event) {
                 console.log(this.props.product);
                 var stock = await this.rpc({
                     model: 'product.product',
                     method: 'available_qty',
                     args: [this.props.product.id],
                 });
-                Gui.showPopup("StockProductPopup", {'stock':stock});
+                Gui.showPopup("StockProductPopup", {'stock': stock});
             }
+        }
+        const ProductScreen2 = (ProductScreen) =>
+        class extends ProductScreen {
+            constructor() {
+                super(...arguments);
+                // this.inicial();
+            }
+            inicial() {
+                const self = this;
+                async function loop(limit,offset) {
+                    let newof = offset;
+                    // if (self.env && self.env.pos && self.env.pos.session) {
+                        let tam = self.env.pos.db.product_by_id.length;
+                        let tiempo = 5000;
+                        try {
+                            await self.recompute_quantity(limit,offset);
+                            newof += 5000;
+                        } catch (error) {
+                            console.log(error);
+                            tiempo = 60000;
+                        }
+                    // }
+                    if(newof>tam){newof=0;}
+                    setTimeout(()=>{loop(5000,newof);}, limit !== 0 ? tiempo:60000);
+                }
+                loop(0,0);
+            }
+            async recompute_quantity(limit,offset){
+                console.log("cargando cantidades");
+                let location = this.env.pos.config.default_location_src_id[0];
+                let products = await this.rpc({
+                    model: 'product.product',
+                    method: 'search_read',
+                    fields: ["qty_available"],
+                    context: {location:location},
+                    limit: limit,
+                    offset: offset,
+                });
+                let p;
+                // console.log("llegaron cantidades");
+                products.forEach(item => {
+                    p = this.env.pos.db.product_by_id[item.id];
+                    if(p){
+                        p.qty_available = item.qty_available;
+                    }
+                });
+                console.log("Termino de cargar");
+            }
+
         }
 
 
 
     Registries.Component.extend(ProductItem, ProductItem2);
-    Registries.Component.extend(ProductItem, ProductScreen2);
+    Registries.Component.extend(ProductScreen, ProductScreen2);
 
     return ProductItem;
 });
