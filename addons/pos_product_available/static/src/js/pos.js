@@ -14,6 +14,10 @@ odoo.define("pos_product_available.PosModel", function (require) {
     models.find(e=>e.model=="product.product").context = function(self){ return { display_default_code: true, location:self.config.default_location_src_id[0]}; };
     const ProductItem2 = (ProductItem) =>
         class extends ProductItem {
+            constructor() {
+                super(...arguments);
+                useListener('click-available', this._clickProductAvailable);
+            }
             format_float_value(val) {
                 var value = parseFloat(val);
                 value = field_utils.format.float(value, {digits: [69, 3]});
@@ -26,14 +30,6 @@ odoo.define("pos_product_available.PosModel", function (require) {
 
             get rounded_qty() {
                 return this.format_float_value(this.props.product.qty_available);
-            }
-
-            async get_product_qty(product, location) {
-                return await this.rpc({
-                    model: 'product.product',
-                    method: 'available_qty',
-                    args: [product, location],
-                });
             }
 
             get price() {
@@ -58,25 +54,27 @@ odoo.define("pos_product_available.PosModel", function (require) {
         class extends ProductScreen {
             constructor() {
                 super(...arguments);
-                // this.inicial();
+                this.inicial();
             }
             inicial() {
                 const self = this;
                 async function loop(limit,offset) {
-                    let newof = offset;
-                    // if (self.env && self.env.pos && self.env.pos.session) {
-                        let tam = self.env.pos.db.product_by_id.length;
+                    if(limit===0){
+                        setTimeout(()=>{loop(5000,0);}, 60000);
+                    }else{
+                        let newof = offset;
+                        let tam = _.size(self.env.pos.db.product_by_id);
                         let tiempo = 5000;
+                        if(newof>tam){newof=0;}
                         try {
-                            await self.recompute_quantity(limit,offset);
+                            await self.recompute_quantity(limit,newof);
                             newof += 5000;
                         } catch (error) {
                             console.log(error);
                             tiempo = 60000;
                         }
-                    // }
-                    if(newof>tam){newof=0;}
-                    setTimeout(()=>{loop(5000,newof);}, limit !== 0 ? tiempo:60000);
+                        setTimeout(()=>{loop(5000,newof);}, tiempo);
+                    }
                 }
                 loop(0,0);
             }
@@ -88,17 +86,19 @@ odoo.define("pos_product_available.PosModel", function (require) {
                     method: 'search_read',
                     fields: ["qty_available"],
                     context: {location:location},
+                    domain:[['type','=','product'],['available_in_pos','=',true]],
                     limit: limit,
                     offset: offset,
+                    orderBy: _.map(['id'], function (name) { return {name: name}; }),
                 });
                 let p;
-                // console.log("llegaron cantidades");
                 products.forEach(item => {
                     p = this.env.pos.db.product_by_id[item.id];
                     if(p){
                         p.qty_available = item.qty_available;
                     }
                 });
+                this.render();
                 console.log("Termino de cargar");
             }
 

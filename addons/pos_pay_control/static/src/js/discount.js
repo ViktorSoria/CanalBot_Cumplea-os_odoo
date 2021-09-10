@@ -12,6 +12,7 @@ odoo.define("pos_pay_control.Discount", function (require) {
         class extends ProductScreen {
             async _clickProduct(event) {
                 if(event.detail.type === 'product' && event.detail.qty_available<=0){
+                    this.playSound("error");
                     return;
                 }
                 super._clickProduct(...arguments);
