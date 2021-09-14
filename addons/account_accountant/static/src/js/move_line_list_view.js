@@ -135,7 +135,7 @@ odoo.define('account_accountant.MoveLineListView', function (require) {
                 if (!attachments.length) {
                     var $empty = $('<p>', {
                         class: 'o_move_line_without_attachment',
-                        text: _t("There is no attachment linked to this move."),
+                        text: _t("No attachments linked."),
                     });
                     self.$attachmentPreview.empty().append($empty);
                 }
@@ -167,6 +167,10 @@ odoo.define('account_accountant.MoveLineListView', function (require) {
         },
     });
     var AccountMoveListRenderer = ListRenderer.extend({
+        events: Object.assign({}, ListRenderer.prototype.events, {
+            'mouseover .o_list_table_grouped tbody tr': '_onToggleGroupButton',
+            'mouseout .o_list_table_grouped tbody tr': '_onToggleGroupButton',
+        }),
 
         //--------------------------------------------------------------------------
         // Private
@@ -191,6 +195,9 @@ odoo.define('account_accountant.MoveLineListView', function (require) {
             });
         },
 
+        /*
+         * Show pdf when using mouse
+         */
         _onRowClicked: function (ev) {
             ev.stopPropagation();
             var id = $(ev.currentTarget).data('id');
@@ -199,6 +206,21 @@ odoo.define('account_accountant.MoveLineListView', function (require) {
                     recordId: id,
                 });
             }
+            return this._super.apply(this, arguments);
+        },
+
+        /*
+         * Show pdf when using keys
+         */
+        _findConnectedCell: function ($cell, direction, colIndex) {
+            var res = this._super.apply(this, arguments);
+            var id = res && res.closest('tr').data('id');
+            if (id) {
+                this.trigger_up('row_selected', {
+                    recordId: id,
+                });
+            }
+            return res;
         },
 
         _renderGroupRow: function (group, groupLevel) {
@@ -224,6 +246,32 @@ odoo.define('account_accountant.MoveLineListView', function (require) {
                 });
             }
             this._super.apply(this, arguments);
+        },
+        /**
+         * Toggle group buttons on mouseover and mouseout on group header or
+         * its content.
+         *
+         * @private
+         * @param {MouseEvent} ev
+         */
+        _onToggleGroupButton: function (ev) {
+            let tr = ev.currentTarget;
+            let groupHeader;
+            if (tr.classList.contains('o_group_header') && tr.querySelector(".o_group_buttons")) {
+                // we are hovering the group header itself
+                groupHeader = tr;
+            } else {
+                let tbody = ev.currentTarget.closest('tbody');
+                while (tbody && !tbody.querySelector(".o_group_buttons")) {
+                    tbody = tbody.previousElementSibling;
+                }
+                if (tbody) {
+                    groupHeader = tbody.querySelector(".o_group_header.o_group_open");
+                }
+            }
+            if (groupHeader) {
+                groupHeader.classList.toggle("show_group_buttons");
+            }
         },
     });
 

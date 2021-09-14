@@ -127,6 +127,7 @@ var accountReportsWidget = AbstractAction.extend({
         'click .o_account_reports_load_more span': 'load_more',
         'click .o_account_reports_table thead th': 'selected_column',
         'click .o_change_expected_date': '_onChangeExpectedDate',
+        'click .o_search_options .dropdown-menu': '_onClickDropDownMenu',
     },
 
     custom_events: {
@@ -154,28 +155,39 @@ var accountReportsWidget = AbstractAction.extend({
             this.financial_id = action.context.id;
         }
         this.odoo_context = action.context;
-        this.report_options = action.options || false;
-        this.ignore_session = action.ignore_session;
-        if ((action.ignore_session === 'read' || action.ignore_session === 'both') !== true) {
+        this.report_options = action.params && action.params.options;
+        this.ignore_session = action.params && action.params.ignore_session;
+        if ((this.ignore_session === 'read' || this.ignore_session === 'both') !== true) {
             var persist_key = 'report:'+this.report_model+':'+this.financial_id+':'+session.company_id;
             this.report_options = JSON.parse(sessionStorage.getItem(persist_key)) || this.report_options;
         }
         return this._super.apply(this, arguments);
     },
-    start: function() {
-        var self = this;
-        var extra_info = this._rpc({
-                model: self.report_model,
-                method: 'get_report_informations',
-                args: [self.financial_id, self.report_options],
-                context: self.odoo_context,
-            })
-            .then(function(result){
-                return self.parse_reports_informations(result);
-            });
-        return Promise.all([extra_info, this._super.apply(this, arguments)]).then(function() {
-            self.render();
-        });
+    willStart: async function () {
+        const reportsInfoPromise = this._rpc({
+            model: this.report_model,
+            method: 'get_report_informations',
+            args: [this.financial_id, this.report_options],
+            context: this.odoo_context,
+        }).then(res => this.parse_reports_informations(res));
+        const parentPromise = this._super(...arguments);
+        return Promise.all([reportsInfoPromise, parentPromise]);
+    },
+    start: async function() {
+        this.renderButtons();
+        this.controlPanelProps.cp_content = {
+            $buttons: this.$buttons,
+            $searchview_buttons: this.$searchview_buttons,
+            $pager: this.$pager,
+            $searchview: this.$searchview,
+        };
+        await this._super(...arguments);
+        this.render();
+
+        // A default value has been set for the filter accounts.
+        // Apply the filter to take this value into account.
+        if("default_filter_accounts" in (this.odoo_context || {}))
+            this.$('.o_account_reports_filter_input').val(this.odoo_context.default_filter_accounts).trigger("input");
     },
     parse_reports_informations: function(values) {
         this.report_options = values.options;
@@ -194,11 +206,6 @@ var accountReportsWidget = AbstractAction.extend({
             sessionStorage.setItem(persist_key, JSON.stringify(this.report_options));
         }
     },
-    // We need this method to rerender the control panel when going back in the breadcrumb
-    do_show: function() {
-        this._super.apply(this, arguments);
-        this.update_cp();
-    },
     // Updates the control panel and render the elements that have yet to be rendered
     update_cp: function() {
         if (!this.$buttons) {
@@ -212,7 +219,7 @@ var accountReportsWidget = AbstractAction.extend({
                 $searchview: this.$searchview,
             },
         };
-        return this.updateControlPanel(status, {clear: true});
+        return this.updateControlPanel(status);
     },
     reload: function() {
         var self = this;
@@ -224,7 +231,8 @@ var accountReportsWidget = AbstractAction.extend({
             })
             .then(function(result){
                 self.parse_reports_informations(result);
-                return self.render();
+                self.render();
+                return self.update_cp();
             });
     },
     render: function() {
@@ -232,7 +240,6 @@ var accountReportsWidget = AbstractAction.extend({
         this.render_template();
         this.render_footnotes();
         this.render_searchview_buttons();
-        this.update_cp();
         this.$('.js_account_report_foldable').each(function() {
             if(!$(this).data('unfolded')) {
                 self.fold($(this));
@@ -244,6 +251,84 @@ var accountReportsWidget = AbstractAction.extend({
         this.$('.o_content').find('.o_account_reports_summary_edit').hide();
         this.$('[data-toggle="tooltip"]').tooltip();
         this._add_line_classes();
+    },
+    _init_line_popups: function(){
+        /*
+            Configure the popover used in the financial reports to display some details about the results given by
+            the report lines like:
+            - the code.
+            - the formula with values.
+            - the domain.
+            - A button to show the account.move.lines.
+        */
+
+        var self = this;
+        _.each(this.$('.o_account_report_popup'), function(popup){
+            $(popup).popover({
+                html: true,
+                template: "<div class='popover' role='tooltip' style='max-width: 100%; margin-right:80px;'><div class='popover-body'></div></div>",
+                placement: 'left',
+                trigger: 'focus',
+                container: 'body',
+                delay: {show: 0, hide: 100},
+                content: function(){
+                    var data = JSON.parse(popup.getAttribute('data'));
+
+                    // Render the content.
+                    var $content = $(QWeb.render(popup.getAttribute('template'), data));
+
+                    // Bind the 'view journal items' button with the 'action_view_journal_entries' python method.
+                    $content.find('.js_view_entries').on('click', function(event){
+                        self._rpc({
+                            model: 'account.financial.html.report.line',
+                            method: 'action_view_journal_entries',
+                            args: [$(event.target).data('id'), self.report_options, self.financial_id],
+                            context: self.odoo_context,
+                        })
+                        .then(function(result){
+                            return self.do_action(result);
+                        })
+                    });
+
+                    var formula_element = $content.find('.js_popup_formula');
+
+                    // Highlight involved codes during formula evaluation.
+                    _.each($content.find('.js_popup_formula'), function(element){
+                        $(element).on("mouseenter", function(event){
+                            $(element).addClass('o_financial_report_hover_popup');
+                            self.$("[code='" + element.textContent + "']").addClass('o_financial_report_hover_popup');
+                        });
+                        $(element).on("mouseleave", function(event){
+                            $(element).removeClass('o_financial_report_hover_popup');
+                            self.$("[code='" + element.textContent + "']").removeClass('o_financial_report_hover_popup');
+                        });
+                    });
+
+                    // Redirect to another report.
+                    _.each($content.find('.js_popup_open_report'), function(element){
+                        $(element).on("click", function(event){
+                            var $target = $(event.target);
+                            self._rpc({
+                                model: 'account.financial.html.report',
+                                method: 'action_redirect_to_report',
+                                args: [$target.data('id'), self.report_options, $target.data('target')],
+                                context: self.odoo_context,
+                            })
+                            .then(function(result){
+                                return self.do_action(result);
+                            })
+                        });
+                    });
+
+                    return $content;
+                }
+            });
+
+            // Triggered when the popup is closed without mouseleave event.
+            $(popup).on("hidden.bs.popover", function(element){
+                self.$('.js_popup_formula').removeClass('o_financial_report_hover_popup');
+            });
+        });
     },
     _add_line_classes: function() {
         /* Pure JS to improve performance in very cornered case (~200k lines)
@@ -263,12 +348,14 @@ var accountReportsWidget = AbstractAction.extend({
         }
         // This selector is not adaptable in pure JS
         this.$('tr[data-parent-id]').addClass('o_js_account_report_inner_row');
+
+        this._init_line_popups();
      },
     filter_accounts: function(e) {
         var self = this;
         var query = e.target.value.trim().toLowerCase();
         this.filterOn = false;
-        this.$('.o_account_reports_level2').each(function(index, el) {
+        this.$('.o_account_searchable_line').each(function(index, el) {
             var $accountReportLineFoldable = $(el);
             var line_id = $accountReportLineFoldable.find('.o_account_report_line').data('id');
             var $childs = self.$('tr[data-parent-id="'+$.escapeSelector(String(line_id))+'"]');
@@ -313,7 +400,7 @@ var accountReportsWidget = AbstractAction.extend({
     _onChangeExpectedDate: function (event) {
         var self = this;
         var targetID = parseInt($(event.target).attr('data-id'));
-        var parentID = parseInt($(event.target).attr('parent-id').split("_")[1]);
+        var parentID = parseInt($(event.target).attr('parent-id').split("-")[1]);
         var $content = $(QWeb.render("paymentDateForm", {target_id: targetID}));
         var paymentDatePicker = new datepicker.DateWidget(this);
         paymentDatePicker.appendTo($content.find('div.o_account_reports_payment_date_picker'));
@@ -466,6 +553,19 @@ var accountReportsWidget = AbstractAction.extend({
             });
             self.reload();
         });
+        var rate_handler = function (event) {
+            var option_value = $(this).data('filter');
+            if (option_value == 'current_currency') {
+                delete self.report_options.currency_rates;
+            } else if (option_value == 'custom_currency') {
+                _.each($('input.js_account_report_custom_currency_input'), function(input) {
+                    self.report_options.currency_rates[input.name].rate = input.value;
+                });
+            }
+            self.reload();
+        }
+        $(document).on('click', '.js_account_report_custom_currency', rate_handler);
+        this.$searchview_buttons.find('.js_account_report_custom_currency').click(rate_handler);
         this.$searchview_buttons.find('.js_account_reports_one_choice_filter').click(function (event) {
             self.report_options[$(this).data('filter')] = $(this).data('id');
             self.reload();
@@ -723,7 +823,7 @@ var accountReportsWidget = AbstractAction.extend({
         e.preventDefault();
         var line = $(e.target).parents('td');
         if (line.length === 0) {line = $(e.target);}
-        var method = line.data('unfolded') === 'True' ? this.fold(line) : this.unfold(line);
+        var method = line[0].dataset.unfolded === 'True' ? this.fold(line) : this.unfold(line);
         Promise.resolve(method).then(function() {
             self.render_footnotes();
             self.persist_options();
@@ -741,7 +841,7 @@ var accountReportsWidget = AbstractAction.extend({
             self.report_options.unfolded_lines.splice(index, 1);
         }
         if ($lines_to_hide.length > 0) {
-            line.data('unfolded', 'False');
+            line[0].dataset.unfolded = 'False';
             $lines_to_hide.find('.js_account_report_line_footnote').addClass('folded');
             $lines_to_hide.hide();
             _.each($lines_to_hide, function(el){
@@ -763,7 +863,7 @@ var accountReportsWidget = AbstractAction.extend({
             $lines_in_dom.find('.js_account_report_line_footnote').removeClass('folded');
             $lines_in_dom.show();
             line.find('.fa-caret-right').toggleClass('fa-caret-right fa-caret-down');
-            line.data('unfolded', 'True');
+            line[0].dataset.unfolded = 'True';
             this._add_line_classes();
             return true;
         }
@@ -777,6 +877,11 @@ var accountReportsWidget = AbstractAction.extend({
                 .then(function(result){
                     $(line).parent('tr').replaceWith(result);
                     self._add_line_classes();
+                    self.$('.js_account_report_foldable').each(function() {
+                        if(!$(this).data('unfolded')) {
+                            self.fold($(this));
+                        }
+                    });
                 });
         }
     },
@@ -831,6 +936,21 @@ var accountReportsWidget = AbstractAction.extend({
                     return self.do_action(result);
                 });
         }
+    },
+
+    //-------------------------------------------------------------------------
+    // Handlers
+    //-------------------------------------------------------------------------
+
+    /**
+     * When clicking inside a dropdown to modify search options
+     * prevents the bootstrap dropdown to close on itself
+     *
+     * @private
+     * @param {$.Event} ev
+     */
+    _onClickDropDownMenu: function (ev) {
+        ev.stopPropagation();
     },
 });
 

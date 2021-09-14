@@ -1,0 +1,50 @@
+<odoo>
+
+    <record id="view_sale_order_form_inherit" model="ir.ui.view">
+        <field name="name">view.sale.order.form.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="after">
+                <div class="alert alert-danger text-center o_form_header" role="status"
+                     attrs="{'invisible': [('amount_due', '&lt;=', 0)]}">
+                    <a class="close" data-dismiss="alert" href="#" aria-label="Close">x</a>
+                    <div>
+                        <strong>El monto adeudado del cliente es:
+                            <field name="amount_due"/>
+                        </strong>
+                    </div>
+                </div>
+            </xpath>
+            <xpath expr="//field[@name='payment_term_id']" position="after">
+                <field name="company_currency_id" invisible="1"/>
+                <field name="necesita" invisible="1"/>
+                <field name="autorizado" attrs="{'invisible':[('necesita','=',False)]}" readonly="True"/>
+                <field name="auto_usr" attrs="{'invisible':[('autorizado','=',False)]}" readonly="True"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_order_aut_tree" model="ir.ui.view">
+        <field name="name">view.sale.order.tree.aut</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_quotation_tree_with_onboarding"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <field name="state" position="after">
+                <button type="object" name="autorizar" string="Autorizar" class="btn-primary"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="action_order_aut" model="ir.actions.act_window">
+        <field name="name">Ordenes por Autorizar</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="ob_customer_credit_limit.view_order_aut_tree"/>
+        <field name="domain">[('state','in',['draft','sent']),('necesita','=',True),('autorizado','=',False)]</field>
+    </record>
+
+    <menuitem id="menu_order_aut" name="Ordenes por Autorizar" action="action_order_aut"
+              parent="sale.sale_order_menu" sequence="2" groups="ob_customer_credit_limit.group_credit"/>
+</odoo>

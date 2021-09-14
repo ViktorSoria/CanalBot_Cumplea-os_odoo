@@ -3,14 +3,15 @@
 # 	* mail_enterprise
 # 
 # Translators:
+# Martin Trigaux, 2020
 # JH CHOI <hwangtog@gmail.com>, 2020
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 13.0+e\n"
+"Project-Id-Version: Odoo Server 14.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-27 09:32+0000\n"
-"PO-Revision-Date: 2019-08-26 09:36+0000\n"
+"POT-Creation-Date: 2020-11-27 13:48+0000\n"
+"PO-Revision-Date: 2020-09-07 08:21+0000\n"
 "Last-Translator: JH CHOI <hwangtog@gmail.com>, 2020\n"
 "Language-Team: Korean (https://www.transifex.com/odoo/teams/41243/ko/)\n"
 "MIME-Version: 1.0\n"
@@ -20,19 +21,28 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #. module: mail_enterprise
-#. openerp-web
-#: code:addons/mail_enterprise/static/src/js/discuss.js:0
-#: code:addons/mail_enterprise/static/src/js/systray_messaging_menu_mobile.js:0
-#: code:addons/mail_enterprise/static/src/js/thread_widget_mobile.js:0
-#, python-format
-msgid "Marked as read"
-msgstr "읽음으로 표시함"
+#: model:ir.model.fields,field_description:mail_enterprise.field_publisher_warranty_contract__display_name
+msgid "Display Name"
+msgstr "이름 표시"
+
+#. module: mail_enterprise
+#: model:ir.model.fields,field_description:mail_enterprise.field_publisher_warranty_contract__id
+msgid "ID"
+msgstr "ID"
+
+#. module: mail_enterprise
+#: model:ir.model.fields,field_description:mail_enterprise.field_publisher_warranty_contract____last_update
+msgid "Last Modified on"
+msgstr "최근 수정"
+
+#. module: mail_enterprise
+#: model:ir.model,name:mail_enterprise.model_publisher_warranty_contract
+msgid "Publisher Warranty Contract For IoT Box"
+msgstr "IoT 박스에 대한 게시자 보증 계약서"
 
 #. module: mail_enterprise
 #. openerp-web
-#: code:addons/mail_enterprise/static/src/js/discuss.js:0
-#: code:addons/mail_enterprise/static/src/js/systray_messaging_menu_mobile.js:0
-#: code:addons/mail_enterprise/static/src/js/thread_widget_mobile.js:0
+#: code:addons/mail_enterprise/static/src/bugfix/bugfix.xml:0
 #, python-format
-msgid "UNDO"
-msgstr "실행 취소"
+msgid "{ 'o-isInFormSheetBg': props.isInFormSheetBg }"
+msgstr ""

@@ -3,15 +3,17 @@
 # 	* mail_enterprise
 # 
 # Translators:
-# trendspotter <j.podhorecky@volny.cz>, 2019
+# Martin Trigaux, 2020
+# Jan Horzinka <jan.horzinka@centrum.cz>, 2020
+# trendspotter, 2020
 # 
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 13.0+e\n"
+"Project-Id-Version: Odoo Server 14.0+e\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-27 09:32+0000\n"
-"PO-Revision-Date: 2019-08-26 09:36+0000\n"
-"Last-Translator: trendspotter <j.podhorecky@volny.cz>, 2019\n"
+"POT-Creation-Date: 2020-11-27 13:48+0000\n"
+"PO-Revision-Date: 2020-09-07 08:21+0000\n"
+"Last-Translator: trendspotter, 2020\n"
 "Language-Team: Czech (https://www.transifex.com/odoo/teams/41243/cs/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -20,19 +22,28 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;\n"
 
 #. module: mail_enterprise
-#. openerp-web
-#: code:addons/mail_enterprise/static/src/js/discuss.js:0
-#: code:addons/mail_enterprise/static/src/js/systray_messaging_menu_mobile.js:0
-#: code:addons/mail_enterprise/static/src/js/thread_widget_mobile.js:0
-#, python-format
-msgid "Marked as read"
-msgstr "Označeno jako přečtené"
+#: model:ir.model.fields,field_description:mail_enterprise.field_publisher_warranty_contract__display_name
+msgid "Display Name"
+msgstr "Zobrazované jméno"
+
+#. module: mail_enterprise
+#: model:ir.model.fields,field_description:mail_enterprise.field_publisher_warranty_contract__id
+msgid "ID"
+msgstr "ID"
+
+#. module: mail_enterprise
+#: model:ir.model.fields,field_description:mail_enterprise.field_publisher_warranty_contract____last_update
+msgid "Last Modified on"
+msgstr "Naposled změněno"
+
+#. module: mail_enterprise
+#: model:ir.model,name:mail_enterprise.model_publisher_warranty_contract
+msgid "Publisher Warranty Contract For IoT Box"
+msgstr ""
 
 #. module: mail_enterprise
 #. openerp-web
-#: code:addons/mail_enterprise/static/src/js/discuss.js:0
-#: code:addons/mail_enterprise/static/src/js/systray_messaging_menu_mobile.js:0
-#: code:addons/mail_enterprise/static/src/js/thread_widget_mobile.js:0
+#: code:addons/mail_enterprise/static/src/bugfix/bugfix.xml:0
 #, python-format
-msgid "UNDO"
-msgstr "ZPĚT"
+msgid "{ 'o-isInFormSheetBg': props.isInFormSheetBg }"
+msgstr ""

@@ -55,7 +55,7 @@ class report_account_consolidated_journal(models.AbstractModel):
                 'id': 'account_%s_%s' % (current_account,current_journal),
                 'name': '%s %s' % (record['account_code'], record['account_name']),
                 'level': 3,
-                'columns': [{'name': n} for n in self._get_sum(results, lambda x: x['account_id'] == current_account)],
+                'columns': [{'name': n} for n in self._get_sum(results, lambda x: x['account_id'] == current_account and x['journal_id'] == current_journal)],
                 'unfoldable': True,
                 'unfolded': self._need_to_unfold('account_%s_%s' % (current_account, current_journal), options),
                 'parent_id': 'journal_%s' % (current_journal),

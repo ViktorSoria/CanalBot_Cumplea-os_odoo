@@ -95,7 +95,7 @@ QUnit.module('Account Reports', {
                             '<span class="fa fa-folder-open"/> Partners' +
                             '<span class="caret" />' +
                             '</a>' +
-                            '<ul class="dropdown-menu o_filters_menu" role="menu">' +
+                            '<ul class="dropdown-menu o_filter_menu" role="menu">' +
                             '<li class="o_account_report_search js_account_partner_m2m"/>' +
                             '</ul>',
                     };

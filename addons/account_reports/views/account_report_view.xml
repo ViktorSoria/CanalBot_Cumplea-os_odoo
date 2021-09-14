@@ -19,7 +19,6 @@
                                 <field name="tax_report"/>
                             </group>
                             <group>
-                                <field name="debit_credit"/>
                                 <field name="generated_menu_id"/>
                             </group>
                         </group>
@@ -27,7 +26,6 @@
                             <group>
                                 <field name="comparison"/>
                                 <field name="unfold_all_filter"/>
-                                <field name="hierarchy_option"/>
                             </group>
                             <group>
                                 <field name="show_journal_filter"/>
@@ -109,7 +107,7 @@
                 </tree>
             </field>
         </record>
-        <menuitem id="menu_account_financial_reports_tree" name="Financial Reports" parent="account.account_management_menu" action="account_reports.action_account_financial_report_tree" groups="base.group_no_one"/>
+        <menuitem id="menu_account_financial_reports_tree" name="Financial Reports" sequence="6" parent="account.account_management_menu" action="account_reports.action_account_financial_report_tree" groups="base.group_no_one"/>
 
     </data>
 </odoo>

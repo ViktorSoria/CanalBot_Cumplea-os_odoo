@@ -4,7 +4,7 @@
         <!-- Top menu item -->
         <menuitem name="Accounting"
             id="menu_accounting"
-            groups="account.group_account_user,account.group_account_manager,account.group_account_invoice"
+            groups="account.group_account_readonly,account.group_account_invoice"
             web_icon="account_accountant,static/description/icon.png"
             sequence="40"/>
         <!-- move existing submenus to point to the new parent -->

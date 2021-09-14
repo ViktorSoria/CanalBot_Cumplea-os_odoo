@@ -11,9 +11,16 @@
             </xpath>
         </template>
 
-        <template id="qunit_suite" name="account_reports_asset_tests" inherit_id="web.qunit_suite">
-            <xpath expr="//t[@t-set='head']" position="inside">
+        <template id="qunit_suite" name="account_reports_asset_tests" inherit_id="web.qunit_suite_tests">
+            <xpath expr="." position="inside">
                 <script type="text/javascript" src="/account_reports/static/tests/action_manager_account_report_dl_tests.js"></script>
+                <script type="text/javascript" src="/account_reports/static/tests/account_reports_tests.js"></script>
+            </xpath>
+        </template>
+
+        <template id="assets_tests" name="Account Reports Assets Tests" inherit_id="web.assets_tests">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/account_reports/static/tests/tours/account_reports_widgets.js"></script>
             </xpath>
         </template>
 

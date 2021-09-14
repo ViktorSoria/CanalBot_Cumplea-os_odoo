@@ -21,10 +21,12 @@ msgstr ""
 
 #. module: account_accountant
 #: model:ir.model.fields,field_description:account_accountant.field_account_change_lock_date__display_name
+#: model:ir.model.fields,field_description:account_accountant.field_account_reconciliation_widget__display_name
 msgid "Display Name"
 msgstr "Nom affiché"
 
 #. module: account_accountant
 #: model:ir.model.fields,field_description:account_accountant.field_account_change_lock_date__id
+#: model:ir.model.fields,field_description:account_accountant.field_account_reconciliation_widget__id
 msgid "ID"
 msgstr "Identifiant"

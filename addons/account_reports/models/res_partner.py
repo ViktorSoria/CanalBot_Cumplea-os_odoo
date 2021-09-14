@@ -26,7 +26,9 @@ class ResPartner(models.Model):
             'type': 'ir.actions.client',
             'name': _('Partner Ledger'),
             'tag': 'account_report',
-            'options': {'partner_ids': [self.id]},
-            'ignore_session': 'both',
+            'params': {
+                'options': {'partner_ids': [self.id]},
+                'ignore_session': 'both',
+            },
             'context': "{'model':'account.partner.ledger'}"
         }

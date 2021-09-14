@@ -28,9 +28,17 @@ class analytic_report(models.AbstractModel):
     def _get_report_name(self):
         return _('Analytic Report')
 
+    @api.model
+    def _init_filter_hierarchy(self, options, previous_options=None):
+        # Override because we don't depend on account.group
+        if previous_options and 'hierarchy' in previous_options:
+            options['hierarchy'] = previous_options['hierarchy']
+        else:
+            options['hierarchy'] = self.filter_hierarchy
+
     def open_analytic_entries(self, options, params):
-        action = self.env.ref('analytic.account_analytic_line_action').read()[0]
-        action = clean_action(action)
+        action = self.env["ir.actions.actions"]._for_xml_id("analytic.account_analytic_line_action")
+        action = clean_action(action, env=self.env)
         action['context'] = {
             'active_id': int(params['id'].split('analytic_account_')[1]),
         }
@@ -131,13 +139,13 @@ class analytic_report(models.AbstractModel):
             AccountAnalyticAccount = AccountAnalyticAccount.with_context(tag_ids=analytic_tag_ids)
 
         if options.get('multi_company'):
-            company_ids = [company['id'] for company in options['multi_company'] if company['selected']]
-            if company_ids:
-                analytic_entries_domain += [('company_id', 'in', company_ids)]
-                analytic_account_domain += ['|', ('company_id', 'in', company_ids), ('company_id', '=', False)]
-                AccountAnalyticAccount = AccountAnalyticAccount.with_context(company_ids=company_ids)
+            company_ids = self.env.companies.ids
+        else:
+            company_ids = self.env.company.ids
 
-        if not options['hierarchy']:
+        analytic_account_domain += ['|', ('company_id', 'in', company_ids), ('company_id', '=', False)]
+
+        if not options.get('hierarchy'):
             return self._generate_analytic_account_lines(AccountAnalyticAccount.search(analytic_account_domain))
 
         # display all groups that have accounts

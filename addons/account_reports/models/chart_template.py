@@ -1,5 +1,5 @@
 # coding: utf-8
-from odoo import models
+from odoo import models, fields
 
 
 class AccountChartTemplate(models.Model):
@@ -17,11 +17,6 @@ class AccountChartTemplate(models.Model):
 
         company.account_tax_periodicity_reminder_day = 7
         # create the recurring entry
-        vals = {
-            'company_id': company,
-            'account_tax_periodicity': company.account_tax_periodicity,
-            'account_tax_periodicity_journal_id': company.account_tax_periodicity_journal_id,
-        }
-        self.env['res.config.settings'].with_context(company=company)._create_edit_tax_reminder(vals)
+        company.with_company(company)._create_edit_tax_reminder(fields.Date.today())
         company.account_tax_original_periodicity_reminder_day = company.account_tax_periodicity_reminder_day
         return res

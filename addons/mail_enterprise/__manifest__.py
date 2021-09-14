@@ -3,7 +3,7 @@
 
 {
     'name': 'Mail Enterprise',
-    'category': 'Discuss',
+    'category': 'Productivity/Discuss',
     'depends': ['mail', 'web_mobile'],
     'description': """
 Bridge module for mail and enterprise
@@ -16,6 +16,7 @@ screen devices.
         'views/mail_enterprise_templates.xml',
     ],
     'qweb': [
+        'static/src/bugfix/bugfix.xml',
         'static/src/xml/mail_enterprise.xml',
     ],
     'auto_install': True,

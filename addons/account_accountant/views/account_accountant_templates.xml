@@ -5,18 +5,23 @@
             <link rel="stylesheet" type="text/scss" href="/account_accountant/static/src/scss/move_line_list_view.scss"/>
             <script type="text/javascript" src="/account_accountant/static/src/js/move_line_list_view.js"></script>
             <script type="text/javascript" src="/account_accountant/static/src/js/tours/account_accountant.js"></script>
+
+            <script type="text/javascript" src="/account_accountant/static/src/js/reconciliation/reconciliation_action.js"></script>
+            <script type="text/javascript" src="/account_accountant/static/src/js/reconciliation/reconciliation_model.js"></script>
+            <script type="text/javascript" src="/account_accountant/static/src/js/reconciliation/reconciliation_renderer.js"></script>
         </xpath>
     </template>
 
     <template id="assets_tests" name="Account Accountant Assets Tests" inherit_id="web.assets_tests">
         <xpath expr="." position="inside">
             <script type="text/javascript" src="/account_accountant/static/tests/tours/account_dashboard_setup_bar_tests.js"></script>
-            <script type="text/javascript" src="/account_accountant/static/tests/tours/account_reports_widgets.js"></script>
+            <script type="text/javascript" src="/account_accountant/static/tests/tours/reconciliation.js"></script>
         </xpath>
     </template>
 
-    <template id="qunit_suite" name="account_accountant tests" inherit_id="web.qunit_suite">
-        <xpath expr="//t[@t-set='head']" position="inside">
+    <template id="qunit_suite" name="account_accountant tests" inherit_id="web.qunit_suite_tests">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/account_accountant/static/tests/reconciliation_tests.js"></script>
             <script type="text/javascript" src="/account_accountant/static/tests/move_line_list_tests.js"></script>
         </xpath>
     </template>

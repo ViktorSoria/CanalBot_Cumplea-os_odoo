@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api, _
+from odoo.tools.misc import get_lang
 
 from dateutil.relativedelta import relativedelta
 
@@ -56,7 +57,7 @@ class AccountCashFlowReport(models.AbstractModel):
     def _get_filter_journals(self):
         # OVERRIDE to filter only bank / cash journals.
         return self.env['account.journal'].search([
-            ('company_id', 'in', self.env.user.company_ids.ids or [self.env.company.id]),
+            ('company_id', 'in', self.env.companies.ids),
             ('type', 'in', ('bank', 'cash'))
         ], order='company_id, name')
 
@@ -114,17 +115,15 @@ class AccountCashFlowReport(models.AbstractModel):
             where_clause = "account_journal.type IN ('bank', 'cash')"
             where_params = []
 
-        payment_account_ids = set()
         self._cr.execute('''
-            SELECT default_debit_account_id, default_credit_account_id
+            SELECT ARRAY_AGG(DISTINCT default_account_id),
+                   ARRAY_AGG(DISTINCT payment_debit_account_id),
+                   ARRAY_AGG(DISTINCT payment_credit_account_id)
             FROM account_journal
             WHERE ''' + where_clause, where_params
         )
-        for debit_account_id, credit_account_id in self._cr.fetchall():
-            if debit_account_id:
-                payment_account_ids.add(debit_account_id)
-            if credit_account_id:
-                payment_account_ids.add(credit_account_id)
+        res = self._cr.fetchall()[0]
+        payment_account_ids = set((res[0] or []) + (res[1] or []) + (res[2] or []))
 
         if not payment_account_ids:
             return (), ()
@@ -197,9 +196,10 @@ class AccountCashFlowReport(models.AbstractModel):
             AND partial.max_date BETWEEN %s AND %s
             GROUP BY debit_line.company_id, debit_line.account_id, account.code, account_name, account.internal_type
         '''
+        lang = self.env.user.lang or get_lang(self.env).code
         self._cr.execute(query, [
-            self.env.user.lang, payment_move_ids, payment_account_ids, options['date']['date_from'], options['date']['date_to'],
-            self.env.user.lang, payment_move_ids, payment_account_ids, options['date']['date_from'], options['date']['date_to'],
+            lang, payment_move_ids, payment_account_ids, options['date']['date_from'], options['date']['date_to'],
+            lang, payment_move_ids, payment_account_ids, options['date']['date_from'], options['date']['date_to'],
         ])
 
         for account_id, account_code, account_name, account_internal_type, reconciled_amount in self._cr.fetchall():
@@ -222,7 +222,7 @@ class AccountCashFlowReport(models.AbstractModel):
             WHERE line.move_id IN %s AND line.account_id NOT IN %s
             GROUP BY line.account_id, account.code, account_name, account.internal_type
         '''
-        self._cr.execute(query, [self.env.user.lang, payment_move_ids, payment_account_ids])
+        self._cr.execute(query, [lang, payment_move_ids, payment_account_ids])
 
         for account_id, account_code, account_name, account_internal_type, balance in self._cr.fetchall():
             reconciled_amount_per_account.setdefault(account_id, [account_code, account_name, account_internal_type, 0.0, 0.0])
@@ -330,7 +330,8 @@ class AccountCashFlowReport(models.AbstractModel):
             WHERE line.move_id IN %s
             GROUP BY line.move_id, line.account_id, account.code, account_name, account.internal_type
         '''
-        self._cr.execute(query, [self.env.user.lang, tuple(reconciled_percentage_per_move.keys())])
+        lang = self.env.user.lang or get_lang(self.env).code
+        self._cr.execute(query, [lang, tuple(reconciled_percentage_per_move.keys())])
 
         for move_id, account_id, account_code, account_name, account_internal_type, balance in self._cr.fetchall():
             # Compute the total reconciled for the whole move.
@@ -399,7 +400,8 @@ class AccountCashFlowReport(models.AbstractModel):
             WHERE ''' + where_clause + '''
             GROUP BY account_move_line.account_id, account.code, account_name
         '''
-        self._cr.execute(query, [self.env.user.lang] + where_params)
+        lang = self.env.user.lang or get_lang(self.env).code
+        self._cr.execute(query, [lang] + where_params)
         return self._cr.fetchall()
 
     # -------------------------------------------------------------------------
@@ -502,7 +504,7 @@ class AccountCashFlowReport(models.AbstractModel):
         self.flush()
 
         unfold_all = self._context.get('print_mode') or options.get('unfold_all')
-        currency_table_query = self._get_query_currency_table(options)
+        currency_table_query = self.env['res.currency']._get_query_currency_table(options)
         lines_to_compute = self._get_lines_to_compute(options)
 
         tag_operating_id = self.env.ref('account.account_tag_operating').id

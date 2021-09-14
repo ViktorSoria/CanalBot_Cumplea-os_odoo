@@ -32,6 +32,8 @@ msgstr ""
 #: model:ir.model.fields,field_description:account_reports.field_account_financial_html_report_line__id
 #: model:ir.model.fields,field_description:account_reports.field_account_general_ledger__id
 #: model:ir.model.fields,field_description:account_reports.field_account_generic_tax_report__id
+#: model:ir.model.fields,field_description:account_reports.field_account_multicurrency_revaluation_report__id
+#: model:ir.model.fields,field_description:account_reports.field_account_multicurrency_revaluation_wizard__id
 #: model:ir.model.fields,field_description:account_reports.field_account_partner_ledger__id
 #: model:ir.model.fields,field_description:account_reports.field_account_report__id
 #: model:ir.model.fields,field_description:account_reports.field_account_report_footnote__id

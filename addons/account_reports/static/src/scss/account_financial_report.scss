@@ -54,6 +54,9 @@
             }
         }
     }
+    .account_report_line_name a {
+        color:#008784;
+    }
     a {
         cursor: pointer;
     }
@@ -61,11 +64,50 @@
         margin-left: 20px;
     }
     .o_account_report_column_header {
-        padding-left: 15px;
+        padding-left: 8px;
+        padding-right: 8px;
     }
     .o_account_report_line {
         white-space: nowrap;
+        position: relative;
     }
+    // truncate span content and ad '...' if content width > span width
+    .o_account_report_line_ellipsis {
+        position: relative;
+        width: 100%;
+        span {
+            margin-left: 8px;
+            margin-right: 8px;
+        }
+    }
+    .o_account_report_line_ellipsis:nth-child(n+2):before {
+        content: '&nbsp;';
+        visibility: hidden;
+    }
+    .o_account_report_line_ellipsis span {
+        position: absolute;
+        left: 0;
+        right: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .o_account_report_name_ellipsis {
+        position: relative;
+        width: 100%;
+        span {
+            margin-right: 8px;
+        }
+    }
+    .o_account_report_name_ellipsis span {
+        position: absolute;
+        left: 0;
+        right: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    // ----------------------------------------------------------------
     .o_account_report_summary {
         padding-left: 5px;
     }
@@ -100,6 +142,9 @@
             text-align: right;
             width: 6%;
         }
+        .text {
+            text-align: left;
+        }
         .date {
             text-align: center;
         }
@@ -114,10 +159,9 @@
             }
             th:not(:first-child) {
                 border: 1px solid #e6e6e6;
-                text-align: center;
                 border-collapse: separate;
-                padding-right: 2px;
-                padding-left: 2px;
+                padding-right: 8px;
+                padding-left: 8px;
             }
         }
     }
@@ -143,8 +187,12 @@
         margin-left: -15px;
         position: absolute;
     }
-    table > tbody > tr > td ~ td > span {
-        margin-left: 15px;
+    table > tbody > tr >  td ~ td{
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+    .top-vertical-align {
+        vertical-align: top;
     }
     .o_account_reports_summary {
         margin-bottom: 20px;
@@ -177,6 +225,10 @@
     .o_account_reports_caret_icon {
         position: absolute;
         display: contents;
+        .fa {
+            position: absolute;
+            bottom: 4px;
+        }
     }
     .o_account_reports_domain_line_0 {
         margin-left: 0px;
@@ -276,18 +328,27 @@
     }
     .o_account_reports_level1 {
         border-width: 2px;
+        border-color: #bbb;
         border-bottom-style: solid;
         font-weight: bold;
+        > td.o_account_report_line_indent > span:last-child {
+            margin-left: 10px;
+        }
+        &.total {
+            > td > span:last-child {
+                margin-left: 0px;
+            }
+        }
     }
     .o_account_reports_level2 {
         border-bottom: 1px solid #bbb;
         font-weight: bold;
         > td.o_account_report_line_indent > span:last-child {
-            margin-left: 15px;
+            margin-left: 20px;
         }
         &.total {
             > td > span:last-child {
-                margin-left: 0px;
+                margin-left: 10px;
             }
         }
     }
@@ -298,13 +359,13 @@
         }
         &.total {
             > td.o_account_report_line_indent > span:last-child {
-                margin-left: 15px;
+                margin-left: 20px;
             }
         }
     }
     .o_account_reports_level4 {
         .o_account_reports_caret_icon {
-            margin-left: 15px;
+            margin-left: 20px;
         }
         border-bottom: 1px solid #eee;
         > td.o_account_report_line_indent > span:last-child {
@@ -387,8 +448,8 @@
     }
     .o_account_reports_default_style {
         border-bottom: 1px solid #eee;
-        > td.o_account_report_line_indent > span:last-child {
-            margin-left: 50px;
+        > td.o_account_report_line_indent > tr:first-child > span:last-child {
+            margin-left: 30px;
         }
         &.o_account_reports_domain_total {
             > td.o_account_report_line_indent > span:last-child {
@@ -414,6 +475,12 @@
     }
     .o_account_reports_history {
         min-width: 300px;
+    }
+    .o_account_coa_column_contrast td:nth-child(4n-1),
+    .o_account_coa_column_contrast td:nth-child(4n-2),
+    td.o_account_coa_column_contrast:nth-child(4n-1),
+    td.o_account_coa_column_contrast:nth-child(4n-2) {
+        background-color: #F8F8F8;
     }
 }
 
@@ -453,7 +520,7 @@
 
 // Filters lines
 // -----------------------------------------
-.o_account_reports_filter_input_wrapper {
+.o_reports_filter_input_wrapper {
     position: relative;
     float: right;
     width: 150px;
@@ -514,6 +581,12 @@
     }
 }
 
+.o_account_reports_body {
+    .alert a {
+        cursor: pointer;
+    }
+}
+
 .o_account_reports_summary_edit {
     padding-bottom: 25px;
     padding-top: 10px;
@@ -525,8 +598,18 @@
     }
 }
 
+.o_financial_report_hover_popup {
+    color: orange;
+}
+
 // Print mode report summary
 // -----------------------------------------
 p.o_account_reports_contact_info {
     min-height: 30px;
+}
+
+.o_account_reports_load_more {
+    span.account_report_line_name {
+        cursor: pointer;
+    }
 }

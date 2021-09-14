@@ -26,6 +26,7 @@ class ReportPartnerLedger(models.AbstractModel):
     def _get_templates(self):
         templates = super(ReportPartnerLedger, self)._get_templates()
         templates['line_template'] = 'account_reports.line_template_partner_ledger_report'
+        templates['main_template'] = 'account_reports.main_template_with_filter_input_partner'
         return templates
 
     ####################################################
@@ -53,8 +54,9 @@ class ReportPartnerLedger(models.AbstractModel):
         domain = super(ReportPartnerLedger, self)._get_options_domain(options)
         if options.get('unreconciled'):
             domain.append(('full_reconcile_id', '=', False))
-        if self.env.context.get('model') == 'account.partner.ledger':
-            domain += ['!', '&', '&', '&', ('credit', '=', 0.0), ('debit', '=', 0.0), ('amount_currency', '!=', 0.0), ('ref', 'ilike', 'EXCH%')]
+        exch_code = self.env['res.company'].browse(self.env.context.get('company_ids')).mapped('currency_exchange_journal_id')
+        if exch_code:
+            domain += ['!', '&', '&', '&', ('credit', '=', 0.0), ('debit', '=', 0.0), ('amount_currency', '!=', 0.0), ('journal_id.id', 'in', exch_code.ids)]
         domain.append(('account_id.internal_type', 'in', [t['id'] for t in self._get_options_account_type(options)]))
 
         return domain
@@ -129,7 +131,7 @@ class ReportPartnerLedger(models.AbstractModel):
             domain = []
 
         # Create the currency table.
-        ct_query = self._get_query_currency_table(options)
+        ct_query = self.env['res.currency']._get_query_currency_table(options)
 
         # Get sums for all partners.
         # period: [('date' <= options['date_to']), ('date' >= options['date_from'])]
@@ -202,11 +204,12 @@ class ReportPartnerLedger(models.AbstractModel):
                 aml_with_partner.partner_id,
                 account_move_line.currency_id,
                 account_move_line.amount_currency,
+                account_move_line.matching_number,
                 CASE WHEN aml_with_partner.balance > 0 THEN 0 ELSE partial.amount END AS debit,
                 CASE WHEN aml_with_partner.balance < 0 THEN 0 ELSE partial.amount END AS credit,
                 CASE WHEN aml_with_partner.balance > 0 THEN -partial.amount ELSE partial.amount END AS balance,
                 account_move_line__move_id.name         AS move_name,
-                account_move_line__move_id.type         AS move_type,
+                account_move_line__move_id.move_type    AS move_type,
                 account.code                            AS account_code,
                 account.name                            AS account_name,
                 journal.code                            AS journal_code,
@@ -292,7 +295,7 @@ class ReportPartnerLedger(models.AbstractModel):
 
         new_options = self._get_options_sum_balance(options)
         tables, where_clause, where_params = self._query_get(new_options, domain=domain)
-        ct_query = self._get_query_currency_table(options)
+        ct_query = self.env['res.currency']._get_query_currency_table(options)
 
         query = '''
             SELECT
@@ -307,29 +310,27 @@ class ReportPartnerLedger(models.AbstractModel):
                 account_move_line.partner_id,
                 account_move_line.currency_id,
                 account_move_line.amount_currency,
+                account_move_line.matching_number,
                 ROUND(account_move_line.debit * currency_table.rate, currency_table.precision)   AS debit,
                 ROUND(account_move_line.credit * currency_table.rate, currency_table.precision)  AS credit,
                 ROUND(account_move_line.balance * currency_table.rate, currency_table.precision) AS balance,
                 account_move_line__move_id.name         AS move_name,
                 company.currency_id                     AS company_currency_id,
                 partner.name                            AS partner_name,
-                account_move_line__move_id.type         AS move_type,
+                account_move_line__move_id.move_type    AS move_type,
                 account.code                            AS account_code,
                 account.name                            AS account_name,
                 journal.code                            AS journal_code,
-                journal.name                            AS journal_name,
-                full_rec.name                           AS full_rec_name
-            FROM account_move_line
-            LEFT JOIN account_move account_move_line__move_id ON account_move_line__move_id.id = account_move_line.move_id
+                journal.name                            AS journal_name
+            FROM %s
             LEFT JOIN %s ON currency_table.company_id = account_move_line.company_id
             LEFT JOIN res_company company               ON company.id = account_move_line.company_id
             LEFT JOIN res_partner partner               ON partner.id = account_move_line.partner_id
             LEFT JOIN account_account account           ON account.id = account_move_line.account_id
             LEFT JOIN account_journal journal           ON journal.id = account_move_line.journal_id
-            LEFT JOIN account_full_reconcile full_rec   ON full_rec.id = account_move_line.full_reconcile_id
             WHERE %s
             ORDER BY account_move_line.date, account_move_line.id
-        ''' % (ct_query, where_clause)
+        ''' % (tables, ct_query, where_clause)
 
         if offset:
             query += ' OFFSET %s '
@@ -471,8 +472,9 @@ class ReportPartnerLedger(models.AbstractModel):
             columns.append({'name': ''})
         columns.append({'name': self.format_value(balance), 'class': 'number'})
 
-        res = {
+        return {
             'id': 'partner_%s' % (partner.id if partner else 0),
+            'partner_id': partner.id if partner else None,
             'name': partner is not None and (partner.name or '')[:128] or _('Unknown Partner'),
             'columns': columns,
             'level': 2,
@@ -481,16 +483,11 @@ class ReportPartnerLedger(models.AbstractModel):
             'unfolded': 'partner_%s' % (partner.id if partner else 0) in options['unfolded_lines'] or unfold_all,
             'colspan': 6,
         }
-        return res
 
     @api.model
     def _get_report_line_move_line(self, options, partner, aml, cumulated_init_balance, cumulated_balance):
         if aml['payment_id']:
             caret_type = 'account.payment'
-        elif aml['move_type'] in ('in_refund', 'in_invoice', 'in_receipt'):
-            caret_type = 'account.invoice.in'
-        elif aml['move_type'] in ('out_refund', 'out_invoice', 'out_receipt'):
-            caret_type = 'account.invoice.out'
         else:
             caret_type = 'account.move'
 
@@ -500,7 +497,7 @@ class ReportPartnerLedger(models.AbstractModel):
             {'name': aml['account_code']},
             {'name': self._format_aml_name(aml['name'], aml['ref'], aml['move_name'])},
             {'name': date_maturity or '', 'class': 'date'},
-            {'name': aml['full_rec_name'] or ''},
+            {'name': aml['matching_number'] or ''},
             {'name': self.format_value(cumulated_init_balance), 'class': 'number'},
             {'name': self.format_value(aml['debit'], blank_if_zero=True), 'class': 'number'},
             {'name': self.format_value(aml['credit'], blank_if_zero=True), 'class': 'number'},
@@ -517,10 +514,10 @@ class ReportPartnerLedger(models.AbstractModel):
             'id': aml['id'],
             'parent_id': 'partner_%s' % (partner.id if partner else 0),
             'name': format_date(self.env, aml['date']),
-            'class': 'date' + aml.get('class', ''),
+            'class': 'text' + aml.get('class', ''),  # do not format as date to prevent text centering
             'columns': columns,
             'caret_options': caret_type,
-            'level': 4,
+            'level': 2,
         }
 
     @api.model
@@ -532,7 +529,7 @@ class ReportPartnerLedger(models.AbstractModel):
             'remaining': remaining,
             'class': 'o_account_reports_load_more text-center',
             'parent_id': 'partner_%s' % (partner.id if partner else 0),
-            'name': _('Load more... (%s remaining)' % remaining),
+            'name': _('Load more... (%s remaining)', remaining),
             'colspan': 10 if self.user_has_groups('base.group_multi_currency') else 9,
             'columns': [{}],
         }
