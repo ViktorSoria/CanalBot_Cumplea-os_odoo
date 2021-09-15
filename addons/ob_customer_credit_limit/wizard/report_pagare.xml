@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+    <odoo>
+    <template id="layout_pagare">
+        <div t-attf-class="o_company_#{company.id}_layout header" t-att-style="report_header_style">
+            <div class="o_background_header">
+            <div class="float-right">
+                <ul class="">
+                    <li class="">Folio: <span class="o_force_ltr" t-field="pagare.move_id.name"/></li>
+                    <li class="">Fecha de venta: <span class="o_force_ltr" t-field="pagare.fecha"/></li>
+                    <li class="">Bueno por: <span class="o_force_ltr" t-field="pagare.monto"/></li>
+                    <li class="">Lugar de emisión: <span class="o_force_ltr" t-field="pagare.sucursal_name"/></li>
+                </ul>
+            </div>
+            <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" class="float-left" alt="Logo"/>
+            <div class="float-left company_address">
+                <strong>Emisor:</strong>
+                <div>
+                    <strong t-field="company.partner_id.name"/>
+                </div>
+                <span t-field="company.partner_id" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;], &quot;no_marker&quot;: true}"/>
+            </div>
+            <div class="clearfix mb8"/>
+            </div>
+        </div>
+
+        <div t-attf-class="o_company_#{company.id}_layout article o_report_layout_background" style="min-height: 120px;" t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id" t-att-data-oe-lang="o and o.env.context.get('lang')">
+            <t t-call="web.address_layout"/>
+            <t t-raw="0"/>
+        </div>
+
+        <div t-attf-class="o_company_#{company.id}_layout footer o_background_footer">
+            <div class="text-center">
+                <ul class="list-inline">
+                    <li class="list-inline-item"><i class="fa fa-phone" role="img" aria-label="Phone" title="Phone"/> Teléfono: <span class="o_force_ltr">(222)379-59-21</span></li>
+                    <li class="list-inline-item"><i class="fa fa-at" role="img" aria-label="Email" title="Email"/> Correo: atencionaclientes@multimoto.com.mx</li>
+                    <li t-if="company.vat" class="list-inline-item"><i class="fa fa-building-o" role="img" aria-label="Fiscal number"/><t t-esc="company.country_id.vat_label or 'Tax ID'"/>: <span t-field="company.vat"/></li>
+                </ul>
+            </div>
+        </div>
+    </template>
+
+
+    <template id="template_pagare">
+        <t t-call="web.html_container">
+            <t t-set="pagare" t-value="docs[0]"/>
+            <t t-set="company" t-value="pagare.move_id.company_id"/>
+            <t t-call="ob_customer_credit_limit.layout_pagare">
+                <div class="page">
+                    <br/>
+                    <p style="font-size:11px;line-height:2">
+                        <strong>DEBO(EMOS) Y PAGARE(EMOS) INCONDICIONALMENTE SIN PRETEXTO ESTE PAGARÉ EN EL LUGAR Y FECHAS CITADAS DONDE ELIJA EL TENEDOR DEL DIA A SU VENCIMIENTO: </strong>
+                        <span t-field="pagare.fecha_limite"/>
+                        <strong> , LA CANTIDAD DE: </strong>
+                        <span t-esc="pagare.move_id._l10n_mx_edi_cfdi_amount_to_text()+ ' '"/>
+                        <strong> A LA ORDEN DE PROVEEDORA DE MOTOPARTES SA DE C.V. VALOR RECIVIDO A MI ENTERA SATISFACCION, ESTE PAGARÉ FORMA PARTE DE UNA SERIE NUMERA DEL DOCUMENTO: </strong>
+                        <span t-field="pagare.move_id.name"/>
+                        <strong> Y TODOS ESTÁN SUJETOS A LA CONDICION DE QUÉ, AL NO PAGARSE DE ELLOS SU VENCIMIENTO,
+                            SERÁN EXIGIBLES TODOS LOS QUE SIGAN EN NÚMERO, ADEMÁS DE LOS YA VENCIDOS DE ACUERDO AL Art. 79 DE LA LEY GENERAL DE TITULOS Y OPERACIONES DE CRÉDITO,
+                            CAUSARÁN INTERESES MORATORIOS DEL 2% POR CADA MES O FRACCIÓN PAGADERO JUNTAMENTE CON EL PRINCIPAL,
+                            DICHOS INTERESES SE CAUSARAN SOBRE EL CAPITAL INSOLUTO CONFORME A LO DISPUESTO POR EL Art. 152 INCISO I,II,III,IV.
+                        </strong>
+                    </p>
+                    <div>
+                        <p style="font-size:11px;line-height:2">
+                            <strong>Nombre y datos del deudor:</strong><br/>
+                            <strong>Nombre: </strong><span t-field="pagare.move_id.partner_id.name"/><br/>
+                            <strong>Domicilio: </strong><span t-field="pagare.domicilio"/><br/>
+                        </p>
+                    </div>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <div class="row">
+                        <div class="col-1"/>
+                        <div class="col-4 text-center" style="border-top: 2px solid;">
+                            <h5>Nombre y firma del aval</h5>
+                        </div>
+                        <div class="col-2"/>
+                        <div class="col-4 text-center" style="border-top: 2px solid;">
+                            <h5>Nombre y firma del deudor</h5>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <record id="paperformat_pagare_report" model="report.paperformat">
+        <field name="name">Reporte Pagare</field>
+        <field name="default" eval="False"/>
+        <field name="orientation">Portrait</field>
+        <field name="format">custom</field>
+        <field name="page_height">139</field>
+        <field name="page_width">215</field>
+        <field name="margin_top">30</field>
+        <field name="margin_bottom">20</field>
+        <field name="margin_right">7</field>
+        <field name="margin_left">7</field>
+        <field name="header_line" eval="True"/>
+        <field name="header_spacing">25</field>
+    </record>
+
+    <report id="report_pagare"
+    model="pagare.wizard"
+    string="Reporte Pagare"
+    report_type="qweb-pdf"
+    name="ob_customer_credit_limit.template_pagare"
+    paperformat="ob_customer_credit_limit.paperformat_pagare_report"
+    menu="False"/>
+
+</odoo>

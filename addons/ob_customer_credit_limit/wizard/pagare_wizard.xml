@@ -1,0 +1,37 @@
+<odoo>
+
+        <record model="ir.actions.server" id="pagare_action">
+            <field name="name">Imprimir pagaré</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="binding_model_id" ref="account.model_account_move" />
+            <field name="state">code</field>
+            <field name="binding_view_types">form</field>
+            <field name="code">
+                action = records.action_pagare()
+            </field>
+        </record>
+
+    <record id="view_pagare_wizard_form" model="ir.ui.view">
+        <field name="name">view.pagare.wizard.form</field>
+        <field name="model">pagare.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Warning">
+                <field name="move_id" invisible="1"/>
+                <group>
+                    <group>
+                        <field name="sucursal" required="True"/>
+                        <field name="monto"/>
+                    </group>
+                    <group>
+                        <field name="fecha" readonly="True"/>
+                    </group>
+                </group>
+                <footer>
+                    <button string="Imprimir" class="btn-primary" type="object" name="generate_report"/>
+                    <button string="Cerrar" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

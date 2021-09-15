@@ -27,29 +27,37 @@ odoo.define("pos_pay_control.Discount", function (require) {
                     method: 'get_discount',
                     args: [null, product, cliente, pos],
                 });
-                if (dis.desc) {
-                    let order = this.currentOrder;
-                    let line = order.get_selected_orderline();
-                    var to_merge_orderline;
-                    order.get_orderlines().forEach(function (orderline) {
-                        if (orderline.id !== line.id &&  orderline.get_product().id === line.get_product().id) {
-                            to_merge_orderline = orderline;
-                        }
-                    });
-                    if (to_merge_orderline) {
+                let order = this.currentOrder;
+                let line = order.get_selected_orderline();
+                var to_merge_orderline;
+                // valida
+                order.get_orderlines().forEach(function (orderline) {
+                    if (orderline.id !== line.id &&  orderline.get_product().id === line.get_product().id) {
+                        to_merge_orderline = orderline;
+                    }
+                });
+                if (to_merge_orderline) {
+                    let cantidad = to_merge_orderline.get_quantity();
+                    if(event.detail.type === 'product' && cantidad >= event.detail.qty_available){
+                        line.set_quantity("remove");
+                        this.playSound("error");
+                    }else{
                         to_merge_orderline.merge(line);
                         line.set_quantity("remove");
                         order.select_orderline(to_merge_orderline);
-                    } else {
-                        let descuento = 0;
-                        if (dis.desc === 'por') {
-                            descuento = dis.value;
-                        } else {
-                            let total = line.get_price_with_tax();
-                            descuento = dis.value * 100 / total;
-                        }
-                        line.set_discount(descuento);
                     }
+                    return;
+                }
+                // descuento
+                if (dis.desc) {
+                    let descuento = 0;
+                    if (dis.desc === 'por') {
+                        descuento = dis.value;
+                    } else {
+                        let total = line.get_price_with_tax();
+                        descuento = dis.value * 100 / total;
+                    }
+                    line.set_discount(descuento);
                 }
             }
             async _onClickCustomer() {

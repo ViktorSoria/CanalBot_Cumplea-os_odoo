@@ -7,7 +7,7 @@
     &.o-aside {
         border-left: $border-width solid;
         padding: map-get($spacers, 0);
-        width: $o-chatter-min-width;
+        //width: $o-chatter-min-width;
     }
 
     &.o-isInFormSheetBg:not(.o-aside) {
