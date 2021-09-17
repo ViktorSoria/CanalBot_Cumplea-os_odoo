@@ -33,7 +33,27 @@ class SaleOrder(models.Model):
         if partner_id.credit_check and not existing_move:
             context = dict(self.env.context or {})
             context['default_sale_id'] = self.id
-            if partner_id.credit_warning <= total_amount and partner_id.credit_blocking > total_amount:
+            fac_venci = self.env['account.move'].search([('partner_id','=',partner_id.id),('state','=','posted'),('payment_state','!=','paid'),('invoice_date_due','<',fields.Date.today())])
+            if fac_venci:
+                if self.autorizado:
+                    if not self._context.get('warning'):
+                        context['message'] = "Esta venta ya fue aprovada. Desea continuar?"
+                        view_id = self.env.ref('ob_customer_credit_limit.view_warning_wizard_form')
+                    else:
+                        return super(SaleOrder, self).action_confirm()
+                else:
+                    context['message'] = "Este cliente tiene facturas vencidas [%s].\n Necesita Autorización"%(', '.join(fac_venci.mapped('name')))
+                    view_id = self.env.ref('ob_customer_credit_limit.view_den_wizard_form')
+                return {
+                    'name': 'Warning',
+                    'type': 'ir.actions.act_window',
+                    'view_mode': 'form',
+                    'res_model': 'warning.wizard',
+                    'view_id': view_id.id,
+                    'target': 'new',
+                    'context': context,
+                }
+            elif partner_id.credit_warning <= total_amount and partner_id.credit_blocking > total_amount:
                 view_id = self.env.ref('ob_customer_credit_limit.view_warning_wizard_form')
                 context['message'] = "Se excedio el limiti de credito de advertencia. Desea Continuar?"
                 if not self._context.get('warning'):
