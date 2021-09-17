@@ -22,3 +22,14 @@ class RecibeLinea(http.Controller):
         request.env['product.pricelist'].sudo().browse(id).write(lineas)
         request.env.cr.commit()
         return True
+
+    @http.route('/image', type='json', auth='user', methods=['POST'], csrf=False)
+    def pricelist(self, **kw):
+        _logger.warning("entro")
+        data = json.loads(request.httprequest.data)
+        datos = data.get('params', {})
+        id = datos.get('id')
+        image = datos.get('image').encode()
+        request.env['product.template'].sudo().browse(id).write({'image_1920':image})
+        request.env.cr.commit()
+        return True
