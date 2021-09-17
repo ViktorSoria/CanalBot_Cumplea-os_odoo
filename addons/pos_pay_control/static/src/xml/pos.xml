@@ -130,6 +130,49 @@
                 <div><t t-esc="ubicacion[1]" /></div>
                 <div><t t-esc="ubicacion[2]" /></div>
             </div>
+            <t t-if="cfdi_vals">
+                <br/>
+                <div class="pos-receipt-order-data">
+                    <div t-if="cfdi_vals.sello" class="barcode">
+                        <img alt="Barcode" t-att-src="cfdi_vals.qr"/>
+                    </div>
+                    <div class="complement-details">
+                        <div class="digital-stamp text-center">
+                            <strong>Sello digital del emisor</strong>
+                        </div>
+                        <div class="digital-stamp-content">
+                            <span t-esc="cfdi_vals.sello"/>
+                        </div>
+                        <div class="digital-stamp text-center">
+                            <strong>Sello digital SAT</strong>
+                        </div>
+                        <div class="digital-stamp-content">
+                            <span t-esc="cfdi_vals.sello_sat"/>
+                        </div>
+                        <div class="digital-stamp text-center">
+                            <strong>Complemento de cadena original de certificación digital SAT</strong>
+                        </div>
+                        <div class="digital-stamp-content">
+                            <span class="nowrap" t-esc="cfdi_vals.cadena"/>
+                        </div>
+                        <div class="digital-stamp text-center">
+                            <strong>Informacion Extra</strong>
+                        </div>
+                        <div class="digital-stamp-content">
+                            <span>Certificado del Emisor:</span> <span t-esc="cfdi_vals.certificate_number"/>
+                            <span> | Certificado del Sat:</span> <span t-esc="cfdi_vals.certificate_sat_number"/>
+                            <span> | Lugar de Expedición:</span> <span t-esc="cfdi_vals.expedition"/>
+                            <span> | Regimen Fiscal:</span><span t-esc="cfdi_vals.fiscal_regime"/>
+                            <span> | Fecha de Emisión:</span> <span t-esc="cfdi_vals.emission_date_str"/>
+                            <span> | Fecha de certificación:</span> <span t-esc="cfdi_vals.stamp_date"/>
+                            <span> | Folio Fiscal:</span> <span t-esc="cfdi_vals.uuid"/>
+                        </div>
+                        <div class="digital-stamp-content text-center">
+                            <strong>Este documento es una representación impresa de un CFDI</strong>
+                        </div>
+                    </div>
+                </div>
+            </t>
         </xpath>
         <xpath expr="//t[@t-if='receipt.total_discount']" position="after">
             <div t-if="puntos">

@@ -16,9 +16,8 @@ odoo.define('pos_pay_control.OrderReceipt', function(require) {
         get ubicacion() {
             return this.env.pos.config.datos_ubicacion.split("/");
         }
-        get facturacion(){
-            console.log(this._receiptEnv);
-            return 0
+        get cfdi_vals(){
+            return this._receiptEnv.order.cfdi_vals;
         }
     }
 

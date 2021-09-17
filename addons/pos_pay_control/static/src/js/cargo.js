@@ -81,7 +81,7 @@ odoo.define("pos_pay_control.cargo", function (require) {
             get puntos() {
                 let cliente = this.env.pos.get_client();
                 if (cliente && cliente.acomula_puntos) {
-                    return cliente.puntos
+                    return this.env.pos.format_currency_no_symbol(cliente.puntos);
                 } else {
                     return false
                 }
@@ -161,6 +161,9 @@ odoo.define("pos_pay_control.cargo", function (require) {
                         syncedOrderBackendIds = await this.env.pos.push_and_invoice_order(
                             this.currentOrder
                         );
+                        if(syncedOrderBackendIds){
+                            this.currentOrder.cfdi_vals = await this._get_cfdi_vals(syncedOrderBackendIds);
+                        }
                     } else {
                         syncedOrderBackendIds = await this.env.pos.push_single_order(this.currentOrder);
                     }
@@ -204,6 +207,15 @@ odoo.define("pos_pay_control.cargo", function (require) {
                         this.env.pos.push_orders();
                     }
                 }
+            }
+
+            async _get_cfdi_vals(id){
+                let vals = await this.rpc({
+                            model: 'pos.order',
+                            method: 'get_cfdi_vals',
+                            args: [id],
+                        });
+                return JSON.parse(vals);
             }
         }
 

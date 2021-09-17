@@ -2,6 +2,7 @@
 
 from odoo import fields, models, api
 import json
+import werkzeug.urls
 import logging
 
 _logger = logging.getLogger("Pos Control")
@@ -27,6 +28,33 @@ class Order(models.Model):
                 acomulados += l.amount
         puntos = acomulados * 0.04 - usado
         partner.write({'puntos':partner.puntos+ puntos})
+
+    def get_cfdi_vals(self):
+        o = self.account_move
+        vals = {}
+        cfdi_vals = o._l10n_mx_edi_decode_cfdi()
+        vals['sello'] = cfdi_vals.get('sello')
+        vals['sello_sat'] = cfdi_vals.get('sello_sat')
+        vals['cadena'] = cfdi_vals.get('cadena')
+        vals['certificate_number'] = cfdi_vals.get('certificate_number')
+        vals['certificate_sat_number'] = cfdi_vals.get('certificate_sat_number')
+        vals['expedition'] = cfdi_vals.get('expedition')
+        vals['fiscal_regime'] = cfdi_vals.get('fiscal_regime')
+        vals['emission_date_str'] = cfdi_vals.get('emission_date_str')
+        vals['stamp_date'] = cfdi_vals.get('stamp_date')
+        vals['uuid'] = cfdi_vals.get('uuid')
+
+        vals['sello_cor'] = vals['sello'][-8:]
+        vals['decimal_places'] = o.currency_id.decimal_places
+        vals['l10n_mx_edi_cfdi_supplier_rfc'] = o.l10n_mx_edi_cfdi_supplier_rfc
+        vals['l10n_mx_edi_cfdi_customer_rfc'] = o.l10n_mx_edi_cfdi_customer_rfc
+        vals['l10n_mx_edi_cfdi_amount'] = '%.*f' % (o.currency_id.decimal_places, o.l10n_mx_edi_cfdi_amount)
+        qr_vals = werkzeug.urls.url_quote_plus('https://verificacfdi.facturaelectronica.sat.gob.mx/default.aspx?'+
+                            're='+vals['l10n_mx_edi_cfdi_supplier_rfc']+ '&rr='+vals['l10n_mx_edi_cfdi_customer_rfc']+
+                            '&tt='+vals['l10n_mx_edi_cfdi_amount']+ '&id='+vals['uuid']
+                            + '&fe='+vals['sello_cor'])
+        vals['qr'] = '/report/barcode/?type=QR&value=%s&width=180&height=180'%qr_vals
+        return json.dumps(vals)
 
 
 class Pospaymentm(models.Model):
