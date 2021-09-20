@@ -24,7 +24,7 @@ class RecibeLinea(http.Controller):
         return True
 
     @http.route('/image', type='json', auth='user', methods=['POST'], csrf=False)
-    def pricelist(self, **kw):
+    def image(self, **kw):
         _logger.warning("entro")
         data = json.loads(request.httprequest.data)
         datos = data.get('params', {})
