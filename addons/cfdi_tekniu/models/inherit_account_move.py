@@ -14,6 +14,8 @@ _logger = logging.getLogger("Pasarela tekniu: ")
 class Partner(models.Model):
     _inherit = "res.partner"
 
+    country_id = fields.Many2one(default=lambda self: self.env.ref('base.mx').id)
+
     def l10n_mx_edi_get_customer_rfc(self,vat=False):
         if not vat:
             vat = self.vat
