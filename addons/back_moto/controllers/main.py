@@ -19,7 +19,11 @@ class RecibeLinea(http.Controller):
         datos = data.get('params', {})
         id = datos.get('id')
         lineas = datos.get('lineas')
-        request.env['product.pricelist'].sudo().browse(id).write(lineas)
+        if lineas:
+            request.env['product.pricelist'].sudo().browse(id).write(lineas)
+        else:
+            precio = datos.get('precio')
+            request.env['product.template'].sudo().browse(id).write({'list_price':precio})
         request.env.cr.commit()
         return True
 
