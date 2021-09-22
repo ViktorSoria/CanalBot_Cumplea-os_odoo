@@ -11,7 +11,11 @@ odoo.define('pos_pay_control.OrderReceipt', function(require) {
             return this.props.order.get_client();
         }
         get puntos() {
-            return this.props.order.puntos;
+            let puntos = false;
+            if(this.cliente && this.cliente.acomula_puntos){
+                puntos = this.props.order.puntos;
+            }
+            return puntos;
         }
         get ubicacion() {
             return this.env.pos.config.datos_ubicacion.split("/");
