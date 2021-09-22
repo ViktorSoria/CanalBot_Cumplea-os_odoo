@@ -79,7 +79,6 @@ odoo.define("pos_product_available.PosModel", function (require) {
                 loop(0,0);
             }
             async recompute_quantity(limit,offset){
-                console.log("cargando cantidades");
                 let location = this.env.pos.config.default_location_src_id[0];
                 let products = await this.rpc({
                     model: 'product.product',
@@ -99,7 +98,6 @@ odoo.define("pos_product_available.PosModel", function (require) {
                     }
                 });
                 this.render();
-                console.log("Termino de cargar");
             }
 
         }
