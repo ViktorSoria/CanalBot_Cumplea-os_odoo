@@ -22,15 +22,15 @@ odoo.define("pos_pay_control.Discount", function (require) {
                 if (cliente) {
                     cliente = cliente.id;
                 }
+                let dis = false;
                 try{
-                     let dis = await this.rpc({
+                     dis = await this.rpc({
                         model: 'price.discount',
                         method: 'get_discount',
                         args: [null, product, cliente, pos],
                     });
                 }catch (e) {
                     console.log(e);
-                    let dis = false;
                 }
                 let order = this.currentOrder;
                 let line = order.get_selected_orderline();
