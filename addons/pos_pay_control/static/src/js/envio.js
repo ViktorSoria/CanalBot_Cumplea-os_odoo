@@ -32,11 +32,15 @@ odoo.define("pos_pay_control.SendOrder", function (require) {
                             args: [parseInt(payload.value),data],
                         }).then(aut => {
                             if(aut){
-                                this.env.pos.get_order().destroy({'reason':'abandon'});
+                                let order = this.env.pos.get_order();
                                 this.showPopup("ConfirmPopup",{
                                     title: "Orden Enviada",
                                     body: "El pedido fue enviado con exito",
-                                })
+                                });
+                                //nueva orden
+                                let new_order = this.env.pos.add_new_order();
+                                this.env.pos.set_order(new_order);
+                                order.destroy({'reason':'abandon'});
                             }else{
                                 this.showPopup("ErrorPopup",{
                                     title: "Envio Fallido",
