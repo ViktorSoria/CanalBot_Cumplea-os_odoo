@@ -2,7 +2,7 @@
 
 from odoo import fields, models, api
 from odoo.exceptions import UserError
-from datetime import datetime,timezone
+from datetime import datetime,timezone,timedelta
 import pytz
 import logging
 
@@ -41,8 +41,6 @@ class Report_order(models.TransientModel):
     def generate_report(self):
         fecha_inicio = self.start_date
         fecha_fin = self.end_date
-        _logger.warning(fecha_inicio)
-        _logger.warning(fecha_fin)
         data = {'date_start': fecha_inicio, 'date_stop': fecha_fin, 'config_ids': self.pos_config_ids.ids,
                 'team_ids': self.team_ids.ids}
         return self.env.ref('back_moto.report_consolidado').report_action([], data=data)
@@ -58,7 +56,7 @@ class ParticularReport(models.AbstractModel):
         pos_lines_dev = self.env['pos.order'].search(domain+[('amount_total','<=',0)])
         pos = pos_lines_fac + pos_lines_no_fac + pos_lines_dev
         move_pos = pos.mapped('account_move')
-        domain = [('invoice_date','>=',data['date_start']),('invoice_date','<=',data['date_stop']),('team_id','in',data['team_ids']),('state','=','posted')]
+        domain = [('invoice_date','>=',(data['date_start']-timedelta(hours=5)).date()),('invoice_date','<=',(data['date_stop']-timedelta(hours=6)).date()),('team_id','in',data['team_ids']),('state','=','posted')]
         fact = self.env['account.move'].search(domain+[('move_type','=','out_invoice')]) -move_pos
         nc = self.env['account.move'].search(domain+[('move_type','=','out_refund')]) -move_pos
         domain = [('date','>=',data['date_start']),('date','<=',data['date_stop']),('state','=','done')]
