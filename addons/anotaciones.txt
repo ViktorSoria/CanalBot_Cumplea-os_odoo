@@ -46,3 +46,12 @@ multiusr
 tek2101
 
 rfc DERJ700707BZ5
+
+p = self.env['product.template'].search([('unspsc_code_id','=',False)])
+codigos = self.env['product.unspsc.code'].search([])
+codigos = {c.code:c.id for c in codigos}
+prod = {a.default_code:a for a in p}
+
+for a in p:
+    id = codigos.get(pr.get(a.default_code,''))
+    a.write({'unspsc_code_id':id})
