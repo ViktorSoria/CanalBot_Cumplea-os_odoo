@@ -56,7 +56,9 @@ class ParticularReport(models.AbstractModel):
         pos_lines_dev = self.env['pos.order'].search(domain+[('amount_total','<=',0)])
         pos = pos_lines_fac + pos_lines_no_fac + pos_lines_dev
         move_pos = pos.mapped('account_move')
-        domain = [('invoice_date','>=',(data['date_start']-timedelta(hours=5)).date()),('invoice_date','<=',(data['date_stop']-timedelta(hours=6)).date()),('team_id','in',data['team_ids']),('state','=','posted')]
+        date_start = datetime.strptime(data['date_start'],'%Y-%m-%d %H:%M:%S')
+        date_stop = datetime.strptime(data['date_stop'],'%Y-%m-%d %H:%M:%S')
+        domain = [('invoice_date','>=',(date_start-timedelta(hours=5)).date()),('invoice_date','<=',(date_stop-timedelta(hours=6)).date()),('team_id','in',data['team_ids']),('state','=','posted')]
         fact = self.env['account.move'].search(domain+[('move_type','=','out_invoice')]) -move_pos
         nc = self.env['account.move'].search(domain+[('move_type','=','out_refund')]) -move_pos
         domain = [('date','>=',data['date_start']),('date','<=',data['date_stop']),('state','=','done')]

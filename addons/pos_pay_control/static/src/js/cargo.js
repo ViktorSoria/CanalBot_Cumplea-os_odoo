@@ -215,7 +215,12 @@ odoo.define("pos_pay_control.cargo", function (require) {
                             method: 'get_cfdi_vals',
                             args: [id],
                         });
-                return JSON.parse(vals);
+                if(vals){
+                    return JSON.parse(vals);
+                }
+                else{
+                    return false
+                }
             }
         }
 
