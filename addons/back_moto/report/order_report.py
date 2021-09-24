@@ -73,7 +73,6 @@ class ParticularReport(models.AbstractModel):
             'metodo':total_method,
             "currency": self.env.user.company_id.currency_id
         })
-        _logger.warning(data)
         return data
 
     def _compute_totals(self,pos,fac,gastos):

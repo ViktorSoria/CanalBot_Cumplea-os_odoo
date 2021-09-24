@@ -64,3 +64,71 @@ class ProducPrice(models.TransientModel):
             'view_type': "form",
             'target': "new",
         }
+
+
+class Pricelist(models.Model):
+    _inherit = "product.pricelist"
+
+    file = fields.Binary("Nuevos Precios (csv)")
+    file_name = fields.Char("Nombre archivo")
+
+    def get_lines(self):
+        lines = []
+        try:
+            if 'csv' in self.file_name:
+                csv_file = base64.b64decode(self.file).decode()
+                file_input = StringIO(csv_file)
+                file_input.seek(0)
+                reader = csv.reader(file_input, delimiter=',')
+                lines.extend(reader)
+            else:
+                file_path = tempfile.gettempdir() + '/file.xls'
+                f = open(file_path, 'wb')
+                f.write(base64.b64decode(self.file))
+                f.close()
+                workbook = xlrd.open_workbook(file_path)
+                sh = workbook.sheet_by_index(0)
+                for i in range(1, sh.nrows):
+                    lines.append(sh.row_values(i))
+        except:
+            raise UserError("Erro en formato de archivo")
+        return lines
+
+
+    def update_price(self):
+        if not self.file:
+            return
+        lines = self.get_lines()
+        if len(lines[0])>2:
+            raise UserError("Formato de archivo incorrecto")
+        productos = self.env['product.template'].search([])
+        productos = {p.default_code: p for p in productos}
+        items = {i.product_tmpl_id.default_code:i for i in self.item_ids if i.product_tmpl_id}
+        new_items = []
+        faltantes = []
+        for l in lines[1:]:
+            try:
+                p = productos.get(l[0])
+                item = items.get(l[0])
+                if not p:
+                    faltantes.append(str(l))
+                if self.id==1:
+                    p.list_price = float(l[1])
+                elif not item:
+                    new_items.append([0,0,{'applied_on':'1_product','compute_price':'fixed','fixed_price':float(l[1]),
+                                          'product_tmpl_id':p.id}])
+                else:
+                    item.write({'fixed_price':float(l[1])})
+            except:
+                raise UserError("Erro en la linea: %s"%str(l))
+        self.write({'item_ids':new_items,'file':False})
+        if faltantes:
+            mensaje = "Los siguientes productos no fueron encontrados\n%s"%('\n'.join(faltantes))
+            return {
+                'name': 'Error Crear Pagos',
+                'type': 'ir.actions.act_window',
+                'view_mode': 'form',
+                'res_model': 'message.wizard',
+                'target': 'new',
+                'context': mensaje
+            }

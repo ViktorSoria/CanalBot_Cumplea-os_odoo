@@ -9,6 +9,7 @@
              "security/ir.model.access.csv",
              "views/purchase_views.xml",
              "views/product_view.xml",
+             "views/pricelist_views.xml",
              "views/report_view.xml",
              "report/report.xml",
              ],
