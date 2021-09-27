@@ -37,6 +37,8 @@ odoo.define("pos_pay_control.Discount", function (require) {
                 var to_merge_orderline;
                 // valida
                 order.get_orderlines().forEach(function (orderline) {
+                    console.log(orderline);
+                    console.log(orderline.id !== line.id &&  orderline.get_product().id === line.get_product().id);
                     if (orderline.id !== line.id &&  orderline.get_product().id === line.get_product().id) {
                         to_merge_orderline = orderline;
                     }
@@ -52,6 +54,11 @@ odoo.define("pos_pay_control.Discount", function (require) {
                         order.select_orderline(to_merge_orderline);
                     }
                     return;
+                }else{
+                    if(event.detail.type === 'product' && line.get_quantity() > event.detail.qty_available){
+                        line.set_quantity(event.detail.qty_available);
+                        this.playSound("error");
+                    }
                 }
                 // descuento
                 if (dis.desc) {
