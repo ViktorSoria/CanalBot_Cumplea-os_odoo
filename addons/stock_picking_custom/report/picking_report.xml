@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="stock_picking_custom_report" inherit_id="stock.report_delivery_document">
+        <xpath expr="//div[@name='signature']" position="before">
+            <br/><br/><br/><br/>
+            <div class="row">
+                <div class="col-3"/>
+                <div class="col-6 text-center" style="border-top: 1px solid black;">
+                    <b>Quien recibe</b>
+                </div>
+                <div class="col-3"/>
+            </div>
+        </xpath>
+    </template>
+</odoo>
