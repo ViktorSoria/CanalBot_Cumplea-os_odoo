@@ -115,7 +115,7 @@ class AccountEdiFormat(models.Model):
             response = requests.post(url,auth=None, verify=False, data=json.dumps({'params':json_invoice}),headers={"Content-type": "application/json"})
         except Exception as e:
             return {'errors': [str(e)]}
-        result = response.json().get('result',{})
+        result = response.json()
         _logger.warning(result)
         validate = result.get('validate',False)
         code = result.get('code','')
