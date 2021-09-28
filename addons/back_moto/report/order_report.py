@@ -51,8 +51,8 @@ class ParticularReport(models.AbstractModel):
 
     def _get_report_values(self, docids, data=None):
         domain = [('create_date','>=',data['date_start']),('create_date','<=',data['date_stop']),('session_id.config_id','in',data['config_ids']),('state','not in',['draft','cancel'])]
-        pos_lines_fac = self.env['pos.order'].search(domain+[('to_invoice','=',False),('amount_total','>',0)])
-        pos_lines_no_fac = self.env['pos.order'].search(domain+[('to_invoice','=',True),('amount_total','>',0)])
+        pos_lines_fac = self.env['pos.order'].search(domain+[('to_invoice','=',True),('amount_total','>',0)])
+        pos_lines_no_fac = self.env['pos.order'].search(domain+[('to_invoice','=',False),('amount_total','>',0)])
         pos_lines_dev = self.env['pos.order'].search(domain+[('amount_total','<=',0)])
         pos = pos_lines_fac + pos_lines_no_fac + pos_lines_dev
         move_pos = pos.mapped('account_move')
@@ -66,6 +66,7 @@ class ParticularReport(models.AbstractModel):
         pos = pos_lines_fac + pos_lines_no_fac + pos_lines_dev
         fac = fact+nc
         total_method = self._compute_totals(pos,fac,gastos)
+        _logger.warning(total_method)
         data.update({
             "pos": {'facturado':pos_lines_fac,'no_facturado':pos_lines_no_fac,'devoluciones':pos_lines_dev},
             'sale': {'facturas':fact,'nc':nc},
@@ -76,12 +77,13 @@ class ParticularReport(models.AbstractModel):
         return data
 
     def _compute_totals(self,pos,fac,gastos):
-        met = {}
         ### calcule pos
+        pos_met = {}
         for order in pos:
             for pay in order.payment_ids:
-                met[pay.payment_method_id.l10n_mx_edi_payment_method_id.name] = met.get(pay.payment_method_id.l10n_mx_edi_payment_method_id.name,0) + pay.amount
+                pos_met[pay.payment_method_id.l10n_mx_edi_payment_method_id.name] = pos_met.get(pay.payment_method_id.l10n_mx_edi_payment_method_id.name,0) + pay.amount
         ### calcule fac
+        fac_met = {}
         for invoice in fac:
-            met[invoice.l10n_mx_edi_payment_method_id.name] = met.get(invoice.l10n_mx_edi_payment_method_id.name, 0) + invoice.amount_total
-        return met
+            fac_met[invoice.l10n_mx_edi_payment_method_id.name] = fac_met.get(invoice.l10n_mx_edi_payment_method_id.name, 0) + invoice.amount_total
+        return {'pos':pos_met,'fac':fac_met}

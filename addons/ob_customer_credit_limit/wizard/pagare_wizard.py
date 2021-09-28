@@ -23,7 +23,7 @@ class PagareWizard(models.TransientModel):
     fecha = fields.Date("Fecha de venta")
     sucursal = fields.Many2one("res.partner","Lugar Emisión")
     currency = fields.Many2one("res.currency","Moneda",related="move_id.currency_id")
-    monto = fields.Monetary("Monto",related="move_id.amount_total",currency_field="currency")
+    monto = fields.Monetary("Monto",related="move_id.amount_residual",currency_field="currency")
     fecha_limite = fields.Date("Fecha limite",related="move_id.invoice_date_due")
     domicilio = fields.Char("domicilio",compute="get_domi")
     sucursal_name = fields.Char("sucursal dom",compute="get_domi")

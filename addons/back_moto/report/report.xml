@@ -181,16 +181,42 @@
                         </span>
                         <table class="table table-condensed table-bordered">
                             <thead>
-                                <th class="text-center" style="width: 70%">Diario</th>
+                                <th class="text-center" style="width: 70%">Resumen POS</th>
                                 <th class="text-center" style="width: 30%">Monto</th>
                             </thead>
                             <tbody>
-                                <t t-foreach="metodo" t-as="m">
+                                <t t-set="total" t-value="0"/>
+                                <t t-foreach="metodo['pos']" t-as="m">
+                                    <t t-set="total" t-value="total+m_value"/>
                                     <tr>
                                         <th class="text-center"><span t-esc="m"/></th>
                                         <th class="text-center"><span t-esc="m_value" t-options='{"widget": "monetary","display_currency":currency}'/></th>
                                     </tr>
                                 </t>
+                                <tr>
+                                    <th class="text-center">TOTAL</th>
+                                    <th class="text-center"><span t-esc="total" t-options='{"widget": "monetary","display_currency":currency}'/></th>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="table table-condensed table-bordered">
+                            <thead>
+                                <th class="text-center" style="width: 70%">Resumen Ventas</th>
+                                <th class="text-center" style="width: 30%">Monto</th>
+                            </thead>
+                            <tbody>
+                                <t t-set="total" t-value="0"/>
+                                <t t-foreach="metodo['fac']" t-as="m">
+                                    <t t-set="total" t-value="total+m_value"/>
+                                    <tr>
+                                        <th class="text-center"><span t-esc="m"/></th>
+                                        <th class="text-center"><span t-esc="m_value" t-options='{"widget": "monetary","display_currency":currency}'/></th>
+                                    </tr>
+                                </t>
+                                <tr>
+                                    <th class="text-center">TOTAL</th>
+                                    <th class="text-center"><span t-esc="total" t-options='{"widget": "monetary","display_currency":currency}'/></th>
+                                </tr>
                             </tbody>
                         </table>
                 </div>
