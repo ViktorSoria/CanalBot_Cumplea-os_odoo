@@ -8,6 +8,11 @@
             <xpath expr="//field[@name='origin']" position="after">
                 <field name="who_recibe"/>
             </xpath>
+            <xpath expr="//field[@name='origin']" position="after">
+                <field name="code_picking" invisible="True"/>
+                <field name="seller" attrs="{'invisible': ['|', ('picking_type_id','=', False), ('code_picking', '!=', 'outgoing')]}" />
+                <field name="team_sale" attrs="{'invisible': ['|', ('picking_type_id','=', False), ('code_picking', '!=', 'outgoing')]}"/>
+            </xpath>
         </field>
     </record>
 </odoo>
