@@ -85,5 +85,5 @@ class ParticularReport(models.AbstractModel):
         ### calcule fac
         fac_met = {}
         for invoice in fac:
-            fac_met[invoice.l10n_mx_edi_payment_method_id.name] = fac_met.get(invoice.l10n_mx_edi_payment_method_id.name, 0) + invoice.amount_total
+            fac_met[invoice.l10n_mx_edi_payment_method_id.name] = fac_met.get(invoice.l10n_mx_edi_payment_method_id.name, 0) + (invoice.amount_total if invoice.move_type != 'out_refund' else invoice.amount_total*-1)
         return {'pos':pos_met,'fac':fac_met}
