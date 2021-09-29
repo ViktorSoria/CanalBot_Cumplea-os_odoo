@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="stock_picking_custom_report" inherit_id="stock.report_delivery_document">
+        <xpath expr="//div[@name='signature']" position="before">
+            <br/><br/><br/><br/>
+            <div class="row">
+                <div class="col-3"/>
+                <div class="col-6 text-center" style="border-top: 1px solid black;">
+                    <b>Quien recibe</b>
+                </div>
+                <div class="col-3"/>
+            </div>
+        </xpath>
+        <xpath expr="//table[@name='stock_move_table']" position="replace">
+            <table class="table table-sm" t-if="o.state!='done'" name="stock_move_table">
+                <thead>
+                    <tr>
+                        <th name="th_sm_product"><strong>Product</strong></th>
+                        <th name="th_sm_demand"><strong>Demanda</strong></th>
+                        <th name="th_sm_reserved"><strong>Reservado</strong></th>
+                        <th name="th_sm_quantity"><strong>Hecho</strong></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-set="lines" t-value="o.move_lines.filtered(lambda x: x.product_uom_qty)"/>
+                    <tr t-foreach="lines" t-as="move">
+                        <td>
+                            <span t-field="move.product_id"/>
+                            <p t-if="move.description_picking != move.product_id.name">
+                                <span t-field="move.description_picking"/>
+                            </p>
+                        </td>
+                        <td>
+                            <!-- Demanda -->
+                            <span t-field="move.product_uom_qty"/>
+                        </td>
+                        <td>
+                            <!-- Reservado -->
+                            <span t-field="move.reserved_availability"/>
+                        </td>
+                        <td>
+                            <!-- Hehco -->
+                            <span t-field="move.quantity_done"/>
+                            <span t-field="move.product_uom"/>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </xpath>
+        <xpath expr="//table[@name='stock_move_table']" position="replace">
+            <table class="table table-sm" t-if="o.state=='done'" name="stock_move_table">
+                <thead>
+                    <tr>
+                        <th name="th_sm_product"><strong>Product</strong></th>
+                        <th name="th_sm_demand"><strong>Demanda</strong></th>
+                        <th name="th_sm_reserved"><strong>Reservado</strong></th>
+                        <th name="th_sm_quantity"><strong>Hecho</strong></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-set="lines" t-value="o.move_lines.filtered(lambda x: x.product_uom_qty)"/>
+                    <tr t-foreach="lines" t-as="move">
+                        <td>
+                            <span t-field="move.product_id"/>
+                            <p t-if="move.description_picking != move.product_id.name">
+                                <span t-field="move.description_picking"/>
+                            </p>
+                        </td>
+                        <td>
+                            <!-- Demanda -->
+                            <span t-field="move.product_uom_qty"/>
+                        </td>
+                        <td>
+                            <!-- Reservado -->
+                            <span t-field="move.reserved_availability"/>
+                        </td>
+                        <td>
+                            <!-- Hehco -->
+                            <span t-field="move.quantity_done"/>
+                            <span t-field="move.product_uom"/>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </xpath>
+    </template>
+</odoo>
