@@ -21,12 +21,16 @@ class Report_order(models.TransientModel):
         date = date.replace(tzinfo=None)
         return date
 
+    def get_current_pos(self):
+        return [(6,0,self.env.user.pos_available.ids)]
+
     start_date = fields.Datetime("Fecha de Inicio",required=True, default=_default_start_date)
     end_date = fields.Datetime("Fecha de Finalizacion",required=True, default=fields.Datetime.now())
-    pos_config_ids = fields.Many2many('pos.config', 'pos_report_order', 'report','pos',string="Puntos de venta",
-        default=lambda s: s.env['pos.config'].search([]))
+    pos_config_ids = fields.Many2many('pos.config', 'pos_report_order', 'report','pos',string="Puntos de venta")
+    #pos_config_ids = fields.Many2many('pos.config', 'pos_report_order', 'report','pos',string="Puntos de venta", default=lambda s: s.env['pos.config'].search([]))
     team_ids = fields.Many2many('crm.team', 'crm_report_order', 'report','pos',string="Equipos de Ventas",
         default=lambda s: s.env['crm.team'].search([]))
+    current_user_pos_ids = fields.Many2many('pos.config','pos_config_default',string="Permitidos",default=get_current_pos)
 
     @api.onchange('start_date')
     def _onchange_start_date(self):

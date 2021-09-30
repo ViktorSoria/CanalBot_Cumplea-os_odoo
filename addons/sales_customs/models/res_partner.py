@@ -13,3 +13,12 @@ class ResPartnerCustom(models.Model):
 
     phone = fields.Char(required=True)
 
+
+class ResUsersCustom(models.Model):
+    _inherit = "res.users"
+
+    pos_available = fields.Many2many('pos.config', string="Puntos de Venta")
+
+    def all_pos(self):
+        self.pos_available = self.env['pos.config'].search([])
+
