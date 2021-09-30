@@ -24,5 +24,5 @@ class ResUsersCustom(models.Model):
         self.pos_available = self.env['pos.config'].search([])
 
     def all_teams(self):
-        self.pos_available = self.env['crm.team'].search([])
+        self.team_available = self.env['crm.team'].search([])
 
