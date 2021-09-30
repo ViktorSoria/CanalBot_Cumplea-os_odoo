@@ -18,10 +18,15 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='clave']" position="after">
                 <label for="pos_available"/>
-                    <div class="o_row">
-                        <field name="pos_available"/>
-                        <button name="all_pos" string="Agregar Todos" type="object" class="oe_highlight"/>
-                    </div>
+                <div class="o_row">
+                    <field name="pos_available"/>
+                    <button name="all_pos" string="Agregar Todos" type="object" class="oe_highlight"/>
+                </div>
+                <label for="team_available"/>
+                <div class="o_row">
+                    <field name="team_available"/>
+                    <button name="all_teams" string="Agregar Todos" type="object" class="oe_highlight"/>
+                </div>
             </xpath>
         </field>
     </record>

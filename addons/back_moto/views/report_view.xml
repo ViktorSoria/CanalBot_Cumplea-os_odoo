@@ -8,7 +8,8 @@
                 <group>
                     <field name="start_date"/>
                     <field name="end_date"/>
-                    <field name="team_ids" widget="many2many_tags"/>
+                    <field name="current_user_teams_ids" invisible="True"/>
+                    <field name="team_ids" widget="many2many_tags" domain="[('id', 'in', current_user_teams_ids)]"/>
                 </group>
                 <group>
                     <field name="current_user_pos_ids" invisible="True"/>
