@@ -33,3 +33,24 @@ class StockPickingCustom(models.Model):
                 return
             record.seller = order.user_id
             record.team_sale = record.seller.sale_team_id
+
+    is_transfer = fields.Boolean("Es Transferencia entre Sucursales")
+    location_transfer_id = fields.Many2one('stock.location', string="Ubicación de destino")
+
+    @api.onchange('location_transfer_id')
+    def _change_location_dest(self):
+        _log.info(self.location_transfer_id)
+        _log.info(self.location_transfer_id.virtual_location)
+        self.location_dest_id = self.location_transfer_id.virtual_location
+
+    @api.onchange('is_transfer')
+    def _change_location_false(self):
+        self.location_dest_id = False
+        self.location_transfer_id = False
+
+
+class StockPickingCustom(models.Model):
+    _inherit = "stock.location"
+
+    virtual_location = fields.Many2one('stock.location', string="Ubicación Virtual")
+
