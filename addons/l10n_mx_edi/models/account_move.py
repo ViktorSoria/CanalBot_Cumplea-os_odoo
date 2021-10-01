@@ -196,7 +196,7 @@ class AccountMove(models.Model):
         }
 
     @api.model
-    def _l10n_mx_edi_cfdi_amount_to_text(self):
+    def _l10n_mx_edi_cfdi_amount_to_text(self,total=False):
         """Method to transform a float amount to text words
         E.g. 100 - ONE HUNDRED
         :returns: Amount transformed to words mexican format for invoices
@@ -211,7 +211,8 @@ class AccountMove(models.Model):
         currency_type = 'M.N' if currency_name == 'MXN' else 'M.E.'
 
         # Split integer and decimal part
-        amount_i, amount_d = divmod(self.amount_total, 1)
+        amount = total or self.amount_total
+        amount_i, amount_d = divmod(amount, 1)
         amount_d = round(amount_d, 2)
         amount_d = int(round(amount_d * 100, 2))
 
