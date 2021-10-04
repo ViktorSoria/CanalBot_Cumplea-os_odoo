@@ -8,6 +8,38 @@
             <xpath expr="//field[@name='origin']" position="after">
                 <field name="who_recibe"/>
             </xpath>
+            <xpath expr="//field[@name='origin']" position="after">
+                <field name="code_picking" invisible="True"/>
+                <field name="seller" attrs="{'invisible': ['|', ('picking_type_id','=', False), ('code_picking', '!=', 'outgoing')]}" />
+                <field name="team_sale" attrs="{'invisible': ['|', ('picking_type_id','=', False), ('code_picking', '!=', 'outgoing')]}"/>
+            </xpath>
+            <xpath expr="//field[@name='location_id']" position="after">
+                <field name="code_picking" invisible="True"/>
+                <field name="is_transfer" attrs="{'invisible': ['|',('picking_type_id','=', False), ('code_picking', '!=', 'internal')], 'readonly': [('state','!=','draft')]}"/>
+                <field name="location_transfer_id"
+                    attrs="{'invisible': ['|','|',('is_transfer','=', False), ('picking_type_id','=', False), ('code_picking', '!=', 'internal')], 'readonly': [('state','!=','draft')]}"
+                    domain="[('usage', '=', 'internal')]"
+                    required="True"
+                />
+            </xpath>
+                <xpath expr="//field[@name='location_id']" position="attributes">
+                <attribute name="domain">[('usage', '!=', 'transit')]</attribute>
+            </xpath>
+            <xpath expr="//field[@name='location_dest_id']" position="attributes">
+                <attribute name="domain">[('usage', '!=', 'transit')]</attribute>
+                <attribute name="attrs">{'invisible': [('is_transfer', '=', True)]}</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="stock_location_view_inherit" model="ir.ui.view">
+        <field name="name">stock.location.view.inherit</field>
+        <field name="model">stock.location</field>
+        <field name="inherit_id" ref="stock.view_location_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='return_location']" position="after">
+                <field name="virtual_location" groups="base.group_no_one"/>
+            </xpath>
         </field>
     </record>
 </odoo>

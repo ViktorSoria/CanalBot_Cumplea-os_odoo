@@ -21,12 +21,20 @@ class Report_order(models.TransientModel):
         date = date.replace(tzinfo=None)
         return date
 
+    def get_current_pos(self):
+        return [(6,0,self.env.user.pos_available.ids)]
+
+    def get_current_teams(self):
+        return [(6,0,self.env.user.team_available.ids)]
+
     start_date = fields.Datetime("Fecha de Inicio",required=True, default=_default_start_date)
     end_date = fields.Datetime("Fecha de Finalizacion",required=True, default=fields.Datetime.now())
-    pos_config_ids = fields.Many2many('pos.config', 'pos_report_order', 'report','pos',string="Puntos de venta",
-        default=lambda s: s.env['pos.config'].search([]))
-    team_ids = fields.Many2many('crm.team', 'crm_report_order', 'report','pos',string="Equipos de Ventas",
-        default=lambda s: s.env['crm.team'].search([]))
+    pos_config_ids = fields.Many2many('pos.config', 'pos_report_order', 'report','pos',string="Puntos de venta")
+    #pos_config_ids = fields.Many2many('pos.config', 'pos_report_order', 'report','pos',string="Puntos de venta", default=lambda s: s.env['pos.config'].search([]))
+    # team_ids = fields.Many2many('crm.team', 'crm_report_order', 'report','pos',string="Equipos de Ventas",default=lambda s: s.env['crm.team'].search([]))
+    team_ids = fields.Many2many('crm.team', 'crm_report_order', 'report','pos',string="Equipos de Ventas", default= lambda s: s.env.user.sale_team_id)
+    current_user_pos_ids = fields.Many2many('pos.config','pos_config_default',string="Permitidos",default=get_current_pos)
+    current_user_teams_ids = fields.Many2many('crm.team','crm_teams_default',string="Permitidos",default=get_current_teams)
 
     @api.onchange('start_date')
     def _onchange_start_date(self):
@@ -85,5 +93,5 @@ class ParticularReport(models.AbstractModel):
         ### calcule fac
         fac_met = {}
         for invoice in fac:
-            fac_met[invoice.l10n_mx_edi_payment_method_id.name] = fac_met.get(invoice.l10n_mx_edi_payment_method_id.name, 0) + invoice.amount_total
+            fac_met[invoice.l10n_mx_edi_payment_method_id.name] = fac_met.get(invoice.l10n_mx_edi_payment_method_id.name, 0) + (invoice.amount_total if invoice.move_type != 'out_refund' else invoice.amount_total*-1)
         return {'pos':pos_met,'fac':fac_met}

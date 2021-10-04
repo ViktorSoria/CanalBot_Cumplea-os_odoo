@@ -13,3 +13,16 @@ class ResPartnerCustom(models.Model):
 
     phone = fields.Char(required=True)
 
+
+class ResUsersCustom(models.Model):
+    _inherit = "res.users"
+
+    pos_available = fields.Many2many('pos.config', string="Puntos de Venta")
+    team_available = fields.Many2many('crm.team', string="Equipos de Venta", default=lambda self: self.sale_team_id)
+
+    def all_pos(self):
+        self.pos_available = self.env['pos.config'].search([])
+
+    def all_teams(self):
+        self.team_available = self.env['crm.team'].search([])
+

@@ -1,12 +1,16 @@
 {
     "name": "Customización de inventario",
     "summary": "Módulo con customizaciones",
-    "author": "Tekniu: Isaac",
+    "author": "Tekniu: Isaac, Jehosafat",
     "depends": [
-        "base", "stock"
+        "base", "stock", "crm", "point_of_sale"
     ],
     "installable": True,
     "data": [
-        "report/picking_report.xml"
-    ]
+        "report/picking_report.xml",
+        "views/stock_picking.xml",
+        "views/stock_inventory_views.xml"
+    ],
+    'post_init_hook': 'post_init_hook',
+    'auto_install': True,
 }
