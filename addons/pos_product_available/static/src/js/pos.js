@@ -60,20 +60,20 @@ odoo.define("pos_product_available.PosModel", function (require) {
                 const self = this;
                 async function loop(limit,offset) {
                     if(limit===0){
-                        setTimeout(()=>{loop(5000,0);}, 60000);
+                        setTimeout(()=>{loop(1000,0);}, 60000);
                     }else{
                         let newof = offset;
                         let tam = _.size(self.env.pos.db.product_by_id);
-                        let tiempo = 5000;
+                        let tiempo = 10000;
                         if(newof>tam){newof=0;}
                         try {
                             await self.recompute_quantity(limit,newof);
-                            newof += 5000;
+                            newof += 1000;
                         } catch (error) {
                             console.log(error);
                             tiempo = 60000;
                         }
-                        setTimeout(()=>{loop(5000,newof);}, tiempo);
+                        setTimeout(()=>{loop(1000,newof);}, tiempo);
                     }
                 }
                 loop(0,0);
