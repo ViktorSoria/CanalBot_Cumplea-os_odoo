@@ -7,6 +7,7 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='origin']" position="after">
                 <field name="who_recibe"/>
+                <field name="is_transfer" attrs="{'invisible': ['|',('picking_type_id','=', False), ('code_picking', '!=', 'internal')], 'readonly': [('state','!=','draft')]}"/>
             </xpath>
             <xpath expr="//field[@name='origin']" position="after">
                 <field name="code_picking" invisible="True"/>
@@ -15,14 +16,14 @@
             </xpath>
             <xpath expr="//field[@name='location_id']" position="after">
                 <field name="code_picking" invisible="True"/>
-                <field name="is_transfer" attrs="{'invisible': ['|',('picking_type_id','=', False), ('code_picking', '!=', 'internal')], 'readonly': [('state','!=','draft')]}"/>
                 <field name="location_transfer_id"
-                    attrs="{'invisible': ['|','|',('is_transfer','=', False), ('picking_type_id','=', False), ('code_picking', '!=', 'internal')], 'readonly': [('state','!=','draft')]}"
+                    attrs="{'invisible': ['|','|',('is_transfer','=', False), ('picking_type_id','=', False), ('code_picking', '!=', 'internal')],
+                            'readonly': [('state','!=','draft')],
+                            'required': [('is_transfer','=',True)]}"
                     domain="[('usage', '=', 'internal')]"
-                    required="True"
                 />
             </xpath>
-                <xpath expr="//field[@name='location_id']" position="attributes">
+            <xpath expr="//field[@name='location_id']" position="attributes">
                 <attribute name="domain">[('usage', '!=', 'transit')]</attribute>
             </xpath>
             <xpath expr="//field[@name='location_dest_id']" position="attributes">
