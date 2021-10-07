@@ -3,17 +3,15 @@
     "summary": "Módulo con customizaciones de lo relacionado con ventas",
     "author": "Tekniu: Isaac, Jehosafat",
     "depends": [
-        "base", "point_of_sale"
+        "base", "point_of_sale", "pos_pay_control"
     ],
     "installable": True,
     "data": [
-        'data/assets.xml'
+        'data/assets.xml',
+        'views/pos_order_views.xml'
     ],
     "qweb": [
         "base", "point_of_sale", "pos_pay_control"
     ],
     "installable": True,
-    "data": [
-        'views/pos_order_views.xml'
-    ]
 }
