@@ -11,7 +11,7 @@ _log = logging.getLogger("stock_picking (%s) -------> " % __name__)
 class StockPickingCustom(models.Model):
     _inherit = "stock.picking"
 
-    who_recibe = fields.Char(string="Quien recibe")
+    who_recibe = fields.Char(string="Quien entrega")
 
     code_picking = fields.Selection(related='picking_type_id.code')
     seller = fields.Many2one('res.users', string="Vendedor", compute='_compute_seller_team')

@@ -47,8 +47,9 @@
                 </tbody>
             </table>
         </xpath>
-        <xpath expr="//table[@name='stock_move_table']" position="replace">
-            <table class="table table-sm" t-if="o.state=='done'" name="stock_move_table">
+        <xpath expr="//table[@name='stock_move_line_table']" position="replace">
+
+            <table class="table table-sm" t-if="o.state=='done'" name="stock_move_line_table">
                 <thead>
                     <tr>
                         <th name="th_sm_product"><strong>Producto</strong></th>
@@ -82,6 +83,7 @@
                     </tr>
                 </tbody>
             </table>
+
         </xpath>
     </template>
 </odoo>
