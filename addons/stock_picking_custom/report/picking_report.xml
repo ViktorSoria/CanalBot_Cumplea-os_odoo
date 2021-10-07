@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <template id="stock_picking_custom_report" inherit_id="stock.report_delivery_document">
+    <template id="report_delivery_document" inherit_id="stock.report_delivery_document">
         <xpath expr="//div[@name='signature']" position="before">
             <br/><br/><br/><br/>
             <div class="row">
                 <div class="col-3"/>
                 <div class="col-6 text-center" style="border-top: 1px solid black;">
-                    <b>Quien recibe</b>
+                    <b>Quien entrega</b>
                 </div>
                 <div class="col-3"/>
             </div>
@@ -15,7 +15,7 @@
             <table class="table table-sm" t-if="o.state!='done'" name="stock_move_table">
                 <thead>
                     <tr>
-                        <th name="th_sm_product"><strong>Product</strong></th>
+                        <th name="th_sm_product"><strong>Producto</strong></th>
                         <th name="th_sm_demand"><strong>Demanda</strong></th>
                         <th name="th_sm_reserved"><strong>Reservado</strong></th>
                         <th name="th_sm_quantity"><strong>Hecho</strong></th>
@@ -51,7 +51,7 @@
             <table class="table table-sm" t-if="o.state=='done'" name="stock_move_table">
                 <thead>
                     <tr>
-                        <th name="th_sm_product"><strong>Product</strong></th>
+                        <th name="th_sm_product"><strong>Producto</strong></th>
                         <th name="th_sm_demand"><strong>Demanda</strong></th>
                         <th name="th_sm_reserved"><strong>Reservado</strong></th>
                         <th name="th_sm_quantity"><strong>Hecho</strong></th>
