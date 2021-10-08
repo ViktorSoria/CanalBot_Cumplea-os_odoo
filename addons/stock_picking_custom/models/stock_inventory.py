@@ -22,7 +22,18 @@ class StockInventoryCustom(models.Model):
         _log.info(self.product_ids)
 
 
+class StockMoveCustom(models.Model):
+    _inherit = "stock.move"
 
+    def calc_productqty(self):
 
+        squant = self.env['stock.quant'].search([('location_id', '=', self.location_id.id),
+                                                 ('product_id', '=', self.product_id.id)])
+        # _log.info("Está calculando cual es el stock actual:::  %s qty: %s " % (squant, squant.quantity))
+
+        act_qty = squant.quantity
+        # act_qty = squant.available_quantity
+
+        return act_qty
 
 
