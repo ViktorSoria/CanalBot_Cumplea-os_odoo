@@ -13,26 +13,26 @@ class StockPickingCustom(models.Model):
 
     who_recibe = fields.Char(string="Quien entrega")
 
-    code_picking = fields.Selection(related='picking_type_id.code')
-    seller = fields.Many2one('res.users', string="Vendedor", compute='_compute_seller_team')
-    team_sale = fields.Many2one('crm.team', string="Equipo de Ventas", compute='_compute_seller_team')
+    seller = fields.Many2one('res.users', string="Vendedor", compute='compute_seller_team', store=True)
+    team_sale = fields.Many2one('crm.team', string="Equipo de Ventas", compute='compute_seller_team', store=True)
 
-    def _compute_seller_team(self):
+    @api.depends('picking_type_id')
+    def compute_seller_team(self):
+        _log.warning("Entre depends")
         for record in self:
-            if not record.picking_type_id and record.picking_type_id.code != 'outgoing':
-                record.seller = None
-                record.team_sale = None
-                return
-            if record.sale_id:
-                order = record.sale_id
-            elif record.pos_order_id:
-                order = record.pos_order_id
-            else:
-                record.seller = None
-                record.team_sale = None
-                return
-            record.seller = order.user_id
-            record.team_sale = record.seller.sale_team_id
+            if record.picking_type_id and record.picking_type_code == 'outgoing':
+                if record.sale_id:
+                    record.seller = record.sale_id.user_id
+                    record.team_sale = record.sale_id.user_id.sale_team_id
+                    continue
+                elif record.pos_order_id:
+                    record.seller = record.pos_order_id.user_id
+                    record.team_sale = record.pos_order_id.user_id.sale_team_id
+                    continue
+            _log.warning(record.seller)
+            _log.warning(record.team_sale)
+            record.seller = None
+            record.team_sale = None
 
     is_transfer = fields.Boolean("Es Transferencia entre Sucursales")
     location_transfer_id = fields.Many2one('stock.location', string="Ubicación de destino")
@@ -49,7 +49,7 @@ class StockPickingCustom(models.Model):
         self.location_transfer_id = False
 
 
-class StockPickingCustom(models.Model):
+class StockLocationCustom(models.Model):
     _inherit = "stock.location"
 
     virtual_location = fields.Many2one('stock.location', string="Ubicación Virtual")

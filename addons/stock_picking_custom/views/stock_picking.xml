@@ -7,17 +7,18 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='origin']" position="after">
                 <field name="who_recibe"/>
-                <field name="is_transfer" attrs="{'invisible': ['|',('picking_type_id','=', False), ('code_picking', '!=', 'internal')], 'readonly': [('state','!=','draft')]}"/>
+                <field name="is_transfer" attrs="{'invisible': ['|',('picking_type_id','=', False), ('picking_type_code', '!=', 'internal')], 'readonly': [('state','!=','draft')]}"/>
             </xpath>
             <xpath expr="//field[@name='origin']" position="after">
-                <field name="code_picking" invisible="True"/>
-                <field name="seller" attrs="{'invisible': ['|', ('picking_type_id','=', False), ('code_picking', '!=', 'outgoing')]}" />
-                <field name="team_sale" attrs="{'invisible': ['|', ('picking_type_id','=', False), ('code_picking', '!=', 'outgoing')]}"/>
+                <field name="picking_type_code" invisible="True"/>
+                <field name="sale_id" invisible="True"/>
+                <field name="seller" attrs="{'invisible': ['|', ('picking_type_id','=', False), ('picking_type_code', '!=', 'outgoing')]}" />
+                <field name="team_sale" attrs="{'invisible': ['|', ('picking_type_id','=', False), ('picking_type_code', '!=', 'outgoing')]}"/>
             </xpath>
             <xpath expr="//field[@name='location_id']" position="after">
-                <field name="code_picking" invisible="True"/>
+                <field name="picking_type_code" invisible="True"/>
                 <field name="location_transfer_id"
-                    attrs="{'invisible': ['|','|',('is_transfer','=', False), ('picking_type_id','=', False), ('code_picking', '!=', 'internal')],
+                    attrs="{'invisible': ['|','|',('is_transfer','=', False), ('picking_type_id','=', False), ('picking_type_code', '!=', 'internal')],
                             'readonly': [('state','!=','draft')],
                             'required': [('is_transfer','=',True)]}"
                     domain="[('usage', '=', 'internal')]"

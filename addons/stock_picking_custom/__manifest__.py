@@ -3,7 +3,7 @@
     "summary": "Módulo con customizaciones",
     "author": "Tekniu: Isaac, Jehosafat",
     "depends": [
-        "base", "stock", "crm", "point_of_sale"
+        "base", "stock", "crm", "point_of_sale", "sale_stock", "stock", "sale", "sale_management"
     ],
     "installable": True,
     "data": [
