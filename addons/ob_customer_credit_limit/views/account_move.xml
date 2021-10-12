@@ -6,7 +6,8 @@
         <field name="inherit_id" ref="account.view_move_form"/>
         <field name="arch" type="xml">
             <xpath expr="//page[@id='other_tab_entry']" position="after">
-                <page id="charges_owed_invoices" string="Cargos por adeudo">
+                <field name="es_cargo" invisible="1"/>
+                <page id="charges_owed_invoices" string="Cargos por adeudo" attrs="{'invisible': [('es_cargo', '=', True)]}">
                     <field name="invoice_cargo_ids">
                        <tree>
                            <field name="name"/>

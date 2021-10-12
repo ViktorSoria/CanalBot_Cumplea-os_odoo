@@ -12,7 +12,8 @@
     </record>
 
     <record model="product.product" id="invoice_wo_payment_product_charge">
-        <field name="name">Cargo por demora en pago de factura</field>
+        <field name="name">Reorganización de la deuda con intereses moratorios</field>
         <field name="type">service</field>
+<!--        <field name="unspsc_code_id">service</field>-->
     </record>
 </odoo>

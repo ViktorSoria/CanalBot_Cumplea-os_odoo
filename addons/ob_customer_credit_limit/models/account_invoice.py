@@ -17,7 +17,7 @@ class Inovice(models.Model):
     def cron_calcule_cargos(self):
         # tasa de adeudo
         porcentaje = self.env['ir.config_parameter'].sudo().get_param('cargo_vencimiento') or 4.4
-        owed_rate = (float(porcentaje)/100)+1
+        owed_rate = (float(porcentaje)/100)
         # Facturas adeudadas al día de hoy.
         inv_domain = [
             ('move_type', '=', 'out_invoice'),
@@ -52,6 +52,7 @@ class Inovice(models.Model):
                 'invoice_date': fields.Date.today(),
                 'move_type': "out_invoice",
                 'journal_id': journal_id.id,
+                'es_cargo': True,
                 'invoice_line_ids': [(0, 0, {
                     'product_id': product_id_charge.id,
                     'quantity': 1,
@@ -86,6 +87,7 @@ class Inovice(models.Model):
                     'invoice_date': fields.Date.today(),
                     'move_type': "out_invoice",
                     'journal_id': journal_id.id,
+                    'es_cargo': True,
                     'invoice_line_ids': [(0, 0, {
                         'product_id': product_id_charge.id,
                         'quantity': 1,
@@ -96,4 +98,3 @@ class Inovice(models.Model):
                 iwc.invoice_cargo_ids = [(0, 0, new_invoice)]
 
             # else  if we have extra owed charges in paid or published add new invoice
-            # abierto = iwc.invoice_cargo_ids.filtered()
