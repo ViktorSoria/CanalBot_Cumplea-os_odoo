@@ -14,11 +14,13 @@
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',
+        'data/data.xml',
         'wizard/warning_wizard.xml',
         'wizard/pagare_wizard.xml',
         'wizard/report_pagare.xml',
         'views/res_partner.xml',
         'views/sale_order.xml',
+        'views/account_move.xml',
     ],
     'installable': True,
     'auto_install': False,
