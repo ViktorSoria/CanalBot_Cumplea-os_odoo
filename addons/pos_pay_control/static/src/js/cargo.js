@@ -48,6 +48,13 @@ odoo.define("pos_pay_control.cargo", function (require) {
                         return;
                     }
                 }
+                if(order.is_to_invoice() && (!order.get_client() || !order.get_client().vat)){
+                    this.showPopup("ErrorPopup", {
+                            title: "Falta RFC",
+                            body: "Agregue cliente con RFC valido antes de finalizar el pedido",
+                        });
+                        return;
+                }
                 if (await this.verify_price_list()) {
                     super.validateOrder(...arguments);
                     let acomulados = 0;
