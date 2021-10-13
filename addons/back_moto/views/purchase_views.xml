@@ -70,5 +70,36 @@
         </field>
     </record>
 
+    <record id="sh_message_wizard_invoice" model="ir.ui.view">
+        <field name="name">sh.message.wizard</field>
+        <field name="model">message.wizard.invoice</field>
+        <field name="arch" type="xml">
+            <form string="Message">
+                <script>
+                    $(document).ready(function(){
+                    $('.modal-dialog').css({'width': '40%', });
+                    });
+                </script>
+                <field name="invoice_ids" invisible="1"/>
+                <field name="name"/>
+                <footer>
+                    <button string="Confirmar" class="btn-primary" type="object" name="confirm"/>
+                    <button string="Cancelar" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+        <record id="confirm_view_form" model="ir.ui.view">
+        <field name="name">confirm.view.form</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account_edi.view_move_form_inherit"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_process_edi_web_services']" position="attributes">
+                <attribute name="context">{'return_message':True}</attribute>
+            </xpath>
+        </field>
+    </record>
+
 
 </odoo>

@@ -881,7 +881,11 @@ Content-Disposition: form-data; name="xml"; filename="xml"
             return edi_result
 
         for invoice in invoices:
-
+            if not invoice.partner_id.vat:
+                edi_result[invoice] = {
+                    'error': self._l10n_mx_edi_format_error_message(_("Invalid configuration:"), ["El cliente no tiene un RFC establecido"]),
+                }
+                continue
             # == Check the configuration ==
             errors = self._l10n_mx_edi_check_configuration(invoice)
             if errors:

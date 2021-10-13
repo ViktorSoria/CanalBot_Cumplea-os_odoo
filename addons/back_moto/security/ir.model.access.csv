@@ -2,4 +2,5 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_line_purchase,access.line.purchase,model_purchase_order_lines_load,purchase.group_purchase_user,1,1,1,1
 access_message_wizard,access.message.wizard,model_message_wizard,purchase.group_purchase_user,1,1,1,1
 access_product_price_transient,access.product.price.transient,model_product_price_transient,base.group_user,1,1,1,1
+access_wizard_mes,access.wizard.mes,model_message_wizard_invoice,base.group_user,1,1,1,1
 access_report_order,access.report.order,model_report_order,point_of_sale.group_pos_manager,1,1,1,0

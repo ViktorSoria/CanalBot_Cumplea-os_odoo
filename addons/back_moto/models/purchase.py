@@ -53,7 +53,7 @@ class PurchaseLoad(models.TransientModel):
                 if self.detalles == 'file':
                     d['price_unit'] = float(l[2].value)
                 else:
-                    d['price_unit'] = self.standard_price
+                    d['price_unit'] = p.standard_price
                 data.append([0,0,d])
         else:
             csv_file = base64.b64decode(self.file).decode()
@@ -75,7 +75,7 @@ class PurchaseLoad(models.TransientModel):
                 if self.detalles == 'file':
                     d['price_unit'] = float(l[2])
                 else:
-                    d['price_unit'] = self.standard_price
+                    d['price_unit'] = p.standard_price
                 data.append([0, 0, d])
         return [data,product]
 

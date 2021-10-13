@@ -12,6 +12,19 @@ _log = logging.getLogger("stock_picking (%s) -------> " % __name__)
 class StockMove(models.Model):
     _inherit = "stock.move"
 
+    def _search_picking_for_assignation(self):
+        self.ensure_one()
+        picking = self.env['stock.picking'].search([
+                ('group_id', '=', self.group_id.id),
+                ('location_id', '=', self.location_id.id),
+                ('location_dest_id', '=', self.location_dest_id.id),
+                ('picking_type_id', '=', self.picking_type_id.id),
+                ('printed', '=', False),
+                ('immediate_transfer', '=', False),
+                ('origin', '=', self.origin),
+                ('state', 'in', ['draft', 'confirmed', 'waiting', 'partially_available', 'assigned'])], limit=1)
+        return picking
+
     def _assign_picking(self):
         """ Try to assign the moves to an existing picking that has not been
         reserved yet and has the same procurement group, locations and picking
@@ -24,7 +37,7 @@ class StockMove(models.Model):
             new_picking = False
             # Could pass the arguments contained in group but they are the same
             # for each move that why moves[0] is acceptable
-            picking = False #moves[0]._search_picking_for_assignation()
+            picking = moves[0]._search_picking_for_assignation()
             if picking:
                 if any(picking.partner_id.id != m.partner_id.id or
                         picking.origin != m.origin for m in moves):

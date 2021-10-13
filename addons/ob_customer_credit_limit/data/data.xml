@@ -1,19 +1,22 @@
 <?xml version='1.0' encoding='utf-8'?>
 <odoo>
-    <record model="ir.cron" id="cron_inspect_invoices_wo_payment">
-        <field name="name">CHeck invoices without payment</field>
-        <field name="model_id" ref="account.model_account_move"/>
-        <field name="state">code</field>
-<!--        <field name="user_id" ref="base.user_root"/>-->
-        <field name="interval_number">1</field> <!-- To decide clearly -->
-        <field name="interval_type">days</field>
-        <field name="numbercall">-1</field>
-        <field name="code">model.cron_calcule_cargos()</field>
-    </record>
+    <data noupdate="True">
+        <record model="ir.cron" id="cron_inspect_invoices_wo_payment">
+            <field name="name">CHeck invoices without payment</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="state">code</field>
+            <field name="active">False</field>
+            <!--        <field name="user_id" ref="base.user_root"/>-->
+            <field name="interval_number">1</field> <!-- To decide clearly -->
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="code">model.cron_calcule_cargos()</field>
+        </record>
 
-    <record model="product.product" id="invoice_wo_payment_product_charge">
-        <field name="name">Reorganización de la deuda con intereses moratorios</field>
-        <field name="type">service</field>
-<!--        <field name="unspsc_code_id">service</field>-->
-    </record>
+        <record model="product.product" id="invoice_wo_payment_product_charge">
+            <field name="name">Reorganización de la deuda con intereses moratorios</field>
+            <field name="type">service</field>
+            <!--        <field name="unspsc_code_id">service</field>-->
+        </record>
+    </data>
 </odoo>
