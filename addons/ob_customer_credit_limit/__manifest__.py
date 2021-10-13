@@ -21,6 +21,7 @@
         'views/res_partner.xml',
         'views/sale_order.xml',
         'views/account_move.xml',
+        'views/res_config.xml',
     ],
     'installable': True,
     'auto_install': False,
