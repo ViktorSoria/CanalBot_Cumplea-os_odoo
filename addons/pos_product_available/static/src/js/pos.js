@@ -64,7 +64,7 @@ odoo.define("pos_product_available.PosModel", function (require) {
                     }else{
                         let newof = offset;
                         let tam = _.size(self.env.pos.db.product_by_id);
-                        let tiempo = 10000;
+                        let tiempo = 30000;
                         if(newof>tam){newof=0;}
                         try {
                             await self.recompute_quantity(limit,newof);
