@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="view_form_sale_order_inherit" model="ir.ui.view">
+        <field name="name">view.form.sale.order.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='product_id']" position="attributes">
+                <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_create':True}</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_form_purchase_order_inherit" model="ir.ui.view">
+        <field name="name">view.form.purchase.order.inherit</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/sheet/notebook/page/field/tree/field[@name='product_id']" position="attributes">
+                <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_create':True}</attribute>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
