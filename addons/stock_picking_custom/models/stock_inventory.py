@@ -19,7 +19,6 @@ class StockInventoryCustom(models.Model):
         #Agrega productos
         products = self.env['product.product'].search([('pos_categ_id', 'in', self.category_products_PDV.ids), ('id', 'not in', self.product_ids.ids)])
         self.write({'product_ids': [(6, 0, products.ids)]})
-        _log.info(self.product_ids)
 
 
 class StockMoveCustom(models.Model):

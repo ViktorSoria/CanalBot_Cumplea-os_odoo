@@ -39,8 +39,6 @@ class StockPickingCustom(models.Model):
 
     @api.onchange('location_transfer_id')
     def _change_location_dest(self):
-        _log.info(self.location_transfer_id)
-        _log.info(self.location_transfer_id.virtual_location)
         self.location_dest_id = self.location_transfer_id.virtual_location
 
     @api.onchange('is_transfer')

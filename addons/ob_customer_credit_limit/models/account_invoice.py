@@ -19,7 +19,7 @@ class Inovice(models.Model):
     def cron_calcule_cargos(self):
         # tasa de adeudo
         porcentaje = self.env['ir.config_parameter'].sudo().get_param('cargo_vencimiento') or 4.4
-        _logger.info("PORCENTAJE DE ADEUDO ::: %s " % porcentaje)
+        # _logger.info("PORCENTAJE DE ADEUDO ::: %s " % porcentaje)
         owed_rate = (float(porcentaje)/100)
         # Facturas adeudadas al día de hoy.
         inv_domain = [
