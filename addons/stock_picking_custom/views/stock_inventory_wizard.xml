@@ -1,0 +1,32 @@
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="wizard_download_data_form_view">
+            <field name="name">wizard.download.data.form</field>
+            <field name="model">wizard.download.data</field>
+            <field name="arch" type="xml">
+                <form string="Informacion a descargar">
+                    <group>
+<!--                        <field name="locations"/>-->
+<!--                        <field name="stock_quants_ids"/>-->
+                    </group>
+                    <footer>
+                        <button name="download_data" type="object" string="Descargar" class="oe_highlight"/>
+                        <button special="cancel" string="Cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="act_download_data" model="ir.actions.act_window">
+            <field name="name">Descargar Información</field>
+            <field name="res_model">wizard.download.data</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="wizard_download_data_form_view"/>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_download_data" parent="stock.menu_warehouse_report" name="Descargar Existencias" sequence="1000"
+                  action="act_download_data" groups="stock.group_stock_manager,stock.group_stock_user"/>
+    </data>
+</odoo>

@@ -36,3 +36,12 @@ class StockMoveCustom(models.Model):
         return act_qty
 
 
+class StockQuantWizard(models.TransientModel):
+    _name = "wizard.download.data"
+
+    # locations =
+    # stock_quants_ids =
+
+    def download_data(self):
+        _log.info('Button')
+

@@ -7,9 +7,15 @@
     ],
     "installable": True,
     "data": [
+        "security/ir.model.access.csv",
         "report/picking_report.xml",
         "views/stock_picking.xml",
-        "views/stock_inventory_views.xml"
+        "views/stock_inventory_wizard.xml",
+        # "views/stock_inventory_views.xml",
+        # "views/stock_templates.xml"
+    ],
+    'qweb': [
+        # 'static/src/xml/stock_template_button.xml',
     ],
     'post_init_hook': 'post_init_hook',
     'auto_install': True,
