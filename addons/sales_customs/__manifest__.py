@@ -11,6 +11,7 @@
         'views/pos_order_views.xml',
         'views/account_payment_views.xml',
         'views/orders_views.xml',
+        'views/account_report_inherit.xml'
     ],
     "qweb": [
         "base", "point_of_sale", "pos_pay_control"

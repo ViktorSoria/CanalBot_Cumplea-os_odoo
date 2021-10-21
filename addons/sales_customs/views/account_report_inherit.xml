@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_invoice_document_inherit" inherit_id="account.report_invoice_document">
+        <xpath expr="//span[@t-field='line.price_unit']" position="replace">
+            <t t-set="unit_price_noiva" t-value=" round((line.price_unit / 1.16),2)"/>
+<!--            <span class="text-nowrap" t-field="line.price_unit"/>-->
+            <span class="text-nowrap" t-esc="unit_price_noiva"/>
+        </xpath>
+    </template>
+
+    <template id="report_sale_document_inherit" inherit_id="sale.report_saleorder_document">
+        <xpath expr="//span[@t-field='line.price_unit']" position="replace">
+            <t t-set="unit_price_noiva" t-value=" round((line.price_unit / 1.16),2)"/>
+                <!--<span t-field="line.price_unit"/>-->
+            <span t-esc="unit_price_noiva"/>
+        </xpath>
+    </template>
+</odoo>
