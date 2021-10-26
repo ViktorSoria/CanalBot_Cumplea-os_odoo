@@ -254,6 +254,14 @@
 
     </t>
 
+    <t t-name="ProductItem" t-inherit="point_of_sale.ProductItem" t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[hasclass('product-name')]" position="replace">
+            <div class="product-name" t-attf-id="article_product_{{props.product.id}}">
+                <t t-esc="props.product.short_name"/>
+            </div>
+        </xpath>
+    </t>
+
     <t t-name="OrderSummary" t-inherit="point_of_sale.OrderSummary" t-inherit-mode="extension" owl="1">
         <xpath expr="//div[@class='entry total']" position="after">
             <div class="subentry">
