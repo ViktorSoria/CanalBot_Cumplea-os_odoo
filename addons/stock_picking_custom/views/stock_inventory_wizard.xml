@@ -7,8 +7,9 @@
             <field name="arch" type="xml">
                 <form string="Informacion a descargar">
                     <group>
-<!--                        <field name="locations"/>-->
-<!--                        <field name="stock_quants_ids"/>-->
+<!--                        <field name="file_name" required="True"/>-->
+                        <field name="location_id" options="{'no_create': True, 'no_create_edit':True, 'no_quick_create': True, 'no_open': True}"/>
+                        <field name="stock_quants_ids"/>
                     </group>
                     <footer>
                         <button name="download_data" type="object" string="Descargar" class="oe_highlight"/>
