@@ -19,6 +19,19 @@
             </field>
         </record>
 
+        <record model="ir.ui.view" id="wizard_warning_data">
+            <field name="name">wizard.warning.data</field>
+            <field name="model">wizard.warning</field>
+            <field name="arch" type="xml">
+                <form string="Warning">
+                        <field name="msg" readonly="True"/>
+                    <footer>
+                        <button name="accept" type="object" string="Aceptar" class="oe_highlight"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
         <record id="act_download_data" model="ir.actions.act_window">
             <field name="name">Descargar Información</field>
             <field name="res_model">wizard.download.data</field>
