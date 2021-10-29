@@ -43,7 +43,7 @@
         </xpath>
         <xpath expr="//th[@t-if='is_cfdi_signed']" position="replace">
             <th t-if="is_cfdi_signed" style="width: 10%">
-                <span>Product code</span>
+                <span>Código Producto</span>
             </th>
         </xpath>
     </template>
