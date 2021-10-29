@@ -202,7 +202,7 @@
                         <WrappedProductNameLines line="line" />
                     </t>-->
                     <!--<t t-else="">-->
-                        <div t-esc="line.product_name_wrapped[0]" />
+                        <div t-esc="line.product_name_wrapped[0]" style="height:5px;"/>
                         <WrappedProductNameLines line="line" />
                         <t t-if="line.display_discount_policy == 'without_discount' and line.price != line.price_lst">
                             <div class="pos-receipt-left-padding">

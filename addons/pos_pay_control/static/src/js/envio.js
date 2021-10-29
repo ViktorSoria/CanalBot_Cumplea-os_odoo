@@ -31,6 +31,7 @@ odoo.define("pos_pay_control.SendOrder", function (require) {
                             method: 'envia',
                             args: [parseInt(payload.value),data],
                         }).then(aut => {
+                            console.log(" AL INICIO DE A DENTOR DEL AWAIT ... >>>  PAYLOAD");
                             if(aut){
                                 let order = this.env.pos.get_order();
                                 this.showPopup("ConfirmPopup",{
