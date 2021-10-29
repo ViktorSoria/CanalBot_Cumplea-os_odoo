@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+accces_wizard_download_data,accces.wizard.download.data,model_wizard_download_data,stock.group_stock_manager,1,1,1,1
+accces_wizard_warning,accces.wizard.warning,model_wizard_warning,base.group_user,1,1,1,1

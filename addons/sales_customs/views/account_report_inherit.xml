@@ -11,8 +11,39 @@
     <template id="report_sale_document_inherit" inherit_id="sale.report_saleorder_document">
         <xpath expr="//span[@t-field='line.price_unit']" position="replace">
             <t t-set="unit_price_noiva" t-value=" round((line.price_unit / 1.16),2)"/>
-                <!--<span t-field="line.price_unit"/>-->
-            <span t-esc="unit_price_noiva"/>
+            <span class="text-nowrap" t-esc="unit_price_noiva"/>
+        </xpath>
+    </template>
+
+    <template id="report_document_invoice_mx_inherit" inherit_id="l10n_mx_edi.report_invoice_document_mx">
+        <xpath expr="//t[@t-if='is_cfdi_signed']" position="replace">
+            <t t-if="is_cfdi_signed">
+                <t t-if="cfdi_vals.get('usage')">
+                    <div name="cfdi_vals['usage']" style="width: 20%">
+                        <strong>Uso:</strong>
+                        <p><span t-esc="cfdi_vals['usage']"/><span> - </span><span t-field="o.l10n_mx_edi_usage"/></p>
+                    </div>
+                </t>
+                <t t-if="o.l10n_mx_edi_payment_method_id">
+                    <div class="col-auto col-3 mw-100 mb-2">
+                        <strong>Forma de Pago:</strong>
+                        <p t-esc="'%s - %s' % (o.l10n_mx_edi_payment_method_id.code, o.l10n_mx_edi_payment_method_id.name)"/>
+                    </div>
+                </t>
+                <div class="col-auto col-3 mw-100 mb-2">
+                    <strong>Metodo de Pago:</strong>
+                    <p t-esc="cfdi_vals.get('payment_method')"/>
+                </div>
+                <div class="col-auto col-3 mw-100 mb-2" t-if="cfdi_vals.get('bank_account')">
+                    <strong>Cuenta de Banco:</strong>
+                    <p t-esc="cfdi_vals['bank_account']"/>
+                </div>
+            </t>
+        </xpath>
+        <xpath expr="//th[@t-if='is_cfdi_signed']" position="replace">
+            <th t-if="is_cfdi_signed" style="width: 10%">
+                <span>Product code</span>
+            </th>
         </xpath>
     </template>
 </odoo>

@@ -21,6 +21,10 @@
                     </page>
                 </notebook>
             </xpath>
+            <xpath expr="//field[@name='exhausted']" position="after">
+                <field name="is_file" attrs="{'readonly': [('state','!=','draft')]}"/>
+                <field name="import_file" attrs="{'readonly': [('state','!=','draft')], 'invisible': [('is_file','=',False)]}"/>
+            </xpath>
         </field>
     </record>
 </odoo>
