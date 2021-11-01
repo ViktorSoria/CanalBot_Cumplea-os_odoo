@@ -18,7 +18,7 @@ class StockPickingCustom(models.Model):
 
     @api.depends('picking_type_id')
     def compute_seller_team(self):
-        _log.warning("Entre depends")
+        # _log.warning("Entre depends")
         for record in self:
             if record.picking_type_id and record.picking_type_code == 'outgoing':
                 if record.sale_id:
@@ -29,8 +29,8 @@ class StockPickingCustom(models.Model):
                     record.seller = record.pos_order_id.user_id
                     record.team_sale = record.pos_order_id.user_id.sale_team_id
                     continue
-            _log.warning(record.seller)
-            _log.warning(record.team_sale)
+            # _log.warning(record.seller)
+            # _log.warning(record.team_sale)
             record.seller = None
             record.team_sale = None
 
