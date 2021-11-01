@@ -37,15 +37,14 @@ agregar sello al final del ticket
 multiusr
 tek2101
 
-1.- Al momento de liberar ticket Liberar e imprimir.
-2.-Ajuste actualización de existencias en POS.
-3.-No permitir cobrar prodcutos que vengan en 0 piezas o $0. (Quitar las lineas al pagar)4 hrs
-4.-En la impresión de Ticket, cuado es una pieza, que diga 1xPrecio unitario. (Ajuste a ticket, no hacer diferencia de cuando se compra una pieza y cuando se compra mas de una, dejar formato de mas de una siempre)2 hrs
-5.-Modificación de Formatos Factura Pedido a surtir (más compactos) si van a desglosar IVA, entonces mostrar precios en la factura antes de IVA. (modificar reportes, cortar espacio entre lineas y todo donde se desperdice espacio) 6 hrs
-6.-En el POS las descripciones largas de los productos, no permiten visualzar precio y existencia. (Cortar descripciones en cuadritos al ponerse encima mostrar nombre completo pos) 2hrs
-7.- En el ticket las descripciones tengan un maximo de carácteres. (Cortar las descripciones a lo equivalete a dos renglones de ticket preferentemente)1 hr
-8.-Código QR en facturas desde POS. (Revisar por que no salen, si deberia de generarlos) 2 hr
-9.-Por default salga publico general. (Al pasar a pagar si no se tiene cliente en el pedido seleccionar publico en general) 2 hr
-10.-Inventarios Generales (todo se maneja en excel). Descargar reporte de inventario, con columna de a mano y otra para colocar contado.
+Isaac 1.- Al momento de liberar ticket Liberar e imprimir.
+Isaac 3.-No permitir cobrar prodcutos que vengan en 0 piezas o $0. (Quitar las lineas al pagar)4 hrs
+Isaac 4.-En la impresión de Ticket, cuado es una pieza, que diga 1xPrecio unitario. (Ajuste a ticket, no hacer diferencia de cuando se compra una pieza y cuando se compra mas de una, dejar formato de mas de una siempre)2 hrs
+Jeho 5.-Modificación de Formatos Factura Pedido a surtir (más compactos) si van a desglosar IVA, entonces mostrar precios en la factura antes de IVA. (modificar reportes, cortar espacio entre lineas y todo donde se desperdice espacio) 6 hrs
+Isaac 6.-En el POS las descripciones largas de los productos, no permiten visualzar precio y existencia. (Cortar descripciones en cuadritos al ponerse encima mostrar nombre completo pos) 2hrs
+Isaac 7.- En el ticket las descripciones tengan un maximo de carácteres. (Cortar las descripciones a lo equivalete a dos renglones de ticket preferentemente)1 hr
+Isaac 8.-Código QR en facturas desde POS. (Revisar por que no salen, si deberia de generarlos) 2 hr
+Isaac 9.-Por default salga publico general. (Al pasar a pagar si no se tiene cliente en el pedido seleccionar publico en general) 2 hr
+Jeho 10.-Inventarios Generales (todo se maneja en excel). Descargar reporte de inventario, con columna de a mano y otra para colocar contado.
     Opcion para cargar el excel a los ajustes de inventario. En la lista de productos mostrar contado, a mano, diferencia y diferencia en dinero,
      con respecto al coste actual del producto. Descargar reporte de ajuste en excel 12-14 hr
