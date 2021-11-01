@@ -109,11 +109,11 @@
                    <div class="button" t-on-click="confirm">
                        <t t-esc="props.confirmText"/>
                    </div>
-                   <!--
+
                    <div class="button" t-on-click="confirmAndPrint">
                        <t t-esc="props.printConfirmText"/>
                    </div>
-                   -->
+
                    <div class="button cancel" t-on-click="cancel">
                        <t t-esc="props.cancelText"/>
                    </div>
@@ -202,8 +202,7 @@
                         <WrappedProductNameLines line="line" />
                     </t>-->
                     <!--<t t-else="">-->
-                        <div t-esc="line.product_name_wrapped[0]" />
-                        <div t-esc="line.product_name_wrapped[1]" />
+                        <div t-esc="line.product_name_wrapped[0]"/>
                         <WrappedProductNameLines line="line" />
                         <t t-if="line.display_discount_policy == 'without_discount' and line.price != line.price_lst">
                             <div class="pos-receipt-left-padding">
