@@ -13,10 +13,7 @@
              "views/pos_views.xml",
              "views/pos_discount.xml",
              ],
-    "qweb": [
-        "static/src/xml/pos.xml",
-        "static/src/xml/OrderReceiptLight.xml",
-            ],
+    "qweb": ["static/src/xml/pos.xml"],
     "post_load": None,
     "pre_init_hook": None,
     "post_init_hook": None,

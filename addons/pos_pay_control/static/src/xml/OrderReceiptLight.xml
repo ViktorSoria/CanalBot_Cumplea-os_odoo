@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates id="template" xml:space="preserve">
 
-    <t t-name="ReceiptLightScreen" owl="1">
-        <h2>Hola mundo !!</h2>
-
-<!--
+    <t t-name="OrderReceiptSent" owl="1">
         <div class="pos-receipt">
             <t t-if="receipt.company.logo">
                 <img class="pos-receipt-logo" t-att-src="receipt.company.logo" alt="Logo"/>
@@ -25,14 +22,14 @@
                 </t>
                 <t t-if="receipt.cashier">
                     <div class="cashier">
-                        <div>&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;</div>
+                        <div>--------------------------------</div>
                         <div>Served by <t t-esc="receipt.cashier" /></div>
                     </div>
                 </t>
             </div>
             <br /><br />
 
-            &lt;!&ndash; Orderlines &ndash;&gt;
+            <!-- Orderlines -->
 
             <div class="orderlines">
                 <t t-foreach="receipt.orderlines" t-as="line" t-key="line.id">
@@ -83,7 +80,6 @@
             </div>
 
         </div>
--->
     </t>
 
 </templates>

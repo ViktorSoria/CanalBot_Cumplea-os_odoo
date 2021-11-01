@@ -16,20 +16,16 @@ odoo.define('pos_product_available.Buttonsend', function (require) {
         getPayload() {
             return {value:this.state.inputValue,order:this.env.pos.get_order().name};
         }
-        confirmAndPrint(event){
-//            this.printReceiptC();
-            console.log("---- BS2 -----");
-            console.log(this);
-            this.showScreen('ReceiptLightScreen');
-//            this.props.resolve({ confirmed: true, payload: await this.getPayload() });
-//            this.trigger('close-popup');
+        async confirmAndPrint(event){
+            this.printReceiptC();
+            this.props.resolve({ confirmed: true, payload: await this.getPayload() });
+            this.trigger('close-popup');
         }
 
         async printReceiptC(){
             console.log("IMPRIMIENDO EL TICKET... ");
             console.log(this.env);
             if (this.env.pos.proxy.printer) {
-                /* Reenderizamos el HTML de manera oculta */
                 const printResult = await this.env.pos.proxy.printer.print_receipt(this.orderReceipt.el.outerHTML);
                 if (printResult.successful) {
                     return true;
