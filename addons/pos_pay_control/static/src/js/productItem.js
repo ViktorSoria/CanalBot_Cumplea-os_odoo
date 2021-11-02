@@ -8,10 +8,7 @@ odoo.define("pos_pay_control.productItem", function (require) {
         class extends ProductItem {
             constructor() {
                 super(...arguments);
-                var dis_name = this.props.product.display_name;
-//                var short_name = (dis_name.split("]")[1]).substring(0,30);
-                var short_name = dis_name.substring(0,30);
-                this['props']['product']['short_name'] = short_name;
+
             }
         }
     Registries.Component.extend(ProductItem, ProductItemCustom);
