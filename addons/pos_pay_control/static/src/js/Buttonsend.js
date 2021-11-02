@@ -13,64 +13,13 @@ odoo.define('pos_product_available.Buttonsend', function (require) {
             this.state.name = event.target.getAttribute('sname');
             this.state.inputValue = event.target.getAttribute('session-id');
         }
-        getPayload() {
+        async getPayload() {
             return {value:this.state.inputValue,order:this.env.pos.get_order().name};
         }
-        confirmAndPrint(event){
-//            this.printReceiptC();
-            console.log("---- BS2 -----");
-            console.log(this);
-            this.showScreen('ReceiptLightScreen');
-//            this.props.resolve({ confirmed: true, payload: await this.getPayload() });
-//            this.trigger('close-popup');
-        }
-
-        async printReceiptC(){
-            console.log("IMPRIMIENDO EL TICKET... ");
-            console.log(this.env);
-            if (this.env.pos.proxy.printer) {
-                /* Reenderizamos el HTML de manera oculta */
-                const printResult = await this.env.pos.proxy.printer.print_receipt(this.orderReceipt.el.outerHTML);
-                if (printResult.successful) {
-                    return true;
-                } else {
-                    const { confirmed } = await this.showPopup('ConfirmPopup', {
-                        title: printResult.message.title,
-                        body: 'Do you want to print using the web printer?',
-                    });
-                    if (confirmed) {
-                        // We want to call the _printWeb when the popup is fully gone
-                        // from the screen which happens after the next animation frame.
-                        await nextFrame();
-                        return await this._printWeb();
-                    }
-                    return false;
-                }
-            } else {
-                return await this._printWeb();
-            }
-        }
-
-        async _printWeb() {
-            try {
-                const isPrinted = document.execCommand('print', false, null);
-                if (!isPrinted) window.print();
-                return true;
-            } catch (err) {
-                await this.showPopup('ErrorPopup', {
-                    title: this.env._t('Printing is not supported on some browsers'),
-                    body: this.env._t(
-                        'Printing is not supported on some browsers due to no default printing protocol ' +
-                            'is available. It is possible to print your tickets by making use of an IoT Box.'
-                    ),
-                });
-                return false;
-            }
-        }
-
-        async confirm() {
-            console.log("___ ASYNC CONFIRM ");
-            this.props.resolve({ confirmed: true, payload: await this.getPayload() });
+        async confirmAndPrint(event){
+            let pay = await this.getPayload();
+            pay.print = true;
+            this.props.resolve({ confirmed: true, payload: pay});
             this.trigger('close-popup');
         }
     }
