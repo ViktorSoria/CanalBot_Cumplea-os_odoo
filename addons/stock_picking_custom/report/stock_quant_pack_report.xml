@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Papper format -->
+    <record id="paperformat_pack_tag" model="report.paperformat">
+        <field name="name">Etiqueta de packs</field>
+        <field name="default" eval="True"/>
+        <field name="format">custom</field>
+        <field name="page_height">50</field>
+        <field name="page_width">100</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">5</field>
+        <field name="margin_bottom">30</field>
+        <field name="margin_left">5</field>
+        <field name="margin_right">5</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="dpi">180</field>
+    </record>
+
+    <!-- Header and footer -->
+    <template id="pack_tag_styles">
+        <style>
+            .cus_page{
+                width: 100%;
+                font-size: 1.2em;
+                padding: 0;
+                margin: 0;
+                background-color: red;
+            }
+            .neg{
+                font-weight: bold;
+            }
+            .cntr{
+                text-align: center;
+            }
+            .bt{
+                border-top: 1px solid black;
+            }
+            .br{
+                border-right: 1px solid black;
+            }
+            .bb{
+                border-bottom: 1px solid black;
+            }
+            .bl{
+                border-left: 1px solid black;
+            }
+        </style>
+    </template>
+
+    <template id="pack_tag_header">
+        <div class="header">
+            <div class="row">
+                <div class="col-6">
+                </div>
+                <div class="col-6 text-right">
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="pack_tag_footer">
+        <div class="footer">
+            <t t-call="stock_picking_custom.pack_tag_styles"/>
+            <div class="container">
+
+            </div>
+        </div>
+    </template>
+
+    <template id="pack_tag_ext_layout">
+        <!-- Multicompany -->
+        <t t-if="not o and doc">
+            <t t-set="o" t-value="doc"/>
+        </t>
+        <t t-if="o and 'company_id' in o">
+            <t t-set="company" t-value="o.company_id"/>
+        </t>
+        <t t-if="not o or not 'company_id' in o">
+            <t t-set="company" t-value="res_company"/>
+        </t>
+        <t t-call="stock_picking_custom.pack_tag_styles"/>
+<!--        <t t-call="stock_picking_custom.pack_tag_header" />-->
+        <t t-raw="0"/>
+<!--        <t t-call="stock_picking_custom.pack_tag_footer" />-->
+    </template>
+
+    <!-- Main template -->
+    <template id="report_pack_tag_document">
+        <t t-call="stock_picking_custom.pack_tag_ext_layout">
+            <div class="page cus_page">
+                <p style="page-break-after:always;"/>
+                <div class="container">
+                    <div class="row bt bl br">
+                        <div class="col-12 neg cntr ">
+                            PROVEEDORA DE MOTOPARTES S.A. DE C.V.
+                        </div>
+                    </div>
+                    <div class="row bt bl br">
+                        <div class="col-4">Fecha validacion</div>
+                        <div class="col-4">No del paquete</div>
+                        <div class="col-4">Peso________</div>
+                    </div>
+                    <div class="row bt bl br">
+                        <div class="col-5">Empacado por</div>
+                        <div class="col-7">nOMBRE</div>
+                    </div>
+                    <div class="row neg bt bl br">
+                        <div class="col-4">Código</div>
+                        <div class="col-4">Cantidad</div>
+                        <div class="col-4">Descripción</div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="pdf_pack_tag_layout">
+        <t t-call="web.basic_layout">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="stock_picking_custom.report_pack_tag_document"/>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_pack_tag_report_pdf" model="ir.actions.report">
+        <field name="name">Etiqueta de paquete</field>
+        <field name="model">stock.quant.package</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">stock_picking_custom.pdf_pack_tag_layout</field>
+        <field name="report_file">stock_picking_custom.pdf_pack_tag_layout</field>
+        <field name="binding_model_id" ref="stock.model_stock_quant_package"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="stock_picking_custom.paperformat_pack_tag"/>
+    </record>
+</odoo>
