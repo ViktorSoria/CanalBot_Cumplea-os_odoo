@@ -262,6 +262,12 @@
         </xpath>
     </t>
 
+    <t t-name="WrappedProductNameLines" t-inherit="point_of_sale.WrappedProductNameLines" t-inherit-mode="extension" owl="1">
+        <xpath expr="//t[@t-as='wrapped_line']" position="replace">
+            <t t-foreach="props.line.product_name_wrapped.slice(1,2)" t-as="wrapped_line"><t t-esc="wrapped_line"/></t>
+        </xpath>
+    </t>
+
     <t t-name="OrderSummary" t-inherit="point_of_sale.OrderSummary" t-inherit-mode="extension" owl="1">
         <xpath expr="//div[@class='entry total']" position="after">
             <div class="subentry">
