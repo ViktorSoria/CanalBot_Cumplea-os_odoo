@@ -6,6 +6,7 @@
             <script type="text/javascript" src="/pos_pay_control/static/src/js/price.js"/>
             <script type="text/javascript" src="/pos_pay_control/static/src/js/productItem.js"/>
             <script type="text/javascript" src="/pos_pay_control/static/src/js/PaymentScreenCus.js"/>
+            <script type="text/javascript" src="/pos_pay_control/static/src/js/OrderReceiptLight.js"/>
             <script type="text/javascript" src="/pos_pay_control/static/src/js/cargo.js"/>
             <script type="text/javascript" src="/pos_pay_control/static/src/js/Buttonsend.js"/>
             <script type="text/javascript" src="/pos_pay_control/static/src/js/OrderReceipt.js"/>
@@ -13,6 +14,7 @@
             <script type="text/javascript" src="/pos_pay_control/static/src/js/recibe.js"/>
             <script type="text/javascript" src="/pos_pay_control/static/src/js/OrderSummary.js"/>
             <script type="text/javascript" src="/pos_pay_control/static/src/js/discount.js"/>
+            <script type="text/javascript" src="/pos_pay_control/static/src/js/printenv.js"/>
         </xpath>
         <xpath expr="//link[@id='pos-stylesheet']" position="after">
             <link rel="stylesheet" href="/pos_pay_control/static/src/css/pos.css"/>

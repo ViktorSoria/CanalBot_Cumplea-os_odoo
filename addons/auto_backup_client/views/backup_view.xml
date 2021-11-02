@@ -1,0 +1,56 @@
+<odoo>
+    <data>
+        <record id="view_backup_config_form" model="ir.ui.view">
+            <field name="name">db.backup.form</field>
+            <field name="model">db.backup</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Back-up view">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" readonly="True"/>
+                                <field name="token" readonly="True"/>
+                                <field name="date_down" readonly="True"/>
+                            </group>
+                            <group>
+                                <field name="state" readonly="True"/>
+                                <field name="delete" readonly="True"/>
+                                <field name="delete_date" readonly="True"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="error" readonly="True"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_backup_config_tree" model="ir.ui.view">
+            <field name="name">db.backup.tree</field>
+            <field name="model">db.backup</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree string="Backups">
+                    <field name='name'/>
+                    <field name='token'/>
+                    <field name='state'/>
+                    <field name='delete'/>
+                    <field name='delete_date'/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="action_backup" model="ir.actions.act_window">
+            <field name="name">Backups</field>
+            <field name="res_model">db.backup</field>
+            <field name="binding_view_types">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_backup_config_tree"/>
+        </record>
+
+        <menuitem id="auto_backup_menu" name="Backup" parent="base.menu_custom"/>
+        <menuitem parent="auto_backup_menu" action="action_backup" id="backup_conf_menu"/>
+    </data>
+</odoo>

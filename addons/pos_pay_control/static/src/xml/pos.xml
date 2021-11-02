@@ -109,11 +109,11 @@
                    <div class="button" t-on-click="confirm">
                        <t t-esc="props.confirmText"/>
                    </div>
-                   <!--
+
                    <div class="button" t-on-click="confirmAndPrint">
                        <t t-esc="props.printConfirmText"/>
                    </div>
-                   -->
+
                    <div class="button cancel" t-on-click="cancel">
                        <t t-esc="props.cancelText"/>
                    </div>
@@ -202,7 +202,7 @@
                         <WrappedProductNameLines line="line" />
                     </t>-->
                     <!--<t t-else="">-->
-                        <div t-esc="line.product_name_wrapped[0]" />
+                        <div t-esc="line.product_name_wrapped[0]"/>
                         <WrappedProductNameLines line="line" />
                         <t t-if="line.display_discount_policy == 'without_discount' and line.price != line.price_lst">
                             <div class="pos-receipt-left-padding">
@@ -259,6 +259,12 @@
             <div class="product-name" t-attf-id="article_product_{{props.product.id}}">
                 <t t-esc="props.product.short_name"/>
             </div>
+        </xpath>
+    </t>
+
+    <t t-name="WrappedProductNameLines" t-inherit="point_of_sale.WrappedProductNameLines" t-inherit-mode="extension" owl="1">
+        <xpath expr="//t[@t-as='wrapped_line']" position="replace">
+            <t t-foreach="props.line.product_name_wrapped.slice(1,2)" t-as="wrapped_line"><t t-esc="wrapped_line"/></t>
         </xpath>
     </t>
 
