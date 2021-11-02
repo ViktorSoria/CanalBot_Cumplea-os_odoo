@@ -10,7 +10,7 @@ odoo.define('pos_pay_control.ReceiptLightScreen', function (require) {
                 super(...arguments);
                 console.log("--- LR 3 ----");
                 console.log(this);
-                let result = await this._printReceipt();
+                let result = this._printReceipt();
                 console.log(result);
             }
         }
