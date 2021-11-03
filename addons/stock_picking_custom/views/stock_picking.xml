@@ -31,6 +31,9 @@
                 <attribute name="domain">[('usage', '!=', 'transit')]</attribute>
                 <attribute name="attrs">{'invisible': [('is_transfer', '=', True)]}</attribute>
             </xpath>
+            <xpath expr="//field[@name='group_id']" position="after">
+                <field name="packager"/>
+            </xpath>
         </field>
     </record>
 

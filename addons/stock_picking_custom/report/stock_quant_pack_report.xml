@@ -8,10 +8,10 @@
         <field name="page_height">50</field>
         <field name="page_width">100</field>
         <field name="orientation">Portrait</field>
-        <field name="margin_top">5</field>
-        <field name="margin_bottom">30</field>
-        <field name="margin_left">5</field>
-        <field name="margin_right">5</field>
+        <field name="margin_top">1</field>
+        <field name="margin_bottom">1</field>
+        <field name="margin_left">1</field>
+        <field name="margin_right">1</field>
         <field name="header_line" eval="False"/>
         <field name="header_spacing">0</field>
         <field name="dpi">180</field>
@@ -25,7 +25,7 @@
                 font-size: 1.2em;
                 padding: 0;
                 margin: 0;
-                background-color: red;
+                background-color: white;
             }
             .neg{
                 font-weight: bold;
@@ -97,19 +97,41 @@
                         </div>
                     </div>
                     <div class="row bt bl br">
-                        <div class="col-4">Fecha validacion</div>
-                        <div class="col-4">No del paquete</div>
-                        <div class="col-4">Peso________</div>
+                        <div class="col-5 br">Validación: <span t-esc="doc.get_picking_validate_date()"/></div>
+                        <div class="col-4 br">
+                            <span t-field="doc.name"/>
+                        </div>
+                        <div class="col-3">Peso ____________</div>
                     </div>
                     <div class="row bt bl br">
-                        <div class="col-5">Empacado por</div>
-                        <div class="col-7">nOMBRE</div>
+                        <div class="col-5 br">Empacado por</div>
+                        <div class="col-7"><t t-esc="doc.get_empacador_name()"/></div>
                     </div>
                     <div class="row neg bt bl br">
-                        <div class="col-4">Código</div>
-                        <div class="col-4">Cantidad</div>
-                        <div class="col-4">Descripción</div>
+                        <div class="col-2 br">Código</div>
+                        <div class="col-2 br">Cantidad</div>
+                        <div class="col-8">Descripción</div>
                     </div>
+                    <t t-set="qty" t-value="len(doc.quant_ids.ids)"/>
+                    <t t-set="index" t-value="0"/>
+                    <t t-foreach="doc.quant_ids" t-as="qi">
+                        <t t-set="index" t-value="index + 1"/>
+                        <t t-if="index != qty">
+                            <div class="row bt bl br">
+                                <div class="col-2 br"><span t-field="qi.product_id.default_code"/></div>
+                                <div class="col-2 br"><span t-field="qi.quantity"/></div>
+                                <div class="col-8"><span t-field="qi.product_id.name"/></div>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <div class="row bt bl br bb">
+                                <div class="col-2 br"><span t-field="qi.product_id.default_code"/></div>
+                                <div class="col-2 br"><span t-field="qi.quantity"/></div>
+                                <div class="col-8"><span t-field="qi.product_id.name"/></div>
+                            </div>
+                        </t>
+
+                    </t>
                 </div>
             </div>
         </t>
