@@ -69,39 +69,39 @@ class StockInventoryCustom(models.Model):
                         'message': msg}
                 }
 
-    def action_start(self):
-        res = super(StockInventoryCustom, self).action_start()
-        if self.is_file and self.stored_data:
-            products_list = list(self.stored_data.split(" "))
-            self.msg = ""
-            for product in products_list:
-                product_l = product.split("@")
-                flag_found = False
-                for line in self.line_ids:
-                    if line.product_id.default_code == product_l[0]:
-                        _log.info("Encontre el producto")
-                        flag_found = True
-                        if product_l[1]:
-                            try:
-                                line.product_qty = float(product_l[1])
-                            except ValueError:
-                                self.msg += str(product_l) + ": La cantidad introducida no es un numero\n"
-                        continue
-                if not flag_found:
-                        self.msg += str(product_l) + ": El producto no existe en la ubicación\n"
-        if self.msg != "":
-            self.msg = "Los siguientes productos no pudieron asignarse:\n\n" + self.msg
-            return {
-                'name': _("Los siguiente productos no pudieron asignarse"),  # Name You want to display on wizard
-                'view_mode': 'form',
-                'view_id': self.env.ref('stock_picking_custom.wizard_warning_data').id,
-                'view_type': 'form',
-                'res_model': 'wizard.warning',  # With . Example sale.order
-                'type': 'ir.actions.act_window',
-                'target': 'new',
-                'context': {'default_msg': self.msg}
-            }
-        return res
+    # def action_start(self):
+    #     res = super(StockInventoryCustom, self).action_start()
+    #     if self.is_file and self.stored_data:
+    #         products_list = list(self.stored_data.split(" "))
+    #         self.msg = ""
+    #         for product in products_list:
+    #             product_l = product.split("@")
+    #             flag_found = False
+    #             for line in self.line_ids:
+    #                 if line.product_id.default_code == product_l[0]:
+    #                     _log.info("Encontre el producto")
+    #                     flag_found = True
+    #                     if product_l[1]:
+    #                         try:
+    #                             line.product_qty = float(product_l[1])
+    #                         except ValueError:
+    #                             self.msg += str(product_l) + ": La cantidad introducida no es un numero\n"
+    #                     continue
+    #             if not flag_found:
+    #                     self.msg += str(product_l) + ": El producto no existe en la ubicación\n"
+    #     if self.msg != "":
+    #         self.msg = "Los siguientes productos no pudieron asignarse:\n\n" + self.msg
+    #         return {
+    #             'name': _("Los siguiente productos no pudieron asignarse"),  # Name You want to display on wizard
+    #             'view_mode': 'form',
+    #             'view_id': self.env.ref('stock_picking_custom.wizard_warning_data').id,
+    #             'view_type': 'form',
+    #             'res_model': 'wizard.warning',  # With . Example sale.order
+    #             'type': 'ir.actions.act_window',
+    #             'target': 'new',
+    #             'context': {'default_msg': self.msg}
+    #         }
+    #     return res
 
 
 class StockMoveCustom(models.Model):
