@@ -91,21 +91,26 @@
             <div class="page cus_page">
                 <p style="page-break-after:always;"/>
                 <div class="container">
+                    <t t-set="picking_info" t-value="doc.get_picking_data()"/>
                     <div class="row bt bl br">
                         <div class="col-12 neg cntr ">
                             PROVEEDORA DE MOTOPARTES S.A. DE C.V.
                         </div>
                     </div>
                     <div class="row bt bl br">
-                        <div class="col-5 br">Validación: <span t-esc="doc.get_picking_validate_date()"/></div>
+                        <div class="col-5 br">Validación: <span t-esc="picking_info['date_done']"/></div>
                         <div class="col-4 br">
                             <span t-field="doc.name"/>
                         </div>
                         <div class="col-3">Peso ____________</div>
                     </div>
                     <div class="row bt bl br">
+                        <div class="col-5 br"><t t-esc="picking_info['origin']"/></div>
+                        <div class="col-7"><t t-esc="picking_info['client']"/></div>
+                    </div>
+                    <div class="row bt bl br">
                         <div class="col-5 br">Empacado por</div>
-                        <div class="col-7"><t t-esc="doc.get_empacador_name()"/></div>
+                        <div class="col-7"><t t-esc="picking_info['packager']"/></div>
                     </div>
                     <div class="row neg bt bl br">
                         <div class="col-2 br">Código</div>
