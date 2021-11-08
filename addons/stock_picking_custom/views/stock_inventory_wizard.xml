@@ -8,8 +8,10 @@
                 <form string="Informacion a descargar">
                     <group>
 <!--                        <field name="file_name" required="True"/>-->
-                        <field name="location_id" options="{'no_create': True, 'no_create_edit':True, 'no_quick_create': True, 'no_open': True}"/>
-                        <field name="stock_quants_ids"/>
+                        <field name="location_id"
+                               options="{'no_create': True, 'no_create_edit':True, 'no_quick_create': True, 'no_open': True}"
+                               domain="[('usage', '=', 'internal')]"/>
+                        <field name="stock_quants_ids" invisible="True"/>
                     </group>
                     <footer>
                         <button name="download_data" type="object" string="Descargar" class="oe_highlight"/>
@@ -29,6 +31,17 @@
                         <button name="accept" type="object" string="Aceptar" class="oe_highlight"/>
                     </footer>
                 </form>
+            </field>
+        </record>
+
+        <record id="action_download_stockquant" model="ir.actions.server">
+            <field name="name">Descargar excel</field>
+            <field name="model_id" ref="stock_picking_custom.model_wizard_download_data"/>
+            <field name="binding_model_id" ref="stock.model_stock_quant"/>
+            <field name="binding_view_types">list</field>
+            <field name="state">code</field>
+            <field name="code">
+                    action = model.call_wizard_excel()
             </field>
         </record>
 
