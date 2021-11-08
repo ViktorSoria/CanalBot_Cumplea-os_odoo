@@ -14,9 +14,16 @@ odoo.define("pos_pay_control.PaymentScreenCus", function (require) {
                     if(line.quantity <= 0){
                         line.order.remove_orderline(line);
                     }
-                    console.log(line.quantity);
                 });
+                /* Cliente publico general */
+                var client = this.currentOrder['attributes']['client'];
+                if (client == null){
+                    var default_client = this.env.pos.config.default_client;
+                    if (default_client != null){
+                        this.currentOrder.set_client(this.env.pos.db.get_partner_by_id(default_client[0]));
+                    }
 
+                }
             }
         }
     Registries.Component.extend(PaymentScreen, paymentScreenCustom);

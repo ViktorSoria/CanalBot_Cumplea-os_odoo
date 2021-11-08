@@ -20,6 +20,13 @@ odoo.define("pos_pay_control.SendOrder", function (require) {
             const {confirmed, payload: payload} = await this.showPopup("Buttonsend", {'sessions':sessions});
             if(confirmed){
                 let order = this.env.pos.db.get_unpaid_orders().find(e=> e.name == payload.order);
+                if(!payload.value){
+                    this.showPopup("ErrorPopup",{
+                                    title: "Envio Fallido",
+                                    body: "La orden no pudo ser enviada, seleccione una caja destino.",
+                                })
+                    return
+                }
                 let data = JSON.stringify({
                     'unpaid_orders': [order],
                     'session_id':    payload.value,
@@ -31,22 +38,26 @@ odoo.define("pos_pay_control.SendOrder", function (require) {
                             method: 'envia',
                             args: [parseInt(payload.value),data],
                         }).then(aut => {
-                            console.log(" AL INICIO DE A DENTOR DEL AWAIT ... >>>  PAYLOAD");
                             if(aut){
                                 let order = this.env.pos.get_order();
-                                this.showPopup("ConfirmPopup",{
-                                    title: "Orden Enviada",
-                                    body: "El pedido fue enviado con exito",
-                                });
                                 //nueva orden
                                 let new_order = this.env.pos.add_new_order();
                                 this.env.pos.set_order(new_order);
+                                if(payload.print){
+                                    this.showScreen('PrintEnvScreen', { order: order });
+                                }else{
+                                    this.showScreen('ProductScreen');
+                                    this.showPopup("ConfirmPopup",{
+                                    title: "Orden Enviada",
+                                    body: "El pedido fue enviado con exito",
+                                    });
+                                }
                                 order.destroy({'reason':'abandon'});
                             }else{
                                 this.showPopup("ErrorPopup",{
                                     title: "Envio Fallido",
                                     body: "La orden no pudo ser enviada, comunicate con un Administrador",
-                                })
+                                });
                             }
                 });
             }

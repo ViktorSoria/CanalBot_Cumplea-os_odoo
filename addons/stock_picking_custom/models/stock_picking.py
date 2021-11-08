@@ -15,6 +15,7 @@ class StockPickingCustom(models.Model):
 
     seller = fields.Many2one('res.users', string="Vendedor", compute='compute_seller_team', store=True)
     team_sale = fields.Many2one('crm.team', string="Equipo de Ventas", compute='compute_seller_team', store=True)
+    packager = fields.Char(string="Empacador")
 
     @api.depends('picking_type_id')
     def compute_seller_team(self):

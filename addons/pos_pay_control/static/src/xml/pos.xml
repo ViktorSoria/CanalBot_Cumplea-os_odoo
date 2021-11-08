@@ -109,11 +109,11 @@
                    <div class="button" t-on-click="confirm">
                        <t t-esc="props.confirmText"/>
                    </div>
-                   <!--
+
                    <div class="button" t-on-click="confirmAndPrint">
                        <t t-esc="props.printConfirmText"/>
                    </div>
-                   -->
+
                    <div class="button cancel" t-on-click="cancel">
                        <t t-esc="props.cancelText"/>
                    </div>
@@ -202,7 +202,7 @@
                         <WrappedProductNameLines line="line" />
                     </t>-->
                     <!--<t t-else="">-->
-                        <div t-esc="line.product_name_wrapped[0]" style="height:5px;"/>
+                        <div t-esc="line.product_name_wrapped[0]"/>
                         <WrappedProductNameLines line="line" />
                         <t t-if="line.display_discount_policy == 'without_discount' and line.price != line.price_lst">
                             <div class="pos-receipt-left-padding">
@@ -256,9 +256,81 @@
 
     <t t-name="ProductItem" t-inherit="point_of_sale.ProductItem" t-inherit-mode="extension" owl="1">
         <xpath expr="//div[hasclass('product-name')]" position="replace">
-            <div class="product-name" t-attf-id="article_product_{{props.product.id}}">
-                <t t-esc="props.product.short_name"/>
+            <style>
+
+                .cut-text {
+                    overflow: hidden;
+                    position: relative;
+                    line-height: 1.2em;
+                    max-height: 2.4em;
+                    text-align: justify;
+                    margin-right: -1em;
+                    padding-right: 1em;
+                }
+
+                /*
+                .cut-text:before {
+                    content: ' ...';
+                    position: absolute;
+                    right: 0;
+                    bottom: 0;
+                }
+                */
+                .cut-text:after {
+                    content: '';
+                    position: absolute;
+                    right: 0;
+                    width: 1em;
+                    height: 1em;
+                    margin-top: 0.2em;
+                    background: white;
+                }
+
+                /*
+                .cut-text {
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    width: 60px;
+                    height: 2.5em;
+                    white-space: nowrap;
+                    top: 98px;
+                }
+
+                .cut-text:hover:after{
+                    cursor: pointer;
+                }
+                */
+
+                .tooltip {
+                    width: 60%;
+                    visibility: hidden;
+                    background-color: #fff;
+                    padding: 20px;
+                    -webkit-box-shadow: 0 0 50px 0 rgba(0,0,0,0.3);
+                    opacity: 0;
+                    transition: opacity 0.5s ease;
+                }
+                .cut-text:hover + .tooltip{
+                    visibility: visible;
+                    transition: opacity 0.5s ease;
+                    opacity: 1;
+                }
+            </style>
+            <div class="product-name cut-text" style="padding-top: 1px;" t-attf-id="article_product_{{props.product.id}}">
+<!--                <t t-esc="props.product.short_name"/>-->
+                <t t-esc="props.product.display_name"/>
             </div>
+
+            <div class="product-name tooltip" style="padding-top: 1px;" t-attf-id="article_product_{{props.product.id}}">
+<!--                <t t-esc="props.product.short_name"/>-->
+                <t t-esc="props.product.display_name"/>
+            </div>
+        </xpath>
+    </t>
+
+    <t t-name="WrappedProductNameLines" t-inherit="point_of_sale.WrappedProductNameLines" t-inherit-mode="extension" owl="1">
+        <xpath expr="//t[@t-as='wrapped_line']" position="replace">
+            <t t-foreach="props.line.product_name_wrapped.slice(1,2)" t-as="wrapped_line"><t t-esc="wrapped_line"/></t>
         </xpath>
     </t>
 
