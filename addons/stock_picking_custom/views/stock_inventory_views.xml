@@ -25,6 +25,51 @@
                 <field name="is_file" attrs="{'readonly': [('state','!=','draft')]}"/>
                 <field name="import_file" attrs="{'readonly': [('state','!=','draft')], 'invisible': [('is_file','=',False)]}"/>
             </xpath>
+            <xpath expr="//button[@name='action_view_related_move_lines']" position="before">
+                <button string="Lineas de Inventario" type="object" name="action_open_inventory_lines_from_button" class="oe_stat_button" icon="fa-bars" attrs="{'invisible': [('state', 'in', 'draft')]}"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="stock_inventory_line_tree_no_create" model="ir.ui.view">
+        <field name="name">stock.inventory.line.tree.no.create</field>
+        <field name="model">stock.inventory.line</field>
+        <field name="arch" type="xml">
+            <tree default_order="location_id,product_id" string="Lineas de Inventario"
+                  decoration-danger="product_qty != theoretical_qty"
+                  decoration-muted="product_qty == theoretical_qty"
+                  decoration-bf="is_editable"
+                  create="false">
+                <field name="company_id" invisible="1"/>
+                <field name="product_tracking" invisible="1"/>
+                <field name="is_editable" invisible="1"/>
+                <field name="outdated" invisible="1"/>
+                <field name="product_id" width="1.6"
+                       readonly="True"/>
+                <field name="location_id" groups="stock.group_stock_multi_locations"
+                       invisible="context.get('readonly_location_id', False)"
+                       readonly="True"/>
+                <field name="inventory_date" optional="hide" width="0.8"/>
+                <field name="prod_lot_id" groups="stock.group_production_lot" width="0.8"
+                       readonly="True"/>
+                <field name="package_id" groups="stock.group_tracking_lot" width="0.8"
+                       readonly="True"/>
+                <field name="partner_id" groups="stock.group_tracking_owner"
+                       readonly="True"/>
+                <field name="theoretical_qty" string="A mano" width="0.5"
+                       force_save="1" readonly="True" optional="show"/>
+                <field name="product_qty" width="0.5" string="Contado"
+                       readonly="True"
+                />
+                <field name="difference_qty" optional="show" width="0.5"/>
+                <field name="product_uom_id" string="UdM" groups="uom.group_uom"
+                       width="0.3" force_save="1"/>
+
+                <field name="cost_related" width="0.5" readonly="True"/>
+                <field name="money_diff" width="0.5" readonly="True"/>
+
+                <field name="inventory_id" invisible="1"/>
+                <field name="state" invisible="1"/>
+            </tree>
         </field>
     </record>
 </odoo>

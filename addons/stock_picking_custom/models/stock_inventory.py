@@ -106,6 +106,32 @@ class StockInventoryCustom(models.Model):
                     sucs.append((4, data['location_id']))
         return {'msg':msg,'locations':sucs,'lines':lines}
 
+    def action_open_inventory_lines_from_button(self):
+        self.ensure_one()
+        action = {
+            'type': 'ir.actions.act_window',
+            'view_mode': 'tree',
+            'name': _('Inventory Lines'),
+            'res_model': 'stock.inventory.line',
+        }
+        context = {
+            'default_is_editable': False,
+            'default_inventory_id': self.id,
+            'default_company_id': self.company_id.id,
+        }
+        domain = [
+            ('inventory_id', '=', self.id),
+            ('location_id.usage', 'in', ['internal', 'transit'])
+        ]
+        if len(self.location_ids) == 1:
+            if not self.location_ids[0].child_ids:
+                context['readonly_location_id'] = True
+
+        action['view_id'] = self.env.ref('stock_picking_custom.stock_inventory_line_tree_no_create').id
+        action['context'] = context
+        action['domain'] = domain
+        return action
+
     def action_start(self):
         msg=""
         flag_super =True
@@ -184,11 +210,11 @@ class StockQuantWizard(models.TransientModel):
         encabezados = workbook.add_format(
             {'bold': 'True', 'font_size': 12, 'bg_color': '#B7F9B0', 'center_across': True})
         sheet = workbook.add_worksheet('Libro 1')
-        sheet.set_column(0, 0, 10)
-        sheet.set_column(1, 1, 25)
-        sheet.set_column(2, 2, 13)
-        sheet.set_column(3, 5, 10)
-        sheet.set_column(6, 8, 10)
+        sheet.set_column(0, 0, 15)
+        sheet.set_column(1, 1, 45)
+        sheet.set_column(2, 2, 15)
+        sheet.set_column(3, 5, 12)
+        sheet.set_column(6, 8, 12)
         sheet.write(0, 0, 'Codigo', encabezados)
         sheet.write(0, 1, 'Descripción', encabezados)
         sheet.write(0, 2, 'Sucursal', encabezados)
@@ -196,7 +222,6 @@ class StockQuantWizard(models.TransientModel):
         sheet.write(0, 4, 'Precio Unitario', encabezados)
         sheet.write(0, 5, 'Precio Total', encabezados)
         sheet.write(0, 6, 'Cantidad Real', encabezados)
-        sheet.write(0, 7, 'Diferencia', encabezados)
         r = 1
         for l in self.stock_quants_ids:
             sheet.write(r, 0, str(l.product_id.default_code) if l.product_id.default_code else '')
@@ -206,7 +231,6 @@ class StockQuantWizard(models.TransientModel):
             sheet.write(r, 4, str(float(l.value/l.available_quantity)) if l.available_quantity != 0 else '0.0')
             sheet.write(r, 5, l.value)
             sheet.write(r, 6, '')
-            sheet.write(r, 7, '')
             r += 1
 
         workbook.close()
@@ -228,5 +252,14 @@ class StockQuantWizard(models.TransientModel):
             })
             return wizard.download_data()
 
+    class StockInventoryLineCustom(models.Model):
+        _inherit = "stock.inventory.line"
+
+        money_diff = fields.Float("Diferencia(MX)", compute='calculate_money_diff')
+        cost_related = fields.Float("Costo Unitario",  related='product_id.standard_price')
+
+        def calculate_money_diff(self):
+            for rec in self:
+                rec.money_diff = rec.difference_qty * rec.product_id.standard_price
 
 
