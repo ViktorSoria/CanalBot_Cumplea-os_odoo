@@ -41,17 +41,23 @@ class DbBackup(models.Model):
     delete_date = fields.Datetime("Fecha de Eliminacion")
     date_down = fields.Datetime("Fecha de descarga")
     error = fields.Char("Error")
+    md5 = fields.Char("Suma Binaria")
 
 
     @api.model
     def cron_delete_back(self):
-        days = self.env['ir.config_parameter'].get_param("days delete") or 7
+        days = self.env['ir.config_parameter'].get_param("days_delete") or 7
+        max = self.env['ir.config_parameter'].get_param("max_back") or 1
+        max = int(max)
         days = int(days)
-        backs = self.search([('delete','=',False),('create_date','<',datetime.now()-timedelta(days=days))])
+        backs = self.search([('delete','=',False),('delete_date','<',datetime.now()-timedelta(days=days))])
+        old = self.search([('delete', '=', False)],order="create_date desc")
+        old = old - old[:max]
+        backs = backs + old
         backs.delete_back()
 
     def delete_back(self):
-        dir = "/tmp/backups"
+        dir = self.env['ir.config_parameter'].get_param("path_backs") or "/tmp/backups"
         list_dir = os.listdir(dir)
         date_now = datetime.now()
         for back in self:
@@ -66,20 +72,24 @@ class DbBackup(models.Model):
 
     def db_backup(self,kw,active_id,bkp_file):
         name = kw.get('db')
-        new_cr = sql_db.db_connect(name).cursor()
+        regis = odoo.registry(name)
+        _logger.warning("Creando Respaldo")
         with Environment.manage():
-            env = Environment(new_cr, kw.get('uid'), {})
-            obj = env['db.backup'].browse(active_id)
-            try:
-                file_path = os.path.join("/tmp/backups", bkp_file)
-                fp = open(file_path, 'wb')
-                odoo.service.db.dump_db(name, fp, "zip")
-                fp.close()
-                obj.write({'name': bkp_file,'state':'term'})
-            except Exception as e:
-                obj.write({'name': bkp_file, 'state': 'error','error':str(e)})
-            env.cr.commit()
-            env.cr.close()
+            with regis.cursor() as cr:
+                env = Environment(cr, kw.get('uid'), {})
+                obj = env['db.backup'].browse(active_id)
+                try:
+                    dir = env['ir.config_parameter'].get_param("path_backs") or "/tmp/backups"
+                    file_path = os.path.join(dir, bkp_file)
+                    fp = open(file_path, 'wb')
+                    odoo.service.db.dump_db(name, fp, "zip")
+                    fp.close()
+                    md5 = self.gen_md5(file_path)
+                    obj.write({'name': bkp_file,'state':'term','md5':md5})
+                except Exception as e:
+                    obj.write({'name': bkp_file, 'state': 'error','error':str(e)})
+                env.cr.commit()
+                _logger.warning("Respaldo Creado")
 
     @api.model
     def create_back(self, vals=None):
@@ -100,3 +110,31 @@ class DbBackup(models.Model):
 
     def download(self):
         self.write({'state':'des','date_down':datetime.now()})
+
+    @api.model
+    def action_model(self,token,action):
+        obj = self.search([('token','=',token)])
+        if action == 'delete':
+            obj.delete_back()
+        elif action == 'download':
+            obj.download()
+        return True
+
+    def gen_md5(self,fname):
+        hash_md5 = hashlib.md5()
+        f = open(fname, "rb")
+        for chunk in iter(lambda: f.read(4096), b""):
+            hash_md5.update(chunk)
+        return hash_md5.hexdigest()
+
+lines = self.env['purchase.order.line'].search([('order_id.state','in',['done','purchase'])])
+prod = {}
+for l in lines:
+    if l.product_id.id in prod:
+        if l.l.order_id.date_approve > prod[l.product_id.id][1]:
+            prod[l.product_id] = [l.product_id, l.order_id.date_approve, l.price_unit]
+    else:
+        prod[l.product_id] = [l.product_id,l.order_id.date_approve,l.price_unit]
+
+for p,v in prod.items():
+    p.write({'standard_price':v[2]})
