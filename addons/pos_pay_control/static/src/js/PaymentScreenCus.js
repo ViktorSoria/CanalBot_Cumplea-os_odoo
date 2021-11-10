@@ -11,7 +11,7 @@ odoo.define("pos_pay_control.PaymentScreenCus", function (require) {
                 var order_id = this.currentOrder;
                 var orderlines = order_id.orderlines;
                 orderlines.forEach(function(line){
-                    if(line.quantity <= 0){
+                    if(line.quantity <= 0 && line.price <= 0.01){
                         line.order.remove_orderline(line);
                     }
                 });
