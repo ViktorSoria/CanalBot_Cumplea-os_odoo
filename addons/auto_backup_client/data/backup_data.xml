@@ -21,7 +21,15 @@
             <field name="state">code</field>
             <field name="code">
                 records.delete_back()
-                action = {}
+            </field>
+        </record>
+        <record model="ir.actions.server" id="create_back_action">
+            <field name="name">Crear Respaldo local</field>
+            <field name="model_id" ref="auto_backup_client.model_db_backup"/>
+            <field name="binding_model_id" ref="auto_backup_client.model_db_backup"/>
+            <field name="state">code</field>
+            <field name="code">
+                record.db_backup()
             </field>
         </record>
     </data>

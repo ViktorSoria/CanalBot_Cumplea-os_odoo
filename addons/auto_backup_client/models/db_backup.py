@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api, tools, _,sql_db
+from odoo import models, fields, api, tools, _,sql_db,SUPERUSER_ID
 from odoo.api import Environment
 import odoo
 import pytz
@@ -70,7 +70,22 @@ class DbBackup(models.Model):
                 _logger.warning(e)
                 back.write({'error': str(e)})
 
-    def db_backup(self,kw,active_id,bkp_file):
+    def db_backup(self):
+        try:
+            dir = self.env['ir.config_parameter'].get_param("path_backs") or "/tmp/backups"
+            file_path = os.path.join(dir, self.name)
+            fp = open(file_path, 'wb')
+            odoo.service.db.dump_db(self.env.cr.dbname, fp, "zip")
+            fp.close()
+            md5 = self.gen_md5(file_path)
+            self.write({'state': 'term', 'md5': md5})
+            _logger.warning("Termino respaldo")
+        except Exception as e:
+            self.write({'state': 'error', 'error': str(e)})
+            _logger.warning(str(e))
+        _logger.warning("Respaldo Creado")
+
+    def db_backup_thr(self,kw,active_id,bkp_file):
         name = kw.get('db')
         regis = odoo.registry(name)
         _logger.warning("Creando Respaldo")
@@ -78,18 +93,9 @@ class DbBackup(models.Model):
             with regis.cursor() as cr:
                 env = Environment(cr, kw.get('uid'), {})
                 obj = env['db.backup'].browse(active_id)
-                try:
-                    dir = env['ir.config_parameter'].get_param("path_backs") or "/tmp/backups"
-                    file_path = os.path.join(dir, bkp_file)
-                    fp = open(file_path, 'wb')
-                    odoo.service.db.dump_db(name, fp, "zip")
-                    fp.close()
-                    md5 = self.gen_md5(file_path)
-                    obj.write({'name': bkp_file,'state':'term','md5':md5})
-                except Exception as e:
-                    obj.write({'name': bkp_file, 'state': 'error','error':str(e)})
+                obj.db_backup()
                 env.cr.commit()
-                _logger.warning("Respaldo Creado")
+        _logger.warning("Saliendo ambiente")
 
     @api.model
     def create_back(self, vals=None):
@@ -103,8 +109,9 @@ class DbBackup(models.Model):
         token = hmac.new(secret.encode('utf-8'), str_tok.encode('utf-8'), hashlib.sha256).hexdigest()
         vals['state'] = "process"
         vals['token'] = token
+        vals['name'] = str_tok
         back = self.create(vals)
-        _thread = threading.Thread(target=back.db_backup, args=({'db':name, 'uid':self.env.user.id},back.id,str_tok))
+        _thread = threading.Thread(target=back.db_backup_thr, args=({'db':name, 'uid':SUPERUSER_ID},back.id,str_tok))
         _thread.start()
         return token
 
@@ -126,15 +133,3 @@ class DbBackup(models.Model):
         for chunk in iter(lambda: f.read(4096), b""):
             hash_md5.update(chunk)
         return hash_md5.hexdigest()
-
-lines = self.env['purchase.order.line'].search([('order_id.state','in',['done','purchase'])])
-prod = {}
-for l in lines:
-    if l.product_id.id in prod:
-        if l.l.order_id.date_approve > prod[l.product_id.id][1]:
-            prod[l.product_id] = [l.product_id, l.order_id.date_approve, l.price_unit]
-    else:
-        prod[l.product_id] = [l.product_id,l.order_id.date_approve,l.price_unit]
-
-for p,v in prod.items():
-    p.write({'standard_price':v[2]})
