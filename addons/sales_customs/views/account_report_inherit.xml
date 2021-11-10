@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
     <template id="report_invoice_document_inherit" inherit_id="account.report_invoice_document">
         <xpath expr="//span[@t-field='line.price_unit']" position="replace">
-            <t t-set="unit_price_noiva" t-value=" round((line.price_unit / 1.16),2)"/>
-<!--            <span class="text-nowrap" t-field="line.price_unit"/>-->
-            <span class="text-nowrap" t-esc="unit_price_noiva"/>
+            <t t-if="o.move_type in ['out_refund','out_invoice']">
+                <t t-set="unit_price_noiva" t-value=" round((line.price_unit / 1.16),2)"/>
+    <!--            <span class="text-nowrap" t-field="line.price_unit"/>-->
+                <span class="text-nowrap" t-esc="unit_price_noiva"/>
+            </t>
+            <t t-else="">
+                <span class="text-nowrap" t-field="line.price_unit"/>
+            </t>
         </xpath>
     </template>
 
