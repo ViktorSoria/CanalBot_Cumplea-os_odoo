@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="portal_my_home_pos_custom" name="Ventas mostrador" customize_show="True" inherit_id="portal.portal_my_home" priority="20">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Ventas en mostrador</t>
+                <t t-set="url" t-value="'/my/pos_sales'"/>
+                <t t-set="placeholder_count" t-value="'pos_order_count'"/>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="portal_my_pos_orders" name="My Pos Sales Orders">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Ventas en mostrador</t>
+            </t>
+            <t t-if="not porders">
+                <p>Actualmente no tienes ventas en mostrador.</p>
+            </t>
+            <t t-if="porders" t-call="portal.portal_table">
+                <thead>
+                    <tr class="active">
+                        <th>
+                            <span class='d-none d-md-inline'>Pedido #</span>
+                            <span class='d-block d-md-none'>Ref.</span>
+                        </th>
+                        <th class="text-right">Fecha de comprae</th>
+                        <th class="text-center"/>
+                        <th class="text-right">Total</th>
+                    </tr>
+                </thead>
+                <t t-foreach="porders" t-as="order">
+                    <tr>
+                        <td>
+                            <a t-att-href="order.get_portal_url()">
+                                <t t-esc="order.name"/>
+                            </a>
+                        </td>
+                        <td class="text-right">
+                            <span t-field="order.date_order" t-options="{'widget': 'date'}"/>&amp;nbsp;
+                            <span class='d-none d-md-inline' t-field="order.date_order" t-options="{'time_only': True}"/>
+                        </td>
+                        <td class="text-center">
+                            <span t-if="order.state == 'done'"  class="badge badge-pill badge-success">
+                                <i class="fa fa-fw fa-check" role="img" aria-label="Done" title="Done"/>Done
+                            </span>
+                        </td>
+                        <td class="text-right"><span t-field="order.amount_total"/></td>
+                    </tr>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <template id="pos_portal_order_content" name="Portal pos order">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Hola</t>
+            </t>
+            <t t-call="portal.portal_table">
+                <br/>
+                <style>
+                    .bg_white{
+                        background-color: white;
+                        margin: 0px;
+                    }
+                    .bb{
+                        border-bottom: 1px solid #ccc;
+                    }
+                    .pt10{
+                        padding-top: 10px;
+                    }
+                </style>
+                <div class="row bg_white bb pt10">
+                    <div class="col-6">
+                        <h2><t t-esc="porder.name"/></h2>
+                    </div>
+                </div>
+                <div>
+                    <t t-call="portal.portal_table">
+                        <thead>
+                            <tr class="active">
+                                <th>
+                                    <span class='d-none d-md-inline'>Producto</span>
+                                    <span class='d-block d-md-none'>Prod.</span>
+                                </th>
+                                <th class="text-right">Cantidad</th>
+                                <th class="text-right">
+                                    <span class='d-none d-md-inline'>Unidad de medida</span>
+                                    <span class='d-block d-md-none'>UDM</span>
+                                </th>
+                                <th class="text-right">Precio unitario</th>
+                                <th class="text-right">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <t t-foreach="porder.lines" t-as="line">
+                            <tr>
+                                <td>
+                                    <t t-esc="line.full_product_name"/>
+                                </td>
+                                <td class="text-right">
+                                    <span t-field="line.qty"/>
+                                </td>
+                                <td class="text-right"><span t-field="line.product_uom_id.name"/></td>
+                                <td class="text-right"><span t-field="line.price_unit"/></td>
+                                <td class="text-right"><span t-field="line.price_subtotal_incl"/></td>
+                            </tr>
+                        </t>
+                    </t>
+                    <div class="row" style="text-align: right; padding-right:20px;">
+                        <div class="col-9"/>
+                        <div class="col-3" style="border-top: 2px solid grey;">
+                            <h3>Total: </h3><span t-field="porder.amount_total"/>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+
+</odoo>
