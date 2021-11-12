@@ -59,7 +59,7 @@ class PosCustomerPortal(CustomerPortal):
         values.update({
             'date': date_begin,
             'porders': porders.sudo(),
-            'page_name': 'order',
+            'page_name': 'pos_orders',
             'pager': pager,
             'default_url': '/my/pos_orders',
             'searchbar_sortings': searchbar_sortings,
@@ -70,12 +70,11 @@ class PosCustomerPortal(CustomerPortal):
     @http.route(['/pos_order'], type='http', auth='user', website=True)
     def pos_order_details(self, **kwargs):
         pos_token = kwargs['stoken'] or ""
-        # PosOrder = request.env['pos.order'].sudo().search([('token_portal', 'ilike', pos_token)])[:1]
-        PosOrder = request.env['pos.order'].sudo().search([])[:100]
+        PosOrder = request.env['pos.order'].sudo().search([('token_portal', 'ilike', pos_token)])[:1]
         # _log.info("pos ordeR: :: %s " % PosOrder)
         values = {
             'porder': PosOrder,
-            'page_name': 'order',
+            'page_name': 'pos_order',
             'default_url': '/pos_order',
         }
         return request.render("website_multimoto.pos_portal_order_content", values)

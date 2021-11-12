@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Remove purchase order option from list of sets -->
+    <template id="portal_my_home_purchase" inherit_id="purchase.portal_my_home_purchase">
+<!--        <xpath expr="//t[first()]" position="after">-->
+<!--            <t t-call="portal.portal_docs_entry">-->
+<!--                <t t-set="title">LAS COMPRAS</t>-->
+<!--                <t t-set="url" t-value="'/my/purchase'"/>-->
+<!--                <t t-set="placeholder_count" t-value="'purchase_count'"/>-->
+<!--            </t>-->
+<!--        </xpath>-->
+    </template>
 
+    <!-- List of sets -->
     <template id="portal_my_home_pos_custom" name="Ventas mostrador" customize_show="True" inherit_id="portal.portal_my_home" priority="20">
         <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
             <t t-call="portal.portal_docs_entry">
@@ -11,6 +22,22 @@
         </xpath>
     </template>
 
+    <!-- Mini navbar -->
+    <template id="portal_my_home_menu_pos_sale" name="Portal layout : pos sales menu entries" inherit_id="portal.portal_breadcrumbs" priority="20">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'pos_orders'" t-attf-class="breadcrumb-item #{'active ' if not porder else ''}">
+                <t t-if="porders">Ventas en mostrador</t>
+            </li>
+            <li t-if="page_name == 'pos_order'" t-attf-class="breadcrumb-item #{'active ' if not porder else ''}">
+                <a t-if="porder" t-attf-href="/my/pos_sales?{{ keep_query() }}">Ventas en mostrador</a>
+            </li>
+            <li t-if="porder" class="breadcrumb-item active">
+                venta-<t t-esc="porder.name"/>
+            </li>
+        </xpath>
+    </template>
+
+    <!-- Order Set -->
     <template id="portal_my_pos_orders" name="My Pos Sales Orders">
         <t t-call="portal.portal_layout">
             <t t-set="breadcrumbs_searchbar" t-value="True"/>
@@ -56,6 +83,7 @@
         </t>
     </template>
 
+    <!-- Order -->
     <template id="pos_portal_order_content" name="Portal pos order">
         <t t-call="portal.portal_layout">
             <t t-set="breadcrumbs_searchbar" t-value="True"/>

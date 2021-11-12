@@ -7,7 +7,7 @@
     'category': 'Website',
     'description': """
 This module adds new some features about website and ecommerce portal.""",
-    'depends': ['portal', 'point_of_sale'],
+    'depends': ['portal', 'point_of_sale', 'purchase'],
     'data': [
         'views/pos_orders.xml',
     ],
