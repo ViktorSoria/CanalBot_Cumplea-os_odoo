@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!-- Remove purchase order option from list of sets -->
-    <template id="portal_my_home_purchase" inherit_id="purchase.portal_my_home_purchase">
-<!--        <xpath expr="//t[first()]" position="after">-->
+<!--    <template id="portal_my_home_purchase" inherit_id="purchase.portal_my_home_purchase">-->
+<!--        <xpath expr="//t[@t-call='portal.portal_docs_entry']" position="replace">-->
 <!--            <t t-call="portal.portal_docs_entry">-->
 <!--                <t t-set="title">LAS COMPRAS</t>-->
 <!--                <t t-set="url" t-value="'/my/purchase'"/>-->
 <!--                <t t-set="placeholder_count" t-value="'purchase_count'"/>-->
 <!--            </t>-->
 <!--        </xpath>-->
-    </template>
+<!--    </template>-->
 
     <!-- List of sets -->
     <template id="portal_my_home_pos_custom" name="Ventas mostrador" customize_show="True" inherit_id="portal.portal_my_home" priority="20">
@@ -207,7 +207,6 @@
                         </table>
                         <div id="total" class="row" name="total" style="page-break-inside: avoid;">
                             <div t-attf-class="#{'col-4' if report_type != 'html' else 'col-sm-7 col-md-5'} ml-auto">
-<!--                                <t t-call="website_multimoto.porder_portal_content_totals_table"/>-->
                                 <table class="table table-sm">
                                     <tr class="border-black">
                                         <td><strong>Subtotal</strong></td>
@@ -316,12 +315,6 @@
                 </div>
             </t>-->
         </t>
-    </template>
-
-    <!-- Table totals -->
-    <template id="porder_portal_content_totals_table">
-
-
     </template>
 
 </odoo>
