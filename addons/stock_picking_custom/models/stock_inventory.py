@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import api, models, fields, _
+from odoo.exceptions import UserError
 from datetime import datetime
 import logging
 import io
@@ -188,16 +189,20 @@ class StockQuantWizard(models.TransientModel):
     _name = "wizard.download.data"
 
     location_id = fields.Many2one('stock.location', string='Ubicación')
+    category_ids = fields.Many2many('pos.category', string='Categorias')
     stock_quants_ids = fields.Many2many('stock.quant', string='Existencias')
     excel_file = fields.Binary('excel file')
     file_name = fields.Char('Nombre del Archivo', size=128)
 
-    @api.onchange('location_id')
     def compute_quants(self):
         if self.location_id:
             self.stock_quants_ids = self.location_id.quant_ids
-        else:
-            self.stock_quants_ids = None
+            if self.category_ids:
+                categories = self.category_ids.ids
+                self.stock_quants_ids = self.stock_quants_ids.filtered(lambda x: x.product_id.pos_categ_id.id in categories)
+        if not self.stock_quants_ids:
+            raise UserError(_('No se han encontrado existencias con la ubicación y las categorias seleccionadas'))
+        return self.download_data()
 
     def download_data(self):
         _log.info('Button')
