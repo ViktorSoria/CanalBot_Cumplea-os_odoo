@@ -48,3 +48,13 @@ Isaac 9.-Por default salga publico general. (Al pasar a pagar si no se tiene cli
 Jeho 10.-Inventarios Generales (todo se maneja en excel). Descargar reporte de inventario, con columna de a mano y otra para colocar contado.
     Opcion para cargar el excel a los ajustes de inventario. En la lista de productos mostrar contado, a mano, diferencia y diferencia en dinero,
      con respecto al coste actual del producto. Descargar reporte de ajuste en excel 12-14 hr
+
+
+2 años de experiencia trabajando como Desarrollador Full Stack en "Soluciones en Ingeniería Tekniu". Actualmente me desempeño como Project Manager en la misma.
+Participación en el concurso de "Robotica y Prototipos de desarrollo tecnológico" en la categoria de sumo
+Participación y obtención de primer lugar en "Concurso de Programación" realizado por la FIE con motivo del 53 aniversario.
+Participación por 4 años consecutivos (2018-2021) en la competencia de codificación llamada "Code Jam" realizada por Google.
+
+Diego Josafat Pelayo Gómez mat:1341315D
+Estudio Ingeniería en Computación (Tramite de titulación)
+Peticion de Posgrado a "Sistemas computacionales"

@@ -23,7 +23,7 @@ class ProductTemplate(models.Model):
         tarifas = self.env['product.pricelist'].search_read(fields=['id', 'name'])
         tarifas = {d['id']:d['name'] for d in tarifas}
         for p in self:
-            prices = [{'name':"Precio del Producto",'precio':self.list_price,"product_id": p.id}]
+            prices = [{'name':"Precio del Producto",'precio':p.list_price,"product_id": p.id}]
             data_p = data[p.id]
             for tarifa,precio in data_p.items():
                 prices.append({
@@ -35,6 +35,36 @@ class ProductTemplate(models.Model):
                 })
             lines = self.env['product.price.transient'].create(prices)
             p.line_ids = [(6,0,lines.ids)]
+
+    def export_data(self,fields_to_export):
+        """
+        se agregan las lineas al archivo web/controllers/main.py en el metodo base(self, data, token)
+        datas = records.export_data(field_names)
+        export_data = datas.get('datas', [])
+        columns_headers = datas.get('columns_headers', columns_headers)
+        """
+        res = super().export_data(fields_to_export)
+        if "line_ids/precio" in fields_to_export and "line_ids/display_name":
+            res = res.get('datas')
+            listas = self.env['product.pricelist'].search([])
+            precio_index = fields_to_export.index("line_ids/precio")
+            nombre_index = fields_to_export.index("line_ids/display_name")
+            fields_to_export.pop(precio_index)
+            fields_to_export.pop(nombre_index)
+            new_res = []
+            disp = (len(listas)+1)
+            for i in range(len(res)//disp):
+                add = []
+                for j in range(disp):
+                    precio = res[i*disp+j].pop(precio_index)
+                    add.append(precio)
+                    nombre = res[i*disp+j].pop(nombre_index)
+                    if i==0:
+                        fields_to_export.append(nombre)
+                    if j==disp-1:
+                        new_res.append(res[i*disp]+add)
+            res = {'datas':new_res,'columns_headers':fields_to_export}
+        return res
 
 
 class ProducPrice(models.TransientModel):
