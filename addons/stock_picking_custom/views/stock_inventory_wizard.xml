@@ -8,16 +8,17 @@
                 <form string="Informacion a descargar">
                     <group>
 <!--                        <field name="file_name" required="True"/>-->
-                        <field name="location_id"
+                        <field name="location_id" required="True"
                                options="{'no_create': True, 'no_create_edit':True, 'no_quick_create': True, 'no_open': True}"
                                domain="[('usage', '=', 'internal')]"/>
                         <field name="category_ids"
                                options="{'no_create': True, 'no_create_edit':True, 'no_quick_create': True, 'no_open': True}"
                                widget="many2many_tags"/>
+                        <field name="file_selection"  required="True"/>
                         <field name="stock_quants_ids" invisible="True"/>
                     </group>
                     <footer>
-                        <button name="compute_quants" type="object" string="Descargar" class="oe_highlight"/>
+                        <button name="download_choice" type="object" string="Descargar" class="oe_highlight"/>
                         <button special="cancel" string="Cancel"/>
                     </footer>
                 </form>

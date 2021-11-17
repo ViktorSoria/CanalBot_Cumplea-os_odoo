@@ -193,13 +193,20 @@ class StockQuantWizard(models.TransientModel):
     stock_quants_ids = fields.Many2many('stock.quant', string='Existencias')
     excel_file = fields.Binary('excel file')
     file_name = fields.Char('Nombre del Archivo', size=128)
+    file_selection = fields.Selection([('excel', 'Excel'), ('pdf', 'PDF')], string="Tipo de Archivo", default='excel')
+
+    def download_choice(self):
+        if self.file_selection == 'excel':
+            return self.compute_quants()
+        else:
+            pass
 
     def compute_quants(self):
-        if self.location_id:
-            self.stock_quants_ids = self.location_id.quant_ids
-            if self.category_ids:
-                categories = self.category_ids.ids
-                self.stock_quants_ids = self.stock_quants_ids.filtered(lambda x: x.product_id.pos_categ_id.id in categories)
+        _log.info("compute quants")
+        self.stock_quants_ids = self.location_id.quant_ids
+        if self.category_ids:
+            categories = self.category_ids.ids
+            self.stock_quants_ids = self.stock_quants_ids.filtered(lambda x: x.product_id.pos_categ_id.id in categories)
         if not self.stock_quants_ids:
             raise UserError(_('No se han encontrado existencias con la ubicación y las categorias seleccionadas'))
         return self.download_data()
@@ -245,6 +252,7 @@ class StockQuantWizard(models.TransientModel):
         url = self.env['ir.config_parameter'].get_param('web.base.url')
         file_url = url + "/web/binary/download_document?model=wizard.download.data&id=%s&field=excel_file&filename=%s" % (
         self.id, self.file_name)
+        _log.info(file_url)
         return {
             'type': 'ir.actions.act_url',
             'url': file_url,
