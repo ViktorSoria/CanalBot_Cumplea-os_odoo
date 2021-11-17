@@ -17,7 +17,7 @@
             <xpath expr="//sheet" position="inside">
                 <notebook>
                     <page string="Productos" name="product_lines">
-                        <field name="product_ids"/>
+                        <field name="product_ids" options="{'no_quick_create':True,'no_create_edit':True,'no_create':True}"/>
                     </page>
                 </notebook>
             </xpath>
