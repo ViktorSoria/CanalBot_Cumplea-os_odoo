@@ -113,6 +113,12 @@ class PurchaseOrder(models.Model):
             "context": {"default_purchase_id":self.id}
         }
 
+    def button_confirm(self):
+        res = super(PurchaseOrder,self).button_confirm()
+        for l in self.order_line:
+            l.product_id.standard_price = l.price_unit
+        return res
+
 
 class wiardMessage(models.TransientModel):
     _name = 'message.wizard'
