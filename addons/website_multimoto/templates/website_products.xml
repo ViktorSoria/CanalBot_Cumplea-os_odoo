@@ -11,10 +11,10 @@
             <div class="collapse d-lg-block" id="wsale_products_lines_collapse">
                 <ul class="nav nav-pills flex-column mb-2">
                     <li class="nav-item">
-                       <a t-att-href="keep('/shop', brand=0)" t-attf-class="nav-link #{'' if brand else 'active'} o_not_editable">All Brands</a>
+                       <a t-att-href="keep('/shop', line=0)" t-attf-class="nav-link #{'' if brand else 'active'} o_not_editable">Todas las lineas</a>
                     </li>
-                    <t t-foreach="brands" t-as="c">
-                        <t t-call="product_brand_ecommerce.brands_recursive" />
+                    <t t-foreach="all_lines" t-as="c">
+<!--                        <t t-call="product_brand_ecommerce.brands_recursive" />-->
                     </t>
                 </ul>
             </div>

@@ -149,6 +149,7 @@ class WebsiteLines(WebsiteSale):
 
         # catch line
         Line = request.env['ws.product.line']
+        all_lines = Line.sudo().search([])
         if line:
             line = Line.sudo().search([('id', '=', int(line))])
             if not line:
@@ -204,6 +205,10 @@ class WebsiteLines(WebsiteSale):
             categs_domain.append(('id', 'in', search_categories.ids))
         else:
             search_categories = Category
+
+        if line:
+            line_categs = line.product_catg_public_id.ids
+            categs_domain.append(('id', 'in', line_categs))
         categs = Category.search(categs_domain)
 
         if category:
@@ -246,160 +251,10 @@ class WebsiteLines(WebsiteSale):
             'keep': keep,
             'search_categories_ids': search_categories.ids,
             'layout_mode': layout_mode,
+            # 'all_lines': all_lines,
 
         }
         if category:
             values['main_object'] = category
         return request.render("website_sale.products", values)
 
-
-    # @http.route([
-    #     '''/shop''',
-    #     '''/shop/page/<int:page>''',
-    #     '''/shop/category/<model("product.public.category"):category>''',
-    #     '''/shop/category/<model("product.public.category"):categorys>/page/<int:page>''',
-    #     '''/shop/line/<string:line_name>''',
-    # ], type='http', auth="public", website=True)
-    # def shop(self, page=0, category=None, search='', ppg=False, line_name=None, **post):
-    #     line_name = line_name.upper() if line_name is not None else None
-    #     add_qty = int(post.get('add_qty', 1))
-    #     _log.info("La category::: %s " % category)
-    #     Category = request.env['product.public.category']
-    #     if category:
-    #         category = Category.search([('id', '=', int(category))], limit=1)
-    #         if not category or not category.can_access_from_current_website():
-    #             raise NotFound()
-    #     else:
-    #         category = Category
-    #     line = request.env['ws.product.line'].sudo().search([('name', 'like', line_name)])[:1]
-    #     line_categories = line.mapped('product_catg_public_id')
-    #     if ppg:
-    #         try:
-    #             ppg = int(ppg)
-    #             post['ppg'] = ppg
-    #         except ValueError:
-    #             ppg = False
-    #     if not ppg:
-    #         ppg = request.env['website'].get_current_website().shop_ppg or 20
-    #
-    #     ppr = request.env['website'].get_current_website().shop_ppr or 4
-    #
-    #     attrib_list = request.httprequest.args.getlist('attrib')
-    #     attrib_values = [[int(x) for x in v.split("-")] for v in attrib_list if v]
-    #     attributes_ids = {v[0] for v in attrib_values}
-    #     attrib_set = {v[1] for v in attrib_values}
-    #
-    #     domain = self._get_search_domain(search, category, attrib_values)
-    #
-    #     keep = QueryURL('/shop', category=category and int(category), search=search, attrib=attrib_list,
-    #                     order=post.get('order'))
-    #
-    #     pricelist_context, pricelist = self._get_pricelist_context()
-    #
-    #     request.context = dict(request.context, pricelist=pricelist.id, partner=request.env.user.partner_id)
-    #
-    #     url = "/shop"
-    #     if search:
-    #         post["search"] = search
-    #     if attrib_list:
-    #         post['attrib'] = attrib_list
-    #
-    #     Product = request.env['product.template'].with_context(bin_size=True)
-    #
-    #     search_product = Product.search(domain)
-    #
-    #     # Filtering all products that have the selected categories from line.
-    #     products_ok = []
-    #     for p in search_product:
-    #         product_ok = False
-    #         for cid in p.public_categ_ids.ids:
-    #             if cid in line_categories.ids:
-    #                 product_ok = True
-    #         if product_ok:
-    #             products_ok.append(p.id)
-    #
-    #     search_product_wlines = search_product.filtered(lambda pr: pr.id in products_ok)
-    #
-    #
-    #     website_domain = request.website.website_domain()
-    #     categs_domain = [('parent_id', '=', False)] + website_domain
-    #     if line_name != None :
-    #         categs_domain += [('id', 'in', line_categories.ids)]
-    #     if search:
-    #         search_categories = Category.search(
-    #             [('product_tmpl_ids', 'in', search_product.ids)] + website_domain).parents_and_self
-    #         categs_domain.append(('id', 'in', search_categories.ids))
-    #     else:
-    #         search_categories = Category
-    #     categs = Category.search(categs_domain)
-    #
-    #     if category:
-    #         url = "/shop/category/%s" % slug(category)
-    #
-    #     product_count = len(search_product)
-    #     pager = request.website.pager(url=url, total=product_count, page=page, step=ppg, scope=7, url_args=post)
-    #     products = Product.search(domain, limit=ppg, offset=pager['offset'], order=self._get_search_order(post))
-    #     print(products)
-    #
-    #     ProductAttribute = request.env['product.attribute']
-    #     if products:
-    #         # get all products without limit
-    #         attributes = ProductAttribute.search([('product_tmpl_ids', 'in', search_product.ids)])
-    #     else:
-    #         attributes = ProductAttribute.browse(attributes_ids)
-    #
-    #     layout_mode = request.session.get('website_sale_shop_layout_mode')
-    #     if not layout_mode:
-    #         if request.website.viewref('website_sale.products_list_view').active:
-    #             layout_mode = 'list'
-    #         else:
-    #             layout_mode = 'grid'
-    #     if line_name is not None:
-    #         pager_lines = request.website.pager(url=url, total=len(search_product_wlines), page=page, step=ppg, scope=7,
-    #                                             url_args=post)
-    #         _log.info("Entra el modificado.. ")
-    #         values = {
-    #             'search': search,
-    #             'category': category,
-    #             'line_name': line_name,
-    #             'attrib_values': attrib_values,
-    #             'attrib_set': attrib_set,
-    #             'pager': pager_lines,
-    #             'pricelist': pricelist,
-    #             'add_qty': add_qty,
-    #             'products': search_product_wlines,
-    #             'search_count': len(search_product_wlines),  # common for all searchbox
-    #             'bins': TableCompute().process(search_product_wlines, ppg, ppr),
-    #             'ppg': ppg,
-    #             'ppr': ppr,
-    #             'categories': categs,
-    #             'attributes': attributes,
-    #             'keep': keep,
-    #             'search_categories_ids': search_categories.ids,
-    #             'layout_mode': layout_mode,
-    #         }
-    #         return request.render("website_sale.products", values)
-    #     else:
-    #         _log.info("Entra  el original :: %s " % add_qty)
-    #         values = {
-    #             'search': search,
-    #             'category': category,
-    #             'attrib_values': attrib_values,
-    #             'attrib_set': attrib_set,
-    #             'pager': pager,
-    #             'pricelist': pricelist,
-    #             'add_qty': add_qty,
-    #             'products': products,
-    #             'search_count': product_count,  # common for all searchbox
-    #             'bins': TableCompute().process(products, ppg, ppr),
-    #             'ppg': ppg,
-    #             'ppr': ppr,
-    #             'categories': categs,
-    #             'attributes': attributes,
-    #             'keep': keep,
-    #             'search_categories_ids': search_categories.ids,
-    #             'layout_mode': layout_mode,
-    #         }
-    #         if category:
-    #             values['main_object'] = category
-    #         return request.render("website_sale.products", values)
