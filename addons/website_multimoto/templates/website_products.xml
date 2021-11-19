@@ -1,7 +1,8 @@
 <odoo>
     <template id="lines_recursive" name="Lines list">
         <li class="nav-item">
-            <a t-att-href="keep('/shop/line/' + slug(c), line=0)" t-attf-class="nav-link #{'active' if line and c.id==line.id else ''}">
+            <a t-att-href="keep('/shop/line/' + slug(c), line=0)"
+               t-attf-class="nav-link #{'active' if line and c.id==line.id else ''}">
                 <span t-field="c.name"/>
             </a>
         </li>
@@ -18,7 +19,14 @@
                 Mostrar lineas
             </button>
             <div class="collapse d-lg-block" id="wsale_products_lines_collapse">
-                <ul class="nav nav-pills flex-column mb-2">
+                <style>
+                    .filters_border{
+                        border: 1px solid grey;
+                        margin-bottom: 200px;
+                        border-radius: 5px;
+                    }
+                </style>
+                <ul class="nav nav-pills flex-column mb-2 filters_border">
                     <li class="nav-item">
                        <a t-att-href="keep('/shop', line=0)" t-attf-class="nav-link #{'' if line else 'active'} o_not_editable">Todas las lineas</a>
                     </li>
@@ -27,6 +35,37 @@
                     </t>
                 </ul>
             </div>
+            <xpath expr="//ul[@id='o_shop_collapse_category']" position="attributes">
+                <!--<style>
+                    .filters_border{
+                        border: 1px solid grey;
+                        margin-top: 20px;
+                        margin-bottom: 20px;
+                        border-radius: 5px;
+                    }
+                </style>
+                <attribute name="class">nav nav-pills flex-column mb-2 filters_border</attribute>-->
+            </xpath>
         </xpath>
+    </template>
+
+    <template id="products_categories" inherit_id="website_sale.products" active="False" customize_show="True" name="eCommerce Categories">
+            <xpath expr="//div[@id='wsale_products_categories_collapse']" position="replace">
+                <style>
+                    .filters_border{
+                        border: 1px solid grey;
+                        margin-bottom: 200px;
+                        border-radius: 5px;
+                    }
+                </style>
+                <ul class="nav nav-pills flex-column mb-2 filters_border">
+                    <li class="nav-item">
+                        <a t-att-href="keep('/shop', category=0)" t-attf-class="nav-link #{'' if category else 'active'} o_not_editable">Todos los productos</a>
+                    </li>
+                    <t t-foreach="categories" t-as="c">
+                        <t t-call="website_sale.categories_recursive" />
+                    </t>
+                </ul>
+            </xpath>
     </template>
 </odoo>
