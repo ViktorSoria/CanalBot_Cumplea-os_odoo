@@ -150,6 +150,7 @@ class WebsiteLines(WebsiteSale):
         # catch line
         Line = request.env['ws.product.line']
         all_lines = Line.sudo().search([])
+        _log.info(" TODAS LAS LINEAS:: :%s " % all_lines)
         if line:
             line = Line.sudo().search([('id', '=', int(line))])
             if not line:
@@ -251,7 +252,8 @@ class WebsiteLines(WebsiteSale):
             'keep': keep,
             'search_categories_ids': search_categories.ids,
             'layout_mode': layout_mode,
-            # 'all_lines': all_lines,
+            'all_lines': all_lines,
+            'line': line,
 
         }
         if category:

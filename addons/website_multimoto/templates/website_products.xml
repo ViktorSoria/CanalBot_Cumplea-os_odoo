@@ -1,9 +1,18 @@
 <odoo>
-    <template id="products_line_categories" inherit_id="website_sale.products" active="False" customize_show="True" name="Product Brand Filter">
+    <template id="lines_recursive" name="Lines list">
+        <li class="nav-item">
+            <a t-att-href="keep('/shop/line/' + slug(c), line=0)" t-attf-class="nav-link #{'active' if line and c.id==line.id else ''}">
+                <span t-field="c.name"/>
+            </a>
+        </li>
+    </template>
+
+    <!--o_shop_collapse_category-->
+    <template id="products_line_categories" inherit_id="website_sale.products" active="True" customize_show="True" name="Product Line Filter">
         <xpath expr="//div[@id='products_grid_before']" position="before">
             <t t-set="enable_left_column" t-value="True"/>
         </xpath>
-        <xpath expr="//div[@id='products_grid_before']" position="inside">
+        <xpath expr="//ul[@id='o_shop_collapse_category']" position="before">
             <button type="button" class="btn btn-link d-lg-none"
                 data-target="#wsale_products_lines_collapse" data-toggle="collapse">
                 Mostrar lineas
@@ -11,10 +20,10 @@
             <div class="collapse d-lg-block" id="wsale_products_lines_collapse">
                 <ul class="nav nav-pills flex-column mb-2">
                     <li class="nav-item">
-                       <a t-att-href="keep('/shop', line=0)" t-attf-class="nav-link #{'' if brand else 'active'} o_not_editable">Todas las lineas</a>
+                       <a t-att-href="keep('/shop', line=0)" t-attf-class="nav-link #{'' if line else 'active'} o_not_editable">Todas las lineas</a>
                     </li>
                     <t t-foreach="all_lines" t-as="c">
-<!--                        <t t-call="product_brand_ecommerce.brands_recursive" />-->
+                        <t t-call="website_multimoto.lines_recursive" />
                     </t>
                 </ul>
             </div>
