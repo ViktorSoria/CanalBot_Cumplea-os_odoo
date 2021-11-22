@@ -54,6 +54,8 @@ class Product(models.Model):
             # We fetch the standard price as the superuser
             products = self.with_company(company or self.env.company).sudo()
         lista = self._context.get('pricelist_id')
+        _log.warning("Buscando en product")
+        _log.warning(lista)
         items_dic = {}
         if lista:
             items = self.env['product.pricelist.item'].search([('product_tmpl_id', 'in', products.mapped('product_tmpl_id').ids), ('pricelist_id', '=', lista.id)])
@@ -122,38 +124,43 @@ class Template(models.Model):
             lista_rel = l.relational_list
             lista_rel.mapped('item_ids').unlink()
             for p in remate:
+                item_rel = l.item_ids.filtered(lambda i: i.product_tmpl_id.id == p[0])
                 data = {
                     'applied_on': '1_product',
                     'product_tmpl_id': p[0],
-                    'compute_price': 'formula',
-                    'base': 'pricelist',
-                    'base_pricelist_id': l.id,
-                    'price_discount': lista_rel.por_remate,
+                    'compute_price': 'fixed',
+                    'fixed_price': item_rel.fixed_price*(100-lista_rel.por_remate)/100,
                     'pricelist_id': lista_rel.id
                 }
                 self.env['product.pricelist.item'].create(data)
             for p in promocion:
+                item_rel = l.item_ids.filtered(lambda i: i.product_tmpl_id.id == p[0])
                 data ={
                     'applied_on': '1_product',
                     'product_tmpl_id': p[0],
-                    'compute_price': 'formula',
-                    'base': 'pricelist',
-                    'base_pricelist_id': l.id,
-                    'price_discount': lista_rel.por_promo,
+                    'compute_price': 'fixed',
+                    'fixed_price': item_rel.fixed_price *(100-lista_rel.por_promo)/ 100,
                     'pricelist_id':lista_rel.id
                 }
                 self.env['product.pricelist.item'].create(data)
 
     def _get_combination_info(self, combination=False, product_id=False, add_qty=1, pricelist=False, parent_combination=False, only_template=False):
-        obj = self
+        combi = super(Template,self)._get_combination_info(
+            combination=combination, product_id=product_id, add_qty=add_qty, pricelist=pricelist,
+            parent_combination=parent_combination, only_template=only_template)
         if self.env.context.get('website_id'):
             current_website = self.env['website'].get_current_website()
             if not pricelist:
                 pricelist = current_website.get_current_pricelist()
-            obj = self.with_context(pricelist_id=pricelist.relational_list)
-        return super(Template,obj)._get_combination_info(
-            combination=combination, product_id=product_id, add_qty=add_qty, pricelist=pricelist,
-            parent_combination=parent_combination, only_template=only_template)
+            price = self.with_context(pricelist_id=pricelist.relational_list).price_compute('list_price')[self.id]
+            list_price = combi.get('list_price',0)
+            has_discounted_price = pricelist.currency_id.compare_amounts(list_price, price) == 1
+            combi.update(
+                price=price,
+                list_price=list_price,
+                has_discounted_price=has_discounted_price,
+            )
+        return combi
 
     def price_compute(self, price_type, uom=False, currency=False, company=None):
         # TDE FIXME: delegate to template or not ? fields are reencoded here ...
@@ -173,6 +180,8 @@ class Template(models.Model):
             company = self.env.company
         date = self.env.context.get('date') or fields.Date.today()
         lista = self._context.get('pricelist_id')
+        _log.warning("Buscando en template")
+        _log.warning(lista)
         items_dic = {}
         if lista:
             items = self.env['product.pricelist.item'].search([('product_tmpl_id', 'in', templates.ids), ('pricelist_id', '=', lista.id)])
@@ -196,5 +205,5 @@ class Template(models.Model):
             # This is right cause a field cannot be in more than one currency
             if currency:
                 prices[template.id] = template.currency_id._convert(prices[template.id], currency, company, date)
-
+        _log.warning(prices)
         return prices
