@@ -10,3 +10,9 @@
 ul.scroll_categ > li > a {
     padding: 2px;
 }
+
+.filters_border{
+    border: 1px solid grey;
+    margin-bottom: 200px;
+    border-radius: 5px;
+}

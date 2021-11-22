@@ -19,13 +19,6 @@
                 Mostrar lineas
             </button>
             <div class="collapse d-lg-block" id="wsale_products_lines_collapse">
-                <style>
-                    .filters_border{
-                        border: 1px solid grey;
-                        margin-bottom: 200px;
-                        border-radius: 5px;
-                    }
-                </style>
                 <ul class="nav nav-pills flex-column mb-2 filters_border">
                     <li class="nav-item">
                        <a t-att-href="keep('/shop', line=0)" t-attf-class="nav-link #{'' if line else 'active'} o_not_editable">Todas las lineas</a>
