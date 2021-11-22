@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	
+	<template id="stock_available" inherit_id="website_sale_stock.website_sale_stock_product" priority="100">
+        <xpath expr="//div[@class='availability_messages o_not_editable']" position="after">
+            <a class="btn btn-link mt16" id="stock_available" href="#">
+                <i class='fa fa-th-list' role="img"/>
+                Consulta disponibilidad en tienda
+            </a>
+        </xpath>
+    </template>
+
+    <template id="product_price" inherit_id="website_sale.product_price">
+        <xpath expr="//div[@class='product_price mt16']/h4" position="inside">
+            <span> + iva</span>
+        </xpath>
+    </template>
+
+    <template id="product" inherit_id="website_sale.products_item">
+        <xpath expr="//h6[@class='o_wsale_products_item_title']" position="attributes">
+            <attribute name="class">o_wsale_products_item_title ocult-text</attribute>
+        </xpath>
+        <xpath expr="//div[@class='product_price']" position="inside">
+            <span> + iva</span>
+        </xpath>
+    </template>
+
+    <template id="product_origin" inherit_id="website_sale.product">
+        <xpath expr="//div[@id='product_details']/h1" position="attributes">
+            <attribute name="class">block-with-text</attribute>
+        </xpath>
+    </template>
+
+</odoo>

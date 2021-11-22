@@ -19,7 +19,7 @@ class ProductTemplate(models.Model):
 
     def compute_line_price(self):
         products = [(product,False,False) for product in self]
-        data = self.env['product.pricelist']._compute_price_rule_multi(products)
+        data = self.env['product.pricelist'].search([('lista_precio','=',True)])._compute_price_rule_multi(products)
         tarifas = self.env['product.pricelist'].search_read(fields=['id', 'name'])
         tarifas = {d['id']:d['name'] for d in tarifas}
         for p in self:
@@ -71,6 +71,7 @@ class Pricelist(models.Model):
 
     file = fields.Binary("Nuevos Precios (csv)")
     file_name = fields.Char("Nombre archivo")
+    lista_precio = fields.Boolean("Lista de precio",default=True)
 
     def get_lines(self):
         lines = []

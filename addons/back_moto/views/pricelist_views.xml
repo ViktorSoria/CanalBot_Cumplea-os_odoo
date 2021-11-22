@@ -8,6 +8,7 @@
         <field name="arch" type="xml">
             <xpath expr="//group[@name='pricelist_discounts']" position="after">
                 <group>
+                    <field name="lista_precio" groups="base.group_no_one"/>
                     <field name="file_name" invisible="1"/>
                     <field name="file" filename="file_name"/>
                     <button type="object" name="update_price" string="Actualizar precios" class="oe_highlight"

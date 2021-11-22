@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <t t-name="website_customs.stock_product_available">
+        <div class="table_stock mt16">
+            <table class="table">
+                <tbody>
+                    <t t-foreach="stock" t-as="s">
+                        <tr>
+                            <td t-esc="s[0]"/>
+                            <td t-esc="s[1]" class="right_td"/>
+                        </tr>
+                    </t>
+                </tbody>
+            </table>
+        </div>
+    </t>
+
+</odoo>
