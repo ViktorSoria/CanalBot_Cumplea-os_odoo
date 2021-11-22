@@ -19,9 +19,9 @@ class List(models.Model):
     _inherit = "product.pricelist"
 
     relational_list = fields.Many2one("product.pricelist",'Lista relacionada')
-    porcentaje = fields.Float('Porcentaje')
-    promocion = fields.Boolean("Promocion")
-    remate = fields.Boolean("Remate")
+    por_promo = fields.Float('Porcentaje promocion')
+    por_remate = fields.Float('Porcentaje remate')
+    promocion = fields.Boolean("Promocion y remate")
 
 
 class Product(models.Model):
@@ -121,21 +121,6 @@ class Template(models.Model):
         for l in listas.filtered(lambda l: l.relational_list.promocion):
             lista_rel = l.relational_list
             lista_rel.mapped('item_ids').unlink()
-            for p in promocion:
-                data ={
-                    'applied_on': '1_product',
-                    'product_tmpl_id': p[0],
-                    'compute_price': 'formula',
-                    'base': 'pricelist',
-                    'base_pricelist_id': l.id,
-                    'price_discount': lista_rel.porcentaje,
-                    'pricelist_id':lista_rel.id
-                }
-                _log.warning(data)
-                self.env['product.pricelist.item'].create(data)
-        for l in listas.filtered(lambda l: l.relational_list.remate):
-            lista_rel = l.relational_list
-            lista_rel.mapped('item_ids').unlink()
             for p in remate:
                 data = {
                     'applied_on': '1_product',
@@ -143,8 +128,19 @@ class Template(models.Model):
                     'compute_price': 'formula',
                     'base': 'pricelist',
                     'base_pricelist_id': l.id,
-                    'price_discount': lista_rel.porcentaje,
+                    'price_discount': lista_rel.por_remate,
                     'pricelist_id': lista_rel.id
+                }
+                self.env['product.pricelist.item'].create(data)
+            for p in promocion:
+                data ={
+                    'applied_on': '1_product',
+                    'product_tmpl_id': p[0],
+                    'compute_price': 'formula',
+                    'base': 'pricelist',
+                    'base_pricelist_id': l.id,
+                    'price_discount': lista_rel.por_promo,
+                    'pricelist_id':lista_rel.id
                 }
                 self.env['product.pricelist.item'].create(data)
 
