@@ -1,5 +1,5 @@
 .scroll_categ{
-    height: 650px;
+    max-height: 600px;
     max-width: 270px;
     overflow: auto;
     overflow-x: hidden;
