@@ -17,7 +17,6 @@ class PosCustomerPortal(CustomerPortal):
         if 'pos_order_count' in counters:
             domain = [('partner_id', '=', partner.id)]
             pos_order_count = request.env['pos.order'].sudo().search_count(domain)
-            _log.info("CONTADOS:: : %s " % pos_order_count)
             values['pos_order_count'] = pos_order_count
 
         return values

@@ -9,9 +9,9 @@
             <xpath expr="//page[@name='pricelist_config']/group" position="inside">
                 <group string="Reglas Lista" groups="base.group_no_one">
                     <field name="relational_list"/>
-                    <field name="porcentaje"/>
                     <field name="promocion"/>
-                    <field name="remate"/>
+                    <field name="por_promo"/>
+                    <field name="por_remate"/>
                 </group>
             </xpath>
         </field>
