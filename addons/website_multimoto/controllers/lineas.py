@@ -150,13 +150,10 @@ class WebsiteLines(WebsiteSale):
         # catch line
         Line = request.env['ws.product.line']
         all_lines = Line.sudo().search([])
-        _log.info(" TODAS LAS LINEAS:: :%s " % all_lines)
         if line:
             line = Line.sudo().search([('id', '=', int(line))])
             if not line:
                 raise NotFound()
-        _log.info("LINEA:::  %s " % line)
-
         if ppg:
             try:
                 ppg = int(ppg)
@@ -174,13 +171,18 @@ class WebsiteLines(WebsiteSale):
         attrib_set = {v[1] for v in attrib_values}
 
         domain = self._get_search_domain(search, category, attrib_values)
-        _log.info("DOMINIO ::: %s " % domain)
         if line:
             line_categs = line.product_catg_public_id.ids
             domain.append(('public_categ_ids', 'child_of', line_categs))
-
-        _log.info("DOMINIO 2 ::::: %s " % domain)
-
+        _log.warning(post)
+        if post.get('mas_vendido'):
+            _log.warning("mas vendido")
+            domain.append(('vendido', '=', True))
+        if post.get('nuevo'):
+            domain.append(('nuevo', '=', True))
+        if post.get('promocion_remate'):
+            temp = request.env['product.pricelist'].search([('promocion','=','True')],limit=1).mapped('item_ids.product_tmpl_id.id')
+            domain.append(('id', 'in', temp))
         keep = QueryURL('/shop', category=category and int(category), search=search, attrib=attrib_list,
                         order=post.get('order'))
 
@@ -197,7 +199,6 @@ class WebsiteLines(WebsiteSale):
         Product = request.env['product.template'].with_context(bin_size=True)
 
         search_product = Product.search(domain, order=self._get_search_order(post))
-        _log.info(" PRODUCTOS ENCONTRADOS :::  %s " % len(search_product))
         website_domain = request.website.website_domain()
         categs_domain = [('parent_id', '=', False)] + website_domain
         if search:
