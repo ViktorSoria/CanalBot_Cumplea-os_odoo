@@ -153,7 +153,7 @@ class Template(models.Model):
             if not pricelist:
                 pricelist = current_website.get_current_pricelist()
             price = self.with_context(pricelist_id=pricelist.relational_list).price_compute('list_price')[self.id]
-            list_price = combi.get('list_price',0)
+            list_price = combi.get('price',0)
             has_discounted_price = pricelist.currency_id.compare_amounts(list_price, price) == 1
             combi.update(
                 price=price,
