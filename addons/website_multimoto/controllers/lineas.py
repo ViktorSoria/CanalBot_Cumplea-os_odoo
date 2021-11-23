@@ -174,9 +174,7 @@ class WebsiteLines(WebsiteSale):
         if line:
             line_categs = line.product_catg_public_id.ids
             domain.append(('public_categ_ids', 'child_of', line_categs))
-        _log.warning(post)
         if post.get('mas_vendido'):
-            _log.warning("mas vendido")
             domain.append(('vendido', '=', True))
         if post.get('nuevo'):
             domain.append(('nuevo', '=', True))
