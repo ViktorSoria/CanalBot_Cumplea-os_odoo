@@ -46,8 +46,8 @@
     </template>
 
     <template id="products_terms_and_conditions" inherit_id="website_sale.product_custom_text" active="True" customize_show="True" name="Website products terms and conditions">
-        <xpath expr="//p" position="replace">
-            <p>
+        <xpath expr="//p[@class='text-muted']" position="replace">
+            <p class="text-muted">
                 <a href="/shop/terms">Términos y Condiciones</a><br/>
                 <span t-esc="product.terms_and_conditions"/>
             </p>

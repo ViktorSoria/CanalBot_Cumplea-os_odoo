@@ -12,6 +12,9 @@
                 <span class="text-nowrap" t-field="line.price_unit"/>
             </t>
         </xpath>
+        <xpath expr="//td[@name='account_invoice_line_name']" position="attributes">
+            <attribute name="style">padding-top: 0px; padding-bottom: 0px</attribute>
+        </xpath>
     </template>
 
     <template id="report_sale_document_inherit" inherit_id="sale.report_saleorder_document">
