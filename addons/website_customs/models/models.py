@@ -165,7 +165,6 @@ class Template(models.Model):
         if website_sale_stock_get_quantity:
             if combi['product_id']:
                 product = self.env['product.product'].sudo().browse(combi['product_id'])
-                website = self.env['website'].get_current_website()
                 ware = self.env['stock.warehouse'].sudo().search([]).ids
                 virtual_available = product.with_context(warehouse=ware).virtual_available
                 combi.update({
