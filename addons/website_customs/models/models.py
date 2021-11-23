@@ -5,7 +5,6 @@ import logging
 
 _log = logging.getLogger("Website (%s) -------> " % __name__)
 
-
 class Location(models.Model):
     _inherit = "stock.location"
 
@@ -24,8 +23,23 @@ class List(models.Model):
     promocion = fields.Boolean("Promocion y remate")
 
 
+class SaleOrder(models.Model):
+    _inherit = 'sale.order'
+
+    def _cart_update(self, product_id=None, line_id=None, add_qty=0, set_qty=0, **kwargs):
+        obj = self.with_context(no_ware=True)
+        return super(SaleOrder, obj)._cart_update(product_id, line_id, add_qty, set_qty, **kwargs)
+
+
 class Product(models.Model):
     _inherit = "product.product"
+
+    def _compute_quantities_dict(self, lot_id, owner_id, package_id, from_date=False, to_date=False):
+        obj = self
+        if self.env.context.get('no_ware'):
+            ware = self.env['stock.warehouse'].sudo().search([]).ids
+            obj = self.with_context(warehouse=ware)
+        return super(Product,obj)._compute_quantities_dict(lot_id=lot_id, owner_id=owner_id, package_id=package_id, from_date=from_date, to_date=to_date)
 
     def available_qty(self,location=False):
         if not location:
