@@ -37,7 +37,8 @@ class Product(models.Model):
             quants += self.env['stock.quant'].sudo()._gather(self, l)
         ware = self.env['stock.warehouse'].sudo().search([])
         ware = {w.lot_stock_id.id:w.name for w in ware}
-        return [("%s"%ware.get(q.location_id.id,q.location_id.display_name), q.available_quantity) for q in quants]
+        exis = [("%s"%ware.get(q.location_id.id,q.location_id.display_name), q.available_quantity) for q in quants]
+        return exis
 
     def price_compute(self, price_type, uom=False, currency=False, company=None):
         # TDE FIXME: delegate to template or not ? fields are reencoded here ...
@@ -54,8 +55,6 @@ class Product(models.Model):
             # We fetch the standard price as the superuser
             products = self.with_company(company or self.env.company).sudo()
         lista = self._context.get('pricelist_id')
-        _log.warning("Buscando en product")
-        _log.warning(lista)
         items_dic = {}
         if lista:
             items = self.env['product.pricelist.item'].search([('product_tmpl_id', 'in', products.mapped('product_tmpl_id').ids), ('pricelist_id', '=', lista.id)])
@@ -145,21 +144,53 @@ class Template(models.Model):
                 self.env['product.pricelist.item'].create(data)
 
     def _get_combination_info(self, combination=False, product_id=False, add_qty=1, pricelist=False, parent_combination=False, only_template=False):
-        combi = super(Template,self)._get_combination_info(
-            combination=combination, product_id=product_id, add_qty=add_qty, pricelist=pricelist,
-            parent_combination=parent_combination, only_template=only_template)
+        website_sale_stock_get_quantity = self.env.context.get('website_sale_stock_get_quantity')
+        obj = self.with_context(website_sale_stock_get_quantity=False)
         if self.env.context.get('website_id'):
             current_website = self.env['website'].get_current_website()
             if not pricelist:
                 pricelist = current_website.get_current_pricelist()
-            price = self.with_context(pricelist_id=pricelist.relational_list).price_compute('list_price')[self.id]
-            list_price = combi.get('list_price',0)
-            has_discounted_price = pricelist.currency_id.compare_amounts(list_price, price) == 1
-            combi.update(
-                price=price,
-                list_price=list_price,
-                has_discounted_price=has_discounted_price,
-            )
+            obj = obj.with_context(pricelist_id=pricelist.relational_list)
+        combi = super(Template,obj)._get_combination_info(
+            combination=combination, product_id=product_id, add_qty=add_qty, pricelist=pricelist,
+            parent_combination=parent_combination, only_template=only_template)
+        list_price = combi.get('price')
+        price = combi.get('list_price')
+        has_discounted_price = pricelist.currency_id.compare_amounts(list_price, price) == 1
+        combi.update(
+            price=price,
+            list_price=list_price,
+            has_discounted_price=has_discounted_price,
+        )
+        if website_sale_stock_get_quantity:
+            if combi['product_id']:
+                product = self.env['product.product'].sudo().browse(combi['product_id'])
+                website = self.env['website'].get_current_website()
+                ware = self.env['stock.warehouse'].sudo().search([]).ids
+                virtual_available = product.with_context(warehouse=ware).virtual_available
+                combi.update({
+                    'virtual_available': virtual_available,
+                    'virtual_available_formatted': self.env['ir.qweb.field.float'].value_to_html(virtual_available, {'precision': 0}),
+                    'product_type': product.type,
+                    'inventory_availability': product.inventory_availability,
+                    'available_threshold': product.available_threshold,
+                    'custom_message': product.custom_message,
+                    'product_template': product.product_tmpl_id.id,
+                    'cart_qty': product.cart_qty,
+                    'uom_name': product.uom_id.name,
+                })
+            else:
+                product_template = self.sudo()
+                combi.update({
+                    'virtual_available': 0,
+                    'product_type': product_template.type,
+                    'inventory_availability': product_template.inventory_availability,
+                    'available_threshold': product_template.available_threshold,
+                    'custom_message': product_template.custom_message,
+                    'product_template': product_template.id,
+                    'cart_qty': 0
+                })
+
         return combi
 
     def price_compute(self, price_type, uom=False, currency=False, company=None):
@@ -180,8 +211,6 @@ class Template(models.Model):
             company = self.env.company
         date = self.env.context.get('date') or fields.Date.today()
         lista = self._context.get('pricelist_id')
-        _log.warning("Buscando en template")
-        _log.warning(lista)
         items_dic = {}
         if lista:
             items = self.env['product.pricelist.item'].search([('product_tmpl_id', 'in', templates.ids), ('pricelist_id', '=', lista.id)])
@@ -205,5 +234,4 @@ class Template(models.Model):
             # This is right cause a field cannot be in more than one currency
             if currency:
                 prices[template.id] = template.currency_id._convert(prices[template.id], currency, company, date)
-        _log.warning(prices)
         return prices
