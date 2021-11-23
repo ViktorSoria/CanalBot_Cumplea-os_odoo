@@ -13,8 +13,9 @@
                                domain="[('usage', '=', 'internal')]"/>
                         <field name="category_ids"
                                options="{'no_create': True, 'no_create_edit':True, 'no_quick_create': True, 'no_open': True}"
-                               widget="many2many_tags"/>
-                        <field name="file_selection"  required="True"/>
+                               widget="many2many_tags"
+                               invisible="True"/>
+                        <field name="file_selection"  required="True" invisible="True"/>
                         <field name="stock_quants_ids" invisible="True"/>
                     </group>
                     <footer>
