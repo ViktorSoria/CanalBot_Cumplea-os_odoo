@@ -8,16 +8,44 @@
         </li>
     </template>
 
+    <template id="list_promo" name="List promo">
+        <li class="nav-item">
+            <a t-att-href="p_value[2]"
+               t-attf-class="nav-link">
+                <span t-attf-class="fa #{'fa-check-square-o' if p_value[1] else 'fa-square-o'}"/>
+                <span t-esc="p_value[0]"/>
+            </a>
+        </li>
+    </template>
+
     <!--o_shop_collapse_category-->
+
+    <template id="products_attributes" inherit_id="website_sale.products_attributes">
+        <xpath expr="//button[@data-target='#wsale_products_attributes_collapse']" position="replace">
+            <div/>
+        </xpath>
+    </template>
+
     <template id="products_line_categories" inherit_id="website_sale.products_categories" active="True" customize_show="True" name="Product Line Filter">
         <xpath expr="//div[@id='products_grid_before']" position="before">
             <t t-set="enable_left_column" t-value="True"/>
         </xpath>
         <xpath expr="//ul[@id='o_shop_collapse_category']" position="before">
             <button type="button" class="btn btn-link d-lg-none"
+                data-target="#wsale_products_promo_collapse" data-toggle="collapse">
+                Mostrar opciones
+            </button>
+            <button type="button" class="btn btn-link d-lg-none"
                 data-target="#wsale_products_lines_collapse" data-toggle="collapse">
                 Mostrar lineas
             </button>
+            <div class="collapse d-lg-block" id="wsale_products_promo_collapse">
+                <ul class="nav nav-pills flex-column mb-2 filters_border">
+                    <t t-foreach="promo" t-as="p">
+                        <t t-call="website_multimoto.list_promo" />
+                    </t>
+                </ul>
+            </div>
             <div class="collapse d-lg-block" id="wsale_products_lines_collapse">
                 <ul class="nav nav-pills flex-column mb-2 filters_border">
                     <li class="nav-item">
@@ -28,21 +56,10 @@
                     </t>
                 </ul>
             </div>
-<!--            <xpath expr="//ul[@id='o_shop_collapse_category']" position="attributes">-->
-<!--                <style>-->
-<!--                    .filters_border{-->
-<!--                        border: 1px solid grey;-->
-<!--                        margin-top: 20px;-->
-<!--                        margin-bottom: 20px;-->
-<!--                        border-radius: 5px;-->
-<!--                    }-->
-<!--                </style>-->
-<!--                <attribute name="class">nav nav-pills flex-column mb-2 filters_border</attribute>-->
-<!--            </xpath>-->
         </xpath>
         <xpath expr="//div[@id='wsale_products_categories_collapse']/ul" position="attributes">
-                <attribute name="class">nav nav-pills mb-2 scroll_categ</attribute>
-            </xpath>
+            <attribute name="class">nav nav-pills mb-2 scroll_categ</attribute>
+        </xpath>
     </template>
 
 <!--    <template id="products_terms_and_conditions" inherit_id="website_sale.product_custom_text" active="True" customize_show="True" name="Website products terms and conditions">-->
