@@ -1,0 +1,33 @@
+.table_stock{
+    height: 375px;
+    overflow: auto;
+    overflow-x: hidden;
+}
+.right_td{
+    text-align: right;
+}
+
+.ocult-text{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 590px;
+}
+
+.ocult-text:hover{
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@mixin multiLineEllipsis($lineHeight: 1.2em, $lineCount: 1, $bgColor: white){
+  overflow: hidden;
+  line-height: $lineHeight;
+  max-height: $lineHeight * $lineCount;
+  margin-right: -1em;
+  padding-right: 1em;
+}
+
+.block-with-text {
+  @include multiLineEllipsis($lineHeight: 1.2em, $lineCount: 3, $bgColor: white);
+}

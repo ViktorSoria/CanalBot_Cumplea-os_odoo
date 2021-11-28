@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ws_product_line_tree" model="ir.ui.view">
+        <field name="name">website.form.product.line.tree</field>
+        <field name="model">ws.product.line</field>
+        <field name="arch" type="xml">
+            <tree string="Lineas de productos" editable="bottom">
+                    <field name="id"/>
+                    <field name="name"/>
+                    <field name="product_catg_public_id" widget="many2many_tags"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_ws_product_lines_tree" model="ir.actions.act_window">
+        <field name="name">Lineas de Productos</field>
+        <field name="res_model">ws.product.line</field>
+        <field name="view_mode">tree</field>
+        <field name="domain">[]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_empty_folder">
+                There's anything here... xD yet.
+            </p>
+        </field>
+    </record>
+
+   <menuitem id="menu_product_public_line" name="Lineas de productos"
+             action="action_ws_product_lines_tree"
+             parent="website_sale.menu_product_settings"/>
+</odoo>

@@ -1,60 +1,9 @@
-Edicion de precios desde producto
-
- **Mostrar stock dentro del punto de venta, al dar click sobre la cantidad mostrar existencias de todos los almacenes
-***Enviar pedidos a caja, permisos especiales de cobro por usuario
-***Monedero Electrónico: acumulacion de puntos en tarjeta de clientes especiales, nueva forma de pago en el punto de venta.
-***Promociones en el punto de venta
-**Cargo del 3% a Pagos con Tarjeta de Crédito
-**Ajustes al ticket de Pos.
-**Reimpresión de tickets.
-**Autorización para ventas a mayoreo
-**En ficha de productos: Visualizar precios de las listas a las que pertenece, Mostrar proveedores.
-**Carga Masiva de Pedidos de Compra
-**/Reporte de ventas por sucursal (ḿodulo de ventas y punto de venta en el mismo reporte)
-
-
-total resumen pos
-metodo de pago
-
-bloqueo por credito
-cobrar desde el pos
-
-
-agrupacion de productos pos
-configuracion de puntos. ligar etiqueta de cliente
-
-
 Instalacion
 ubuntu server https://blogdesistemas.com/instalar-ubuntu-server-20-04/
 ssh https://voragine.net/linux/acceso-ssh-seguro-servidor-autenticacion-clave-publica
 odoo https://odooperu.org/?p=1413 https://rborja.net/como-instalar-odoo14-en-ubuntu/
 
-
-restringir cajas por almacen, agregar configuracion
-timbrar en el momento para la descarga timbrada
-agregar sello al final del ticket
-
 multiusr
 tek2101
 
-Isaac 1.- Al momento de liberar ticket Liberar e imprimir.
-Isaac 3.-No permitir cobrar prodcutos que vengan en 0 piezas o $0. (Quitar las lineas al pagar)4 hrs
-Isaac 4.-En la impresión de Ticket, cuado es una pieza, que diga 1xPrecio unitario. (Ajuste a ticket, no hacer diferencia de cuando se compra una pieza y cuando se compra mas de una, dejar formato de mas de una siempre)2 hrs
-Jeho 5.-Modificación de Formatos Factura Pedido a surtir (más compactos) si van a desglosar IVA, entonces mostrar precios en la factura antes de IVA. (modificar reportes, cortar espacio entre lineas y todo donde se desperdice espacio) 6 hrs
-Isaac 6.-En el POS las descripciones largas de los productos, no permiten visualzar precio y existencia. (Cortar descripciones en cuadritos al ponerse encima mostrar nombre completo pos) 2hrs
-Isaac 7.- En el ticket las descripciones tengan un maximo de carácteres. (Cortar las descripciones a lo equivalete a dos renglones de ticket preferentemente)1 hr
-Isaac 8.-Código QR en facturas desde POS. (Revisar por que no salen, si deberia de generarlos) 2 hr
-Isaac 9.-Por default salga publico general. (Al pasar a pagar si no se tiene cliente en el pedido seleccionar publico en general) 2 hr
-Jeho 10.-Inventarios Generales (todo se maneja en excel). Descargar reporte de inventario, con columna de a mano y otra para colocar contado.
-    Opcion para cargar el excel a los ajustes de inventario. En la lista de productos mostrar contado, a mano, diferencia y diferencia en dinero,
-     con respecto al coste actual del producto. Descargar reporte de ajuste en excel 12-14 hr
-
-
-2 años de experiencia trabajando como Desarrollador Full Stack en "Soluciones en Ingeniería Tekniu". Actualmente me desempeño como Project Manager en la misma.
-Participación en el concurso de "Robotica y Prototipos de desarrollo tecnológico" en la categoria de sumo
-Participación y obtención de primer lugar en "Concurso de Programación" realizado por la FIE con motivo del 53 aniversario.
-Participación por 4 años consecutivos (2018-2021) en la competencia de codificación llamada "Code Jam" realizada por Google.
-
-Diego Josafat Pelayo Gómez mat:1341315D
-Estudio Ingeniería en Computación (Tramite de titulación)
-Peticion de Posgrado a "Sistemas computacionales"
+falta calcular secuencia website
