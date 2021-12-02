@@ -81,8 +81,6 @@ class Website(models.Model):
 
         if self.env['product.pricelist'].browse(force_pricelist).exists():
             pricelist_id = force_pricelist
-            _log.warning("lista forzada")
-            _log.warning(pricelist_id)
             request.session['website_sale_current_pl'] = pricelist_id
             update_pricelist = True
         else:
@@ -119,14 +117,10 @@ class Website(models.Model):
 
         # check for change of pricelist with a coupon
         pricelist_id = pricelist_id or partner.property_product_pricelist.id
-        _log.warning("lista partner")
-        _log.warning(pricelist_id)
         # check for change of partner_id ie after signup
         if sale_order.partner_id.id != partner.id and request.website.partner_id.id != partner.id:
             flag_pricelist = False
             if pricelist_id != sale_order.pricelist_id.id:
-                _log.warning("listas orden diferente 1")
-                _log.warning(pricelist_id)
                 flag_pricelist = True
             fiscal_position = sale_order.fiscal_position_id.id
 
@@ -141,9 +135,6 @@ class Website(models.Model):
             values = {}
             if sale_order.pricelist_id:
                 if sale_order.pricelist_id.id != pricelist_id:
-                    _log.warning("listas orden diferente 2")
-                    _log.warning(pricelist_id)
-                    _log.warning(sale_order.pricelist_id.id)
                     values['pricelist_id'] = pricelist_id
                     update_pricelist = True
 
@@ -173,8 +164,6 @@ class Website(models.Model):
 
         # update the pricelist
         if update_pricelist:
-            _log.warning("actualizando sesion y carrito")
-            _log.warning(pricelist_id)
             request.session['website_sale_current_pl'] = pricelist_id
             pricelist = self.env['product.pricelist'].browse(pricelist_id).sudo()
             values = {'pricelist_id': pricelist.relational_list.id or pricelist_id}
@@ -415,7 +404,7 @@ class Product(models.Model):
         lista = self._context.get('pricelist_id')
         items_dic = {}
         if lista:
-            items = self.env['product.pricelist.item'].search([('product_tmpl_id', 'in', products.mapped('product_tmpl_id').ids), ('pricelist_id', '=', lista.id)])
+            items = self.env['product.pricelist.item'].search([('product_tmpl_id', 'in', products.mapped('product_tmpl_id').ids), ('pricelist_id', '=', lista)])
             items_dic = {i.product_tmpl_id.id: i.fixed_price for i in items}
         prices = dict.fromkeys(self.ids, 0.0)
         for product in products:
@@ -438,6 +427,33 @@ class Product(models.Model):
                     prices[product.id], currency, product.company_id, fields.Date.today())
 
         return prices
+
+    @api.depends_context('pricelist', 'partner', 'quantity', 'uom', 'date', 'no_variant_attributes_price_extra')
+    def _compute_product_price(self):
+        prices = {}
+        pricelist_id_or_name = self._context.get('pricelist')
+        if pricelist_id_or_name:
+            pricelist = None
+            partner = self.env.context.get('partner', False)
+            quantity = self.env.context.get('quantity', 1.0)
+
+            # Support context pricelists specified as list, display_name or ID for compatibility
+            if isinstance(pricelist_id_or_name, list):
+                pricelist_id_or_name = pricelist_id_or_name[0]
+            if isinstance(pricelist_id_or_name, str):
+                pricelist_name_search = self.env['product.pricelist'].name_search(pricelist_id_or_name, operator='=', limit=1)
+                if pricelist_name_search:
+                    pricelist = self.env['product.pricelist'].browse([pricelist_name_search[0][0]])
+            elif isinstance(pricelist_id_or_name, int):
+                pricelist = self.env['product.pricelist'].browse(pricelist_id_or_name)
+
+            if pricelist:
+                quantities = [quantity] * len(self)
+                partners = [partner] * len(self)
+                prices = pricelist.get_products_price(self.with_context(pricelist_id=pricelist.id), quantities, partners)
+
+        for product in self:
+            product.price = prices.get(product.id, 0.0)
 
 
 class Template(models.Model):
@@ -508,7 +524,7 @@ class Template(models.Model):
             current_website = self.env['website'].get_current_website()
             if not pricelist:
                 pricelist = current_website.get_current_pricelist()
-            obj = obj.with_context(pricelist_id=pricelist.relational_list)
+            obj = obj.with_context(pricelist_id=pricelist.relational_list.id)
         combi = super(Template,obj)._get_combination_info(
             combination=combination, product_id=product_id, add_qty=add_qty, pricelist=pricelist,
             parent_combination=parent_combination, only_template=only_template)
@@ -568,8 +584,9 @@ class Template(models.Model):
         date = self.env.context.get('date') or fields.Date.today()
         lista = self._context.get('pricelist_id')
         items_dic = {}
+        # if lista and not self._context.get('pricelist'):
         if lista:
-            items = self.env['product.pricelist.item'].search([('product_tmpl_id', 'in', templates.ids), ('pricelist_id', '=', lista.id)])
+            items = self.env['product.pricelist.item'].search([('product_tmpl_id', 'in', templates.ids), ('pricelist_id', '=', lista)])
             items_dic = {i.product_tmpl_id.id: i.fixed_price for i in items}
         prices = dict.fromkeys(self.ids, 0.0)
         for template in templates:
@@ -590,4 +607,32 @@ class Template(models.Model):
             # This is right cause a field cannot be in more than one currency
             if currency:
                 prices[template.id] = template.currency_id._convert(prices[template.id], currency, company, date)
+        return prices
+
+    def _compute_template_price_no_inverse(self):
+        """The _compute_template_price writes the 'list_price' field with an inverse method
+        This method allows computing the price without writing the 'list_price'
+        """
+        prices = {}
+        pricelist_id_or_name = self._context.get('pricelist')
+        if pricelist_id_or_name:
+            pricelist = None
+            partner = self.env.context.get('partner')
+            quantity = self.env.context.get('quantity', 1.0)
+
+            # Support context pricelists specified as list, display_name or ID for compatibility
+            if isinstance(pricelist_id_or_name, list):
+                pricelist_id_or_name = pricelist_id_or_name[0]
+            if isinstance(pricelist_id_or_name, str):
+                pricelist_data = self.env['product.pricelist'].name_search(pricelist_id_or_name, operator='=', limit=1)
+                if pricelist_data:
+                    pricelist = self.env['product.pricelist'].browse(pricelist_data[0][0])
+            elif isinstance(pricelist_id_or_name, int):
+                pricelist = self.env['product.pricelist'].browse(pricelist_id_or_name)
+
+            if pricelist:
+                quantities = [quantity] * len(self)
+                partners = [partner] * len(self)
+                prices = pricelist.get_products_price(self.with_context(pricelist_id=pricelist.id), quantities, partners)
+
         return prices
