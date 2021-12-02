@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <record model="product.product" id="product_global_invoice">
-        <field name="name">Producto Facturacion</field>
+        <field name="name">Orden de venta</field>
     </record>
 
     <record id="view_pos_global_order" model="ir.ui.view">

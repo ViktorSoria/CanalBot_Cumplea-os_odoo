@@ -39,24 +39,37 @@ class InvoiceOrder(models.TransientModel):
     def generate_invoice(self):
         invoice_ids = []
         orders = self._search_orders()
-        methods = orders.mapped('payment_ids.payment_method_id')
+        _logger.warning("Obtuvimos ordenes")
+        methods = orders.mapped('payment_ids.payment_method_id.l10n_mx_edi_payment_method_id')
+        _logger.warning("Obtuvimos metodos de pago")
         method_orderes = self._split_orders_by_method(orders,methods,self.pos_config_ids)
+        _logger.warning("Ordenamos las dos listas")
+        _logger.warning("Vamos a crear aprox %d facturas"%(len(methods)*len(self.pos_config_ids)))
+        i=1
         for method,pos_orders in method_orderes.items():
             for pos,order_ids in pos_orders.items():
                 if not order_ids:
                     continue
                 data = self.default_values_invoice()
+                _logger.warning("Factura %d tiene %d ordenes" % (i, len(order_ids)))
                 data.update({
                     'invoice_origin': "Sucursal %s %s"%(pos,self.period),
                     'l10n_mx_edi_payment_method_id': method
                 })
                 lines = []
+                j=0
                 for order in order_ids:
+                    j +=1
                     lines.append((0,0,self.create_line_invoice(order.name,order.amount_total)))
+                    if j%10==0:
+                        _logger.warning("LLevamos %d lineas"%j)
                 data['invoice_line_ids'] = lines
                 invoice = self.env['account.move'].create(data)
+                _logger.warning("Terminamos de crear")
                 invoice_ids.append(invoice.id)
                 order_ids.write({'account_move': invoice.id, 'state': 'invoiced','fac_global':True})
+                _logger.warning("Factura %d"%i)
+                i+=1
         action = self.env["ir.actions.actions"]._for_xml_id("account.action_move_out_invoice_type")
         action['domain'] = [('id','in',invoice_ids)]
         action['context'] = {'default_move_type': 'out_invoice', 'move_type': 'out_invoice', 'journal_type': 'sale'}
@@ -64,7 +77,7 @@ class InvoiceOrder(models.TransientModel):
 
     def _search_orders(self):
         """Return orders by period"""
-        domain = [('session_id.config_id', 'in', self.pos_config_ids.ids)]
+        domain = [('amount_total','>',0),('session_id.config_id', 'in', self.pos_config_ids.ids)]
         if self.re_fac:
             domain += ['|',('state', 'in', ['done']),'&',('state', 'in', ['invoiced']),('fac_global', '=', True)]
         else:
@@ -82,7 +95,7 @@ class InvoiceOrder(models.TransientModel):
         obj = self.env['pos.order']
         data = {m.id:{pos.name:obj for pos in pos_conf} for m in methods}
         for order in orders:
-            metodo = order.payment_method_id
+            metodo = order.payment_method_id.l10n_mx_edi_payment_method_id
             pos = order.config_id
             data[metodo.id][pos.name] = data[metodo.id][pos.name] | order
         return data
