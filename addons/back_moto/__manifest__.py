@@ -12,5 +12,6 @@
              "views/pricelist_views.xml",
              "views/report_view.xml",
              "report/report.xml",
+             "views/global_invoice_view.xml",
              ],
 }

@@ -4,3 +4,4 @@ access_message_wizard,access.message.wizard,model_message_wizard,purchase.group_
 access_product_price_transient,access.product.price.transient,model_product_price_transient,base.group_user,1,1,1,1
 access_wizard_mes,access.wizard.mes,model_message_wizard_invoice,base.group_user,1,1,1,1
 access_report_order,access.report.order,model_report_order,point_of_sale.group_pos_manager,1,1,1,0
+access_pos_order_invoice,access.pos.order.invoice,model_pos_order_invoice,point_of_sale.group_pos_manager,1,1,1,0
