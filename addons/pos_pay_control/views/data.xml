@@ -4,7 +4,6 @@
         <xpath expr="." position="inside">
             <script type="text/javascript" src="/pos_pay_control/static/src/js/pos_button_pay.js"/>
             <script type="text/javascript" src="/pos_pay_control/static/src/js/price.js"/>
-            <script type="text/javascript" src="/pos_pay_control/static/src/js/PaymentScreenCus.js"/>
             <script type="text/javascript" src="/pos_pay_control/static/src/js/OrderReceiptLight.js"/>
             <script type="text/javascript" src="/pos_pay_control/static/src/js/cargo.js"/>
             <script type="text/javascript" src="/pos_pay_control/static/src/js/Buttonsend.js"/>
