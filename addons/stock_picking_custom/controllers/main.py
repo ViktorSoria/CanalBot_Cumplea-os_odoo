@@ -6,6 +6,7 @@ from odoo.addons.web.controllers.main import serialize_exception,content_disposi
 import base64
 from odoo.tools import html_escape
 import logging
+import werkzeug
 
 _logger = logging.getLogger("Moto Control")
 
@@ -23,5 +24,8 @@ class Binary(http.Controller):
          else:
              if not filename:
                  filename = '%s_%s' % (model.replace('.', '_'), id)
-             return request.make_response(filecontent, [('Content-Type', 'application/octet-stream'),
-                                                        ('Content-Disposition', content_disposition(filename))])
+             headers =[
+                     ('Content-Type', 'application/octet-stream'),
+                     ('Content-Disposition', content_disposition(filename))
+             ]
+             return werkzeug.wrappers.Response(filecontent, headers=headers, direct_passthrough=True)

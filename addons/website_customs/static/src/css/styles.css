@@ -1,0 +1,64 @@
+.table_stock{
+    height: 375px;
+    overflow: auto;
+    overflow-x: hidden;
+}
+.right_td{
+    text-align: right;
+}
+
+.ocult-text{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 590px;
+}
+
+.ocult-text:hover{
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@mixin multiLineEllipsis($lineHeight: 1.2em, $lineCount: 1, $bgColor: white){
+  overflow: hidden;
+  line-height: $lineHeight;
+  max-height: $lineHeight * $lineCount;
+  margin-right: -1em;
+  padding-right: 1em;
+}
+
+.block-with-text {
+  @include multiLineEllipsis($lineHeight: 1.2em, $lineCount: 3, $bgColor: white);
+}
+
+.new_button{
+    border: none;
+    margin-bottom: 2%;
+    margin-right: 4%;
+    background-color:transparent;
+    text-shadow: none;
+    > div > img{
+        width: 50px;
+    }
+    > div > span{
+        padding: 10% 15%;
+        border-radius: 10px;
+    }
+}
+
+.new_chat{
+    border: none;
+    margin-right: 4%;
+    background-color: transparent;
+    > div.o_mail_thread{
+        background-color: white;
+    }
+    > div > img{
+        width: 50px;
+    }
+    > div > span{
+        padding: 10% 15%;
+        border-radius: 10px;
+    }
+}
