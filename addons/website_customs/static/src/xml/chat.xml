@@ -15,16 +15,38 @@
     </t>
     <t t-name="website_customs.livechat">
         <span t-if="widget.isMobile()">
-            <a href="#" class="o_thread_window_close fa fa-1x fa-arrow-left" aria-label="Close chat window" title="Close chat window"/>
+            <a href="#" class="o_thread_window_close fa fa-1x fa-arrow-left" aria-label="Close chat window"
+               title="Close chat window"/>
         </span>
         <span class="o_thread_window_title">
             <t t-esc="title"/>
-            <span t-if="unreadCounter"> (<t t-esc="unreadCounter"/>)</span>
-            <t t-if="thread and thread.hasTypingNotification() and thread.isSomeoneTyping()" t-call="im_livechat.legacy.mail.ThreadTypingIcon"/>
+            <span t-if="unreadCounter">(<t t-esc="unreadCounter"/>)
+            </span>
+            <t t-if="thread and thread.hasTypingNotification() and thread.isSomeoneTyping()"
+               t-call="im_livechat.legacy.mail.ThreadTypingIcon"/>
         </span>
         <t t-if="!widget.isMobile()">
             <t t-call="website_customs.image"/>
+            <a href="#" class="o_thread_window_close fa fa-close"/>
         </t>
+    </t>
+
+    <t t-name="website_customs.livechat_origin">
+        <div class="o_thread_window o_in_home_menu" t-att-data-thread-id="widget.getID()">
+            <div class="o_thread_window_header">
+                <t t-call="website_customs.livechat">
+                    <t t-set="status" t-value="widget.getThreadStatus()"/>
+                    <t t-set="title" t-value="widget.getTitle()"/>
+                    <t t-set="unreadCounter" t-value="widget.getUnreadCounter()"/>
+                    <t t-set="thread" t-value="widget.getThread()"/>
+                </t>
+            </div>
+            <div class="o_thread_window_content">
+            </div>
+            <div t-if="widget.needsComposer()" class="o_thread_composer o_chat_mini_composer">
+                <input class="o_composer_text_field" t-att-placeholder="widget.options.placeholder"/>
+            </div>
+        </div>
     </t>
 
 </odoo>

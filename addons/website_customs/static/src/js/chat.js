@@ -30,16 +30,17 @@ odoo.define("website_customs.chat_web", function (require) {
     });
 
     LivechatWindow.include({
-        // async start() {
-        //     await this._super(...arguments);
-        //     this.$el.addClass("new_chat");
-        //     this.$('.o_thread_window_header').css('background-color', 'transparent');
-        // },
-        // renderHeader: function () {
-        //     var options = this._getHeaderRenderingOptions();
-        //     this.$header.html(
-        //         QWeb.render('website_customs.livechat', options));
-        // },
+        template: 'website_customs.livechat_origin',
+        async start() {
+            await this._super(...arguments);
+            this.$el.addClass("new_chat");
+            // this.$('.o_thread_window_header').css('background-color', 'transparent');
+        },
+        renderHeader: function () {
+            var options = this._getHeaderRenderingOptions();
+            this.$header.html(
+                QWeb.render('website_customs.livechat', options));
+        },
     });
 });
 

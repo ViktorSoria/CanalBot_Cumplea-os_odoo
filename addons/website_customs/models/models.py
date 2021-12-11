@@ -96,7 +96,6 @@ class Website(models.Model):
             pricelist_rel = pricelist.relational_list or pricelist
             so_data = self._prepare_sale_order_values(partner, pricelist_rel)
             sale_order = self.env['sale.order'].with_company(request.website.company_id.id).with_user(SUPERUSER_ID).create(so_data)
-            _log.error(sale_order.pricelist_id)
             # set fiscal position
             if request.website.partner_id.id != partner.id:
                 sale_order.onchange_partner_shipping_id()
