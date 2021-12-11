@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <t t-name="website_customs.text">
+        <span t-att-class="clase_text" t-esc="text" t-att-style="'color: '+color +'; background-color :'+back_color"/>
+    </t>
+    <t t-name="website_customs.image">
+        <img src="/website_customs/static/src/chat.png"/>
+    </t>
+
+    <t t-name="website_customs.chat">
+        <div>
+            <t t-call="website_customs.text"/>
+            <t t-call="website_customs.image"/>
+        </div>
+    </t>
+    <t t-name="website_customs.livechat">
+        <span t-if="widget.isMobile()">
+            <a href="#" class="o_thread_window_close fa fa-1x fa-arrow-left" aria-label="Close chat window" title="Close chat window"/>
+        </span>
+        <span class="o_thread_window_title">
+            <t t-esc="title"/>
+            <span t-if="unreadCounter"> (<t t-esc="unreadCounter"/>)</span>
+            <t t-if="thread and thread.hasTypingNotification() and thread.isSomeoneTyping()" t-call="im_livechat.legacy.mail.ThreadTypingIcon"/>
+        </span>
+        <t t-if="!widget.isMobile()">
+            <t t-call="website_customs.image"/>
+        </t>
+    </t>
+
+</odoo>

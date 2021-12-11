@@ -489,6 +489,10 @@ class Template(models.Model):
         vendido.write({'vendido':True})
         promocion_obj = self.env['product.template'].search([('id', 'in', promocion)])
         remate_obj = self.env['product.template'].search([('id', 'in', remate)])
+        todos = self.env['product.template'].search([])
+        todos._compute_quantities()
+        for p in todos:
+            p.write({'is_published': p.sale_ok, 'website_sequence': 100000 - p.qty_available - (10000 if p.image_1920 else 0)})
         promocion_obj.write({'website_ribbon_id':self.env.ref('website_customs.ribbon_15')})
         remate_obj.write({'website_ribbon_id':self.env.ref('website_customs.ribbon_26')})
         ##Ajustar listas de precio

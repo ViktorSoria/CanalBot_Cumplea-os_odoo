@@ -6,6 +6,7 @@
         <field name="arch" type="xml">
             <tree string="Lineas de productos" editable="bottom">
                     <field name="id"/>
+                    <field name="visi"/>
                     <field name="name"/>
                     <field name="product_catg_public_id" widget="many2many_tags"/>
             </tree>

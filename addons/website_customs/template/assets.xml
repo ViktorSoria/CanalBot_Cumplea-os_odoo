@@ -6,8 +6,7 @@
 		</xpath>
 		<xpath expr="//script[last()]" position="after">
 			<script type="text/javascript" src="/website_customs/static/src/js/stock_product_popup.js" />
+			<script type="text/javascript" src="/website_customs/static/src/js/chat.js" />
 		</xpath>
 	</template>
-
-	
 </odoo>

@@ -29,6 +29,7 @@ class WsProductLine(models.Model):
     name = fields.Char(string="Nombre de linea", required=True)
     # product_tmpl_ids = fields.Many2many("product.template", "product_cat_line_ids", string="Productos de ésta linea")
     product_catg_public_id = fields.Many2many('product.public.category', string="Categoria de sitio web")
+    visi = fields.Boolean("Visible web",default=True)
 
 
 class ResConfigSettingsCustom(models.TransientModel):

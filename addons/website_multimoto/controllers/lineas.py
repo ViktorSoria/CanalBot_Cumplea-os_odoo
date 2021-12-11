@@ -149,7 +149,7 @@ class WebsiteLines(WebsiteSale):
 
         # catch line
         Line = request.env['ws.product.line']
-        all_lines = Line.sudo().search([])
+        all_lines = Line.sudo().search([('visi','=',True)])
         if line:
             line = Line.sudo().search([('id', '=', int(line))])
             if not line:

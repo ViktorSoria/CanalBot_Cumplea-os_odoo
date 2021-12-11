@@ -3,7 +3,7 @@
     "summary": "",
     "author": "Tekniu",
     "depends": [
-        "website", "point_of_sale",'website_sale','website_sale_stock'
+        "website", "point_of_sale",'website_sale','website_sale_stock','im_livechat'
     ],
     "installable": True,
     "data": [

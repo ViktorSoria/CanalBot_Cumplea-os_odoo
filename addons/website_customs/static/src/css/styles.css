@@ -31,3 +31,34 @@
 .block-with-text {
   @include multiLineEllipsis($lineHeight: 1.2em, $lineCount: 3, $bgColor: white);
 }
+
+.new_button{
+    border: none;
+    margin-bottom: 2%;
+    margin-right: 4%;
+    background-color:transparent;
+    text-shadow: none;
+    > div > img{
+        width: 50px;
+    }
+    > div > span{
+        padding: 10% 15%;
+        border-radius: 10px;
+    }
+}
+
+.new_chat{
+    border: none;
+    margin-right: 4%;
+    background-color: transparent;
+    > div.o_mail_thread{
+        background-color: white;
+    }
+    > div > img{
+        width: 50px;
+    }
+    > div > span{
+        padding: 10% 15%;
+        border-radius: 10px;
+    }
+}
