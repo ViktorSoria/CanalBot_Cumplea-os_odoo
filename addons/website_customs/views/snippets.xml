@@ -4,7 +4,6 @@
     <template id="s_products_filter_viewed" name="Viewed Products filter">
         <section class="s_wsale_products_filter_viewed d-none pt24 pb24" style="min-height: 400px;">
             <div class="container">
-                <h3 class="text-center mb32">Productos</h3>
                 <div class="slider o_not_editable"/>
             </div>
         </section>
