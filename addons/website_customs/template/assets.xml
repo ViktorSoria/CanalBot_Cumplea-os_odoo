@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<template id="assets_frontend" inherit_id="website.assets_frontend" name="Website Sale Stock">
+		<xpath expr="//link[last()]" position="after">
+            <link rel="stylesheet" type="text/scss" href="/website_customs/static/src/css/styles.css"/>
+		</xpath>
+		<xpath expr="//script[last()]" position="after">
+			<script type="text/javascript" src="/website_customs/static/src/js/stock_product_popup.js" />
+			<script type="text/javascript" src="/website_customs/static/src/js/chat.js" />
+		</xpath>
+	</template>
+</odoo>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	
+	<template id="stock_available" inherit_id="website_sale_stock.website_sale_stock_product" priority="100">
+        <xpath expr="//div[@class='availability_messages o_not_editable']" position="after">
+            <a class="btn btn-link mt16" id="stock_available" href="#">
+                <i class='fa fa-th-list' role="img"/>
+                Consulta disponibilidad en tienda
+            </a>
+        </xpath>
+    </template>
+
+    <template id="product_price" inherit_id="website_sale.product_price">
+        <xpath expr="//div[@class='product_price mt16']/h4" position="inside">
+            <span> + iva</span>
+        </xpath>
+    </template>
+
+    <template id="product" inherit_id="website_sale.products_item">
+        <xpath expr="//h6[@class='o_wsale_products_item_title']" position="attributes">
+            <attribute name="class">o_wsale_products_item_title ocult-text</attribute>
+        </xpath>
+        <xpath expr="//div[@class='product_price']" position="inside">
+            <span> + iva</span>
+        </xpath>
+        <xpath expr="//a[@t-field='product.name']" position="replace">
+            <a itemprop="name" t-att-href="product_href" t-att-content="product.name" t-field="product.display_name"/>
+        </xpath>
+    </template>
+
+    <template id="products" inherit_id="website_sale.products">
+        <xpath expr="//div[@id='products_grid']" position="attributes">
+            <attribute name="style">max-width: 75%;</attribute>
+        </xpath>
+    </template>
+
+    <template id="product_origin" inherit_id="website_sale.product">
+        <xpath expr="//div[@id='product_details']/h1" position="attributes">
+            <attribute name="class">block-with-text</attribute>
+            <attribute name="t-field">product.display_name</attribute>
+        </xpath>
+    </template>
+
+    <template id="pricelist_list" inherit_id="website_sale.pricelist_list">
+        <xpath expr="//div" position="replace">
+            <div/>
+        </xpath>
+    </template>
+
+    <template id="cart_lines" inherit_id="website_sale.cart_lines">
+        <xpath expr="//td[@name='price']" position="replace">
+            <td class="text-center td-price" name="price">
+                <t t-set="combination_info" t-value="line.product_id.product_tmpl_id._get_combination_info()"/>
+
+                <t groups="account.group_show_line_subtotals_tax_excluded" t-if="combination_info.get('has_discounted_price')" name="order_line_discount">
+                    <del t-attf-class="#{'text-danger mr8'}" style="white-space: nowrap;" t-esc="combination_info.get('list_price')" t-options="{'widget': 'monetary', 'display_currency': website_sale_order.currency_id}" />
+                </t>
+                <span t-esc="combination_info.get('price')" style="white-space: nowrap;" t-options="{'widget': 'monetary', 'display_currency': website_sale_order.currency_id}" groups="account.group_show_line_subtotals_tax_excluded" />
+            </td>
+        </xpath>
+    </template>
+
+</odoo>

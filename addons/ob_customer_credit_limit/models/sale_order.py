@@ -33,7 +33,7 @@ class SaleOrder(models.Model):
         if partner_id.credit_check and not existing_move:
             context = dict(self.env.context or {})
             context['default_sale_id'] = self.id
-            fac_venci = self.env['account.move'].search([('partner_id','=',partner_id.id),('state','=','posted'),('payment_state','!=','paid'),('invoice_date_due','<',fields.Date.today())])
+            fac_venci = self.env['account.move'].search([('partner_id','=',partner_id.id),('state','=','posted'),('payment_state','not in',['paid','in_payment']),('invoice_date_due','<',fields.Date.today())])
             if fac_venci:
                 if self.autorizado:
                     if not self._context.get('warning'):

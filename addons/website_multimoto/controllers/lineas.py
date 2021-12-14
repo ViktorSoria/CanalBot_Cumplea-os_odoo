@@ -101,7 +101,7 @@ class WebsiteLines(WebsiteSale):
             if not qs or qs.lower() in loc:
                 yield {'loc': loc}
 
-    def _get_search_domain(self, search, category, attrib_values):
+    def _get_search_domain(self, search, category, attrib_values, search_in_description=True):
         domain = request.website.sale_product_domain()
         if search:
             for srch in search.split(" "):
@@ -149,14 +149,11 @@ class WebsiteLines(WebsiteSale):
 
         # catch line
         Line = request.env['ws.product.line']
-        all_lines = Line.sudo().search([])
-        _log.info(" TODAS LAS LINEAS:: :%s " % all_lines)
+        all_lines = Line.sudo().search([('visi','=',True)])
         if line:
             line = Line.sudo().search([('id', '=', int(line))])
             if not line:
                 raise NotFound()
-        _log.info("LINEA:::  %s " % line)
-
         if ppg:
             try:
                 ppg = int(ppg)
@@ -174,13 +171,29 @@ class WebsiteLines(WebsiteSale):
         attrib_set = {v[1] for v in attrib_values}
 
         domain = self._get_search_domain(search, category, attrib_values)
-        _log.info("DOMINIO ::: %s " % domain)
         if line:
             line_categs = line.product_catg_public_id.ids
             domain.append(('public_categ_ids', 'child_of', line_categs))
-
-        _log.info("DOMINIO 2 ::::: %s " % domain)
-
+        base = request.httprequest.full_path
+        simb = ''
+        if '?' not in base:
+            simb = '?'
+        promo = {'mas_vendido':['Más Vendido',0,base+simb+'&mas_vendido=1'],
+                 'nuevo':['Lo más Nuevo',0,base+simb+'&nuevo=1'],
+                 'promocion_remate':['Promoción y Remate',0,base+simb+'&promocion_remate=1']}
+        if post.get('mas_vendido') and post.get('mas_vendido') not in [0,'0','false']:
+            domain.append(('vendido', '=', True))
+            promo['mas_vendido'][1] =1
+            promo['mas_vendido'][2] = base.replace('&mas_vendido=1','')
+        if post.get('nuevo') and post.get('nuevo') not in [0,'0','false']:
+            domain.append(('nuevo', '=', True))
+            promo['nuevo'][1] = 1
+            promo['nuevo'][2] = base.replace('&nuevo=1','')
+        if post.get('promocion_remate') and post.get('promocion_remate') not in [0,'0','false']:
+            promo['promocion_remate'][1] = 1
+            promo['promocion_remate'][2] = base.replace('&promocion_remate=1','')
+            temp = request.env['product.pricelist'].search([('promocion','=','True')],limit=1).mapped('item_ids.product_tmpl_id.id')
+            domain.append(('id', 'in', temp))
         keep = QueryURL('/shop', category=category and int(category), search=search, attrib=attrib_list,
                         order=post.get('order'))
 
@@ -197,7 +210,6 @@ class WebsiteLines(WebsiteSale):
         Product = request.env['product.template'].with_context(bin_size=True)
 
         search_product = Product.search(domain, order=self._get_search_order(post))
-        _log.info(" PRODUCTOS ENCONTRADOS :::  %s " % len(search_product))
         website_domain = request.website.website_domain()
         categs_domain = [('parent_id', '=', False)] + website_domain
         if search:
@@ -254,6 +266,7 @@ class WebsiteLines(WebsiteSale):
             'layout_mode': layout_mode,
             'all_lines': all_lines,
             'line': line,
+            'promo':promo,
 
         }
         if category:
