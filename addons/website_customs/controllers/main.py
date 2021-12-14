@@ -6,6 +6,7 @@ from odoo.addons.website_sale.controllers.main import WebsiteSale
 from odoo.addons.website_sale_stock.controllers.main import WebsiteSaleStock
 from odoo.tools.translate import _
 from odoo.exceptions import ValidationError
+import json
 import logging
 
 _log = logging.getLogger(__name__)
@@ -58,3 +59,28 @@ class WebsiteBackend(Home):
                 return request.redirect(first_menu[0].url)
 
         raise request.not_found()
+
+
+class WebsiteSaleP(http.Controller):
+
+    @http.route('/shop/products/filter_viewed', type='json', auth='public', website=True)
+    def products_recently_viewed(self, **kwargs):
+        res = {'products': []}
+        _log.warning(kwargs)
+        domain = kwargs.get('domain',"[]")
+        try:
+            domain = json.loads(domain.replace("'",'"'))
+        except:
+            domain = []
+        FieldMonetary = request.env['ir.qweb.field.monetary']
+        monetary_options = {
+            'display_currency': request.website.get_current_pricelist().currency_id,
+        }
+        viewed_products = request.env['product.product'].sudo().search(domain,limit=16)
+        for product in viewed_products:
+            combination_info = product._get_combination_info_variant()
+            res_product = product.read(['id', 'name', 'website_url'])[0]
+            res_product.update(combination_info)
+            res_product['price'] = FieldMonetary.value_to_html(res_product['price'], monetary_options)
+            res['products'].append(res_product)
+        return res
