@@ -37,10 +37,16 @@ class AccountPaymentCustom(models.Model):
         self.date_change = True
 
     def action_process_edi_web_services(self):
-        date = self.date_payment_SAT
+        date_SAT = self.date_payment_SAT
+        date_PAY = self.date_payment_customer
         tz_str = self.env.user.tz or 'America/Mexico_City'
         tz = pytz.timezone(tz_str)
-        local_datetime = date.astimezone(tz=tz)
-        local_datetime = local_datetime.replace(tzinfo=None)
-        objeto = self.with_context(date_payment=local_datetime)
+
+        date_SAT = date_SAT.astimezone(tz=tz)
+        date_SAT = date_SAT.replace(tzinfo=None)
+
+        date_PAY = date_PAY.astimezone(tz=tz)
+        date_PAY = date_PAY.replace(tzinfo=None)
+
+        objeto = self.with_context(date_SAT=date_SAT, date_PAY=date_PAY)
         return super(AccountPaymentCustom, objeto).action_process_edi_web_services()

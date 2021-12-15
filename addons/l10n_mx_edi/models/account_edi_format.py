@@ -411,7 +411,7 @@ class AccountEdiFormat(models.Model):
         amount = abs(sum(receivable_lines.mapped('amount_currency')) if len(currencies) == 1 else sum(receivable_lines.mapped('balance')))
 
         # Si la solicitud viene de una pago (context['from_payment']) se asigna la fecha ingresada en "Fecha de Timbrado"
-        cfdi_date_pay = self._context.get('date_payment').strftime('%Y-%m-%dT%H:%M:%S') if self._context.get('date_payment') else move.l10n_mx_edi_post_time.strftime('%Y-%m-%dT%H:%M:%S')
+        cfdi_date_pay = self._context.get('date_SAT').strftime('%Y-%m-%dT%H:%M:%S') if self._context.get('date_SAT') else move.l10n_mx_edi_post_time.strftime('%Y-%m-%dT%H:%M:%S')
 
         cfdi_values = {
             **self._l10n_mx_edi_get_common_cfdi_values(move),
@@ -429,7 +429,8 @@ class AccountEdiFormat(models.Model):
         }
 
         cfdi_payment_datetime = datetime.combine(fields.Datetime.from_string(move.date), datetime.strptime('12:00:00', '%H:%M:%S').time())
-        cfdi_values['cfdi_payment_date'] = cfdi_payment_datetime.strftime('%Y-%m-%dT%H:%M:%S')
+        # cfdi_values['cfdi_payment_date'] = cfdi_payment_datetime.strftime('%Y-%m-%dT%H:%M:%S')
+        cfdi_values['cfdi_payment_date'] = self._context.get('date_PAY').strftime('%Y-%m-%dT%H:%M:%S') if self._context.get('date_PAY') else cfdi_payment_datetime.strftime('%Y-%m-%dT%H:%M:%S')
 
         if cfdi_values['customer'].country_id.l10n_mx_edi_code != 'MEX':
             cfdi_values['customer_fiscal_residence'] = cfdi_values['customer'].country_id.l10n_mx_edi_code

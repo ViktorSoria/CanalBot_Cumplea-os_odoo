@@ -9,8 +9,8 @@
                 <group name="group4">
                     <field name="seller_original"/>
                     <field name="date_change" invisible="True"/>
-                    <field name="date_payment_customer"/>
-                    <field name="edi_state"/>
+                    <field name="date_payment_customer" attrs="{'readonly':[('edi_state','=','sent')]}"/>
+<!--                    <field name="edi_state"/>-->
                     <field name="date_payment_SAT" attrs="{'readonly':[('edi_state','=','sent')]}"/>
                 </group>
             </xpath>
