@@ -60,4 +60,68 @@
         </xpath>
     </template>
 
+    <template id="busqueda_pagina" inherit_id="website.template_header_default" name="Busqueda_pagina_multimoto">
+        <xpath expr="//t[@t-call='portal.placeholder_user_sign_in']" position="replace"/>
+        <xpath expr="//t[@t-call='portal.user_dropdown']" position="replace"/>
+        <xpath expr="//nav[@class='navbar navbar-expand-lg navbar-light o_colored_level o_cc shadow-sm']" position="before">
+            <section class="barra_busqueda">
+                <div class="container">
+                    <div class="row" style="align-content: center;">
+                        <div data-snippet="s_share" class="s_share text-left" data-name="Share">
+                            <h4 class="s_share_title d-none o_default_snippet_text">Compartir</h4>
+                            <a href="/" target="_blank" class="s_share_facebook">
+                                <i class="fa fa-facebook rounded-circle"/>
+                            </a>
+                            <a href="/" target="_blank" class="s_share_instagram">
+                                <i class="fa fa-instagram rounded-circle"/>
+                            </a>
+                            <a href="/" target="blank" class="s_share_whatsapp">
+                                <i class="fa fa-whatsapp rounded-circle"/>
+                            </a>
+                        </div>
+                        <div class="s_allow_columns container parte_superior">
+                            <form method="get" data-snippet="s_products_searchbar_input" class="o_wsale_products_searchbar_form o_wait_lazy_js s_wsale_products_searchbar_input" action="/shop" data-name="Products Search">
+                                <div role="search" class="input-group">
+                                    <input type="search" name="search" class="search-query form-control oe_search_box" data-limit="5" data-display-description="true" data-display-price="true" data-display-image="true" placeholder="Buscar…"/>
+                                    <div class="input-group-append">
+                                    <button type="submit" class="btn_cust btn btn-primary oe_search_button" aria-label="Búsqueda" title="Búsqueda">
+                                        <i class="fa fa-search"/>
+                                    </button>
+                                    </div>
+                                </div>
+                                <input name="order" type="hidden" class="o_wsale_search_order_by" value=""/>
+                            </form>
+                        </div>
+                        <div class="row">
+                            <ul t-attf-class="nav navbar-nav o_menu_loading flex-grow-1">
+                                <t t-call="portal.placeholder_user_sign_in">
+                                    <t t-set="_item_class" t-value="'nav-item new-session'"/>
+                                    <t t-set="_link_class" t-value="'nav-link'"/>
+                                </t>
+                                <t t-call="portal.user_dropdown">
+                                    <t t-set="_user_name" t-value="true"/>
+                                    <t t-set="_item_class" t-value="'nav-item dropdown new-session'"/>
+                                    <t t-set="_link_class" t-value="'nav-link'"/>
+                                    <t t-set="_dropdown_menu_class" t-value="'dropdown-menu-right'"/>
+                                </t>
+<!--                                <t t-call="website_sale.header_cart_link">-->
+<!--                                    <t t-set="_icon" t-value="True"/>-->
+<!--                                    <t t-set="_item_class" t-value="'nav-item mx-lg-3'"/>-->
+<!--                                    <t t-set="_link_class" t-value="'nav-link'"/>-->
+<!--                                </t>-->
+                            </ul>
+<!--                            <t t-set="website_sale_order" t-value="website.sale_get_order()" />-->
+<!--                            <a href="/shop/cart" class="o_wsale_my_cart">-->
+<!--                                <i class="fa fa-opencart btn btn-primary faOpCart">-->
+<!--                                    <sup class="my_cart_quantity badge badge-primary" t-esc="website_sale_order and website_sale_order.cart_quantity or '0'" t-att-data-order-id="website_sale_order and website_sale_order.id or ''"/>-->
+<!--                                </i>-->
+<!--                                <span t-if="_text">My Cart</span>-->
+<!--                            </a>-->
+                        </div>
+                    </div>
+                </div>
+            </section>
+		</xpath>
+    </template>
+<!--Paptic Header Shadow-->
 </odoo>

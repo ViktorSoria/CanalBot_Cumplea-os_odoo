@@ -96,7 +96,6 @@ class Website(models.Model):
             pricelist_rel = pricelist.relational_list or pricelist
             so_data = self._prepare_sale_order_values(partner, pricelist_rel)
             sale_order = self.env['sale.order'].with_company(request.website.company_id.id).with_user(SUPERUSER_ID).create(so_data)
-
             # set fiscal position
             if request.website.partner_id.id != partner.id:
                 sale_order.onchange_partner_shipping_id()
@@ -192,50 +191,6 @@ class SaleOrderLine(models.Model):
         for record in self:
             record.name_short = record.product_id.display_name
 
-    @api.onchange('product_id', 'price_unit', 'product_uom', 'product_uom_qty', 'tax_id')
-    def _onchange_discount(self):
-        """Quitamos listas de precio tipo mostrar descuento"""
-        return
-
-    def _get_real_price_currency(self, product, rule_id, qty, uom, pricelist_id):
-        """Quitamos listas de precio tipo mostrar descuento"""
-        PricelistItem = self.env['product.pricelist.item']
-        field_name = 'lst_price'
-        currency_id = None
-        product_currency = product.currency_id
-        if rule_id:
-            pricelist_item = PricelistItem.browse(rule_id)
-            # if pricelist_item.pricelist_id.discount_policy == 'without_discount':
-            #     while pricelist_item.base == 'pricelist' and pricelist_item.base_pricelist_id and pricelist_item.base_pricelist_id.discount_policy == 'without_discount':
-            #         price, rule_id = pricelist_item.base_pricelist_id.with_context(uom=uom.id).get_product_price_rule(product, qty, self.order_id.partner_id)
-            #         pricelist_item = PricelistItem.browse(rule_id)
-            if pricelist_item.base == 'standard_price':
-                field_name = 'standard_price'
-                product_currency = product.cost_currency_id
-            elif pricelist_item.base == 'pricelist' and pricelist_item.base_pricelist_id:
-                field_name = 'price'
-                product = product.with_context(pricelist=pricelist_item.base_pricelist_id.id)
-                product_currency = pricelist_item.base_pricelist_id.currency_id
-            currency_id = pricelist_item.pricelist_id.currency_id
-
-        if not currency_id:
-            currency_id = product_currency
-            cur_factor = 1.0
-        else:
-            if currency_id.id == product_currency.id:
-                cur_factor = 1.0
-            else:
-                cur_factor = currency_id._get_conversion_rate(product_currency, currency_id, self.company_id or self.env.company, self.order_id.date_order or fields.Date.today())
-
-        product_uom = self.env.context.get('uom') or product.uom_id.id
-        if uom and uom.id != product_uom:
-            # the unit price is in a different uom
-            uom_factor = uom._compute_price(1.0, product.uom_id)
-        else:
-            uom_factor = 1.0
-
-        return product[field_name] * uom_factor * cur_factor, currency_id
-
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
@@ -243,98 +198,6 @@ class SaleOrder(models.Model):
     def _cart_update(self, product_id=None, line_id=None, add_qty=0, set_qty=0, **kwargs):
         obj = self.with_context(no_ware=True)
         return super(SaleOrder, obj)._cart_update(product_id, line_id, add_qty, set_qty, **kwargs)
-
-    def update_prices(self):
-        """Quitamos listas de precio tipo mostrar descuento"""
-        self.ensure_one()
-        lines_to_update = []
-        for line in self.order_line.filtered(lambda line: not line.display_type):
-            product = line.product_id.with_context(
-                partner=self.partner_id,
-                quantity=line.product_uom_qty,
-                date=self.date_order,
-                pricelist=self.pricelist_id.id,
-                uom=line.product_uom.id
-            )
-            price_unit = self.env['account.tax']._fix_tax_included_price_company(
-                line._get_display_price(product), line.product_id.taxes_id, line.tax_id, line.company_id)
-            discount = 0
-            lines_to_update.append((1, line.id, {'price_unit': price_unit, 'discount': discount}))
-        self.update({'order_line': lines_to_update})
-        self.show_update_pricelist = False
-        self.message_post(body=_("Product prices have been recomputed according to pricelist <b>%s<b> ", self.pricelist_id.display_name))
-
-    @api.onchange('sale_order_template_id')
-    def onchange_sale_order_template_id(self):
-        """Quitamos listas de precio tipo mostrar descuento"""
-        if not self.sale_order_template_id:
-            self.require_signature = self._get_default_require_signature()
-            self.require_payment = self._get_default_require_payment()
-            return
-
-        template = self.sale_order_template_id.with_context(lang=self.partner_id.lang)
-
-        # --- first, process the list of products from the template
-        order_lines = [(5, 0, 0)]
-        for line in template.sale_order_template_line_ids:
-            data = self._compute_line_data_for_template_change(line)
-
-            if line.product_id:
-                price = line.product_id.lst_price
-                discount = 0
-
-                if self.pricelist_id:
-                    pricelist_price = self.pricelist_id.with_context(uom=line.product_uom_id.id).get_product_price(line.product_id, 1, False)
-                    price = pricelist_price
-
-                data.update({
-                    'price_unit': price,
-                    'discount': discount,
-                    'product_uom_qty': line.product_uom_qty,
-                    'product_id': line.product_id.id,
-                    'product_uom': line.product_uom_id.id,
-                    'customer_lead': self._get_customer_lead(line.product_id.product_tmpl_id),
-                })
-
-            order_lines.append((0, 0, data))
-
-        self.order_line = order_lines
-        self.order_line._compute_tax_id()
-
-        # then, process the list of optional products from the template
-        option_lines = [(5, 0, 0)]
-        for option in template.sale_order_template_option_ids:
-            data = self._compute_option_data_for_template_change(option)
-            option_lines.append((0, 0, data))
-
-        self.sale_order_option_ids = option_lines
-
-        if template.number_of_days > 0:
-            self.validity_date = fields.Date.context_today(self) + timedelta(template.number_of_days)
-
-        self.require_signature = template.require_signature
-        self.require_payment = template.require_payment
-
-        if template.note:
-            self.note = template.note
-
-    def _compute_option_data_for_template_change(self, option):
-        """Quitamos listas de precio tipo mostrar descuento"""
-        price = option.product_id.lst_price
-        discount = 0
-
-        if self.pricelist_id:
-            pricelist_price = self.pricelist_id.with_context(uom=option.uom_id.id).get_product_price(option.product_id, 1, False)
-            price = pricelist_price
-
-        return {
-            'product_id': option.product_id.id,
-            'name': option.name,
-            'quantity': option.quantity,
-            'uom_id': option.uom_id.id,
-            'price_unit': price,
-            'discount': discount
-        }
 
     def _website_product_id_change(self, order_id, product_id, qty=0):
         order = self.sudo().browse(order_id)
@@ -520,55 +383,7 @@ class Template(models.Model):
                     'pricelist_id':lista_rel.id
                 }
                 self.env['product.pricelist.item'].create(data)
-
-    def _get_combination_info(self, combination=False, product_id=False, add_qty=1, pricelist=False, parent_combination=False, only_template=False):
-        website_sale_stock_get_quantity = self.env.context.get('website_sale_stock_get_quantity')
-        obj = self.with_context(website_sale_stock_get_quantity=False)
-        if self.env.context.get('website_id'):
-            current_website = self.env['website'].get_current_website()
-            if not pricelist:
-                pricelist = current_website.get_current_pricelist()
-            obj = obj.with_context(pricelist_id=pricelist.relational_list.id)
-        combi = super(Template,obj)._get_combination_info(
-            combination=combination, product_id=product_id, add_qty=add_qty, pricelist=pricelist,
-            parent_combination=parent_combination, only_template=only_template)
-        list_price = combi.get('price')
-        price = combi.get('list_price')
-        has_discounted_price = pricelist.currency_id.compare_amounts(list_price, price) == 1
-        combi.update(
-            price=price if has_discounted_price else list_price,
-            list_price=list_price,
-            has_discounted_price=has_discounted_price,
-        )
-        if website_sale_stock_get_quantity:
-            if combi['product_id']:
-                product = self.env['product.product'].sudo().browse(combi['product_id'])
-                ware = self.env['stock.warehouse'].sudo().search([]).ids
-                virtual_available = product.with_context(warehouse=ware).virtual_available
-                combi.update({
-                    'virtual_available': virtual_available,
-                    'virtual_available_formatted': self.env['ir.qweb.field.float'].value_to_html(virtual_available, {'precision': 0}),
-                    'product_type': product.type,
-                    'inventory_availability': product.inventory_availability,
-                    'available_threshold': product.available_threshold,
-                    'custom_message': product.custom_message,
-                    'product_template': product.product_tmpl_id.id,
-                    'cart_qty': product.cart_qty,
-                    'uom_name': product.uom_id.name,
-                })
-            else:
-                product_template = self.sudo()
-                combi.update({
-                    'virtual_available': 0,
-                    'product_type': product_template.type,
-                    'inventory_availability': product_template.inventory_availability,
-                    'available_threshold': product_template.available_threshold,
-                    'custom_message': product_template.custom_message,
-                    'product_template': product_template.id,
-                    'cart_qty': 0
-                })
-        return combi
-
+    
     def price_compute(self, price_type, uom=False, currency=False, company=None):
         # TDE FIXME: delegate to template or not ? fields are reencoded here ...
         # compatibility about context keys used a bit everywhere in the code
@@ -640,3 +455,151 @@ class Template(models.Model):
                 prices = pricelist.get_products_price(self.with_context(pricelist_id=pricelist.id), quantities, partners)
 
         return prices
+    
+    def _get_combination_info(self, combination=False, product_id=False, add_qty=1, pricelist=False, parent_combination=False, only_template=False):
+        self.ensure_one()
+        obj = self.with_context(website_sale_stock_get_quantity=False)
+        current_website = False
+        if self.env.context.get('website_id'):
+            current_website = self.env['website'].get_current_website()
+            if not pricelist:
+                pricelist = current_website.get_current_pricelist()
+            obj = obj.with_context(pricelist_id=pricelist.relational_list.id,politica='without_discount')
+        combination_info = obj.ori_get_combination_info(
+            combination=combination, product_id=product_id, add_qty=add_qty, pricelist=pricelist,
+            parent_combination=parent_combination, only_template=only_template)
+
+        """website"""
+        if current_website:
+            partner = self.env.user.partner_id
+            company_id = current_website.company_id
+            product = self.env['product.product'].browse(combination_info['product_id']) or self
+            product = product.with_context(politica='without_discount')
+            tax_display = self.user_has_groups('account.group_show_line_subtotals_tax_excluded') and 'total_excluded' or 'total_included'
+            fpos = self.env['account.fiscal.position'].get_fiscal_position(partner.id).sudo().with_context(politica='without_discount')
+            taxes = fpos.map_tax(product.sudo().taxes_id.filtered(lambda x: x.company_id == company_id), product, partner)
+            taxes = taxes.with_context(politica='without_discount')
+            # The list_price is always the price of one.
+            quantity_1 = 1
+            combination_info['price'] = self.env['account.tax'].with_context(politica='without_discount')._fix_tax_included_price_company(combination_info['price'], product.sudo().taxes_id, taxes, company_id)
+            price = taxes.compute_all(combination_info['price'], pricelist.currency_id, quantity_1, product, partner)[tax_display]
+            combination_info['list_price'] = self.env['account.tax'].with_context(politica='without_discount')._fix_tax_included_price_company(combination_info['list_price'], product.sudo().taxes_id, taxes, company_id)
+            list_price = taxes.compute_all(combination_info['list_price'], pricelist.currency_id, quantity_1, product, partner)[tax_display]
+            has_discounted_price = pricelist.currency_id.compare_amounts(list_price, price) == 1
+
+            combination_info.update(
+                price=price,
+                list_price=list_price,
+                has_discounted_price=has_discounted_price,
+            )
+        list_price = combination_info.get('price')
+        price = combination_info.get('list_price')
+        has_discounted_price = pricelist.currency_id.compare_amounts(list_price, price) == 1
+        combination_info.update(
+            price=price if has_discounted_price else list_price,
+            list_price=list_price,
+            has_discounted_price=has_discounted_price,
+        )
+        """website stock"""
+        if self.env.context.get('website_sale_stock_get_quantity'):
+            if combination_info['product_id']:
+                product = self.env['product.product'].sudo().browse(combination_info['product_id'])
+                ware = self.env['stock.warehouse'].sudo().search([]).ids
+                virtual_available = product.with_context(warehouse=ware).virtual_available
+                combination_info.update({
+                    'virtual_available': virtual_available,
+                    'virtual_available_formatted': self.env['ir.qweb.field.float'].value_to_html(virtual_available, {'precision': 0}),
+                    'product_type': product.type,
+                    'inventory_availability': product.inventory_availability,
+                    'available_threshold': product.available_threshold,
+                    'custom_message': product.custom_message,
+                    'product_template': product.product_tmpl_id.id,
+                    'cart_qty': product.cart_qty,
+                    'uom_name': product.uom_id.name,
+                })
+            else:
+                product_template = self.sudo()
+                combination_info.update({
+                    'virtual_available': 0,
+                    'product_type': product_template.type,
+                    'inventory_availability': product_template.inventory_availability,
+                    'available_threshold': product_template.available_threshold,
+                    'custom_message': product_template.custom_message,
+                    'product_template': product_template.id,
+                    'cart_qty': 0
+                })
+        return combination_info
+    
+    def ori_get_combination_info(self, combination=False, product_id=False, add_qty=1, pricelist=False, parent_combination=False, only_template=False):
+
+        self.ensure_one()
+        # get the name before the change of context to benefit from prefetch
+        display_name = self.display_name
+
+        display_image = True
+        quantity = self.env.context.get('quantity', add_qty)
+        context = dict(self.env.context, quantity=quantity, pricelist=pricelist.id if pricelist else False)
+        product_template = self.with_context(context)
+
+        combination = combination or product_template.env['product.template.attribute.value']
+
+        if not product_id and not combination and not only_template:
+            combination = product_template._get_first_possible_combination(parent_combination)
+
+        if only_template:
+            product = product_template.env['product.product']
+        elif product_id and not combination:
+            product = product_template.env['product.product'].browse(product_id)
+        else:
+            product = product_template._get_variant_for_combination(combination)
+
+        if product:
+            # We need to add the price_extra for the attributes that are not
+            # in the variant, typically those of type no_variant, but it is
+            # possible that a no_variant attribute is still in a variant if
+            # the type of the attribute has been changed after creation.
+            no_variant_attributes_price_extra = [
+                ptav.price_extra for ptav in combination.filtered(
+                    lambda ptav:
+                        ptav.price_extra and
+                        ptav not in product.product_template_attribute_value_ids
+                )
+            ]
+            if no_variant_attributes_price_extra:
+                product = product.with_context(
+                    no_variant_attributes_price_extra=tuple(no_variant_attributes_price_extra)
+                )
+            list_price = product.price_compute('list_price')[product.id]
+            price = product.price if pricelist else list_price
+            display_image = bool(product.image_1920)
+            display_name = product.display_name
+        else:
+            product_template = product_template.with_context(current_attributes_price_extra=[v.price_extra or 0.0 for v in combination])
+            list_price = product_template.price_compute('list_price')[product_template.id]
+            price = product_template.price if pricelist else list_price
+            display_image = bool(product_template.image_1920)
+
+            combination_name = combination._get_combination_name()
+            if combination_name:
+                display_name = "%s (%s)" % (display_name, combination_name)
+
+        if pricelist and pricelist.currency_id != product_template.currency_id:
+            list_price = product_template.currency_id._convert(
+                list_price, pricelist.currency_id, product_template._get_current_company(pricelist=pricelist),
+                fields.Date.today()
+            )
+        if self.env.context.get('politica','') == 'without_discount' or (pricelist and pricelist.discount_policy == 'without_discount'):
+            price_without_discount = list_price
+        else:
+            price_without_discount = price
+        has_discounted_price = (pricelist or product_template).currency_id.compare_amounts(price_without_discount, price) == 1
+
+        return {
+            'product_id': product.id,
+            'product_template_id': product_template.id,
+            'display_name': display_name,
+            'display_image': display_image,
+            'price': price,
+            'list_price': list_price,
+            'has_discounted_price': has_discounted_price,
+        }

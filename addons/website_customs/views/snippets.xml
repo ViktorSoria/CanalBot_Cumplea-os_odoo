@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <template id="s_products_filter_viewed" name="Viewed Products filter">
+        <section class="s_wsale_products_filter_viewed d-none pt24 pb24" style="min-height: 400px;">
+            <div class="container">
+                <div class="slider o_not_editable"/>
+            </div>
+        </section>
+    </template>
+
+    <template id="snippets" inherit_id="website_sale.snippets" name="e-commerce snippets">
+        <xpath expr="//t[@t-snippet='website_sale.s_products_recently_viewed']" position="after">
+            <t t-snippet="website_customs.s_products_filter_viewed" t-thumbnail="/website_sale/static/src/img/snippets_thumbs/s_products_recently_viewed.svg"/>
+        </xpath>
+    </template>
+
+    <template id="snippet_options" inherit_id="website.snippet_options" name="e-commerce snippet options">
+        <xpath expr="." position="inside">
+            <div data-js="productsFilterViewedOptions" data-selector=".s_wsale_products_filter_viewed">
+                <we-input string="Dominio" data-name="dominio_of_product_opt" data-attribute-name="dominioOfProduct" data-select-data-attribute=""/>
+            </div>
+        </xpath>
+    </template>
+</odoo>

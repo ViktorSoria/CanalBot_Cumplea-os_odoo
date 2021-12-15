@@ -50,15 +50,58 @@
 .new_chat{
     border: none;
     margin-right: 4%;
+    margin-bottom: 1.6%;
     background-color: transparent;
     > div.o_mail_thread{
         background-color: white;
+        border-radius: 10px 0 0 0;
+        margin-top: 5px;
+    }
+    > div.o_livechat_rating{
+        background-color: white;
+    }
+    > div.o_thread_window_header{
+        border-radius: 5px 0 0 5px;
+        border: none;
     }
     > div > img{
         width: 50px;
+        margin-right: 10px;
     }
     > div > span{
-        padding: 10% 15%;
+        padding-right: 2%;
+        padding-left: 2%;
         border-radius: 10px;
+    }
+}
+
+.parte_superior{
+    margin-top: 10px;
+    width: 60%;
+}
+
+button.btn_cust{
+    background: rgb(200, 20, 50);
+    border: none;
+    border-radius: 12px;
+    padding: 8px;
+}
+
+.barra_busqueda{
+    background: rgb(28, 62, 145);
+    padding-top: 1px;
+    padding-bottom: 1px;
+}
+
+.faOpCart{
+    background: rgb(28,62,145);
+    padding-top: 15px;
+    /*padding-right: 0;*/
+}
+
+.new-session{
+    margin-top: 10px;
+    > a{
+        color: white;
     }
 }

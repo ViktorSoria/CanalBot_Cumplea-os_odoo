@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record model="product.product" id="product_global_invoice">
+        <field name="name">Orden de venta</field>
+    </record>
+
+    <record id="view_pos_global_order" model="ir.ui.view">
+        <field name="name">pos.global.order.form</field>
+        <field name="model">pos.order.invoice</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="start_date"/>
+                        <field name="end_date"/>
+                    </group>
+                    <group>
+                        <field name="re_fac"/>
+                    </group>
+                </group>
+                <group>
+                    <field name="current_user_pos_ids" invisible="True"/>
+                    <field name="pos_config_ids" mode="tree" colspan="4" nolabel="1" domain="[('id', 'in', current_user_pos_ids)]"/>
+                </group>
+                <footer>
+                    <button name="generate_invoice" string="Facturar" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_invoice_order" model="ir.actions.act_window">
+        <field name="name">Factura Global</field>
+        <field name="res_model">pos.order.invoice</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_invoice_order" name="Facturacion Global" action="action_invoice_order"
+              parent="point_of_sale.menu_point_rep" sequence="20"/>
+
+</odoo>
