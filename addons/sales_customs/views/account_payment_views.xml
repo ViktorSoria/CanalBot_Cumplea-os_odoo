@@ -5,8 +5,14 @@
         <field name="model">account.payment</field>
         <field name="inherit_id" ref="account.view_account_payment_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='ref']" position="after">
-                <field name="seller_original"/>
+            <xpath expr="//group[@name='group3']" position="after">
+                <group name="group4">
+                    <field name="seller_original"/>
+                    <field name="date_change" invisible="True"/>
+                    <field name="date_payment_customer"/>
+                    <field name="edi_state"/>
+                    <field name="date_payment_SAT" attrs="{'readonly':[('edi_state','=','sent')]}"/>
+                </group>
             </xpath>
         </field>
     </record>
