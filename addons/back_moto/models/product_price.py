@@ -46,7 +46,7 @@ class ProductTemplate(models.Model):
         res = super().export_data(fields_to_export)
         if "line_ids/precio" in fields_to_export and "line_ids/display_name":
             res = res.get('datas')
-            listas = self.env['product.pricelist'].search([])
+            listas = self.env['product.pricelist'].search([('lista_precio','=',True)])
             precio_index = fields_to_export.index("line_ids/precio")
             nombre_index = fields_to_export.index("line_ids/display_name")
             fields_to_export.pop(precio_index)

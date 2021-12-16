@@ -12,6 +12,9 @@ from lxml.objectify import fromstring
 from pytz import timezone
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+import logging
+
+_logger = logging.getLogger("Facturacion")
 
 CFDI_XSLT_CADENA = 'l10n_mx_edi/data/3.3/cadenaoriginal.xslt'
 CFDI_XSLT_CADENA_TFD = 'l10n_mx_edi/data/xslt/3.3/cadenaoriginal_TFD_1_1.xslt'
@@ -103,7 +106,7 @@ class AccountMove(models.Model):
     # ==== CFDI attachment fields ====
     l10n_mx_edi_cfdi_uuid = fields.Char(string='Fiscal Folio', copy=False, readonly=True,
         help='Folio in electronic invoice, is returned by SAT when send to stamp.',
-        compute='_compute_cfdi_values')
+        compute='_compute_cfdi_values',store=True)
     l10n_mx_edi_cfdi_supplier_rfc = fields.Char(string='Supplier RFC', copy=False, readonly=True,
         help='The supplier tax identification number.',
         compute='_compute_cfdi_values')

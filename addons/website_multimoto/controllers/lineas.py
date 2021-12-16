@@ -133,9 +133,12 @@ class WebsiteLines(WebsiteSale):
     @http.route([
         '''/shop''',
         '''/shop/line/<model("ws.product.line"):line>''',
+        '''/shop/line/<model("ws.product.line"):line>/page/<int:page>''',
         '''/shop/page/<int:page>''',
         '''/shop/category/<model("product.public.category"):category>''',
-        '''/shop/category/<model("product.public.category"):category>/page/<int:page>'''
+        '''/shop/category/<model("product.public.category"):category>/page/<int:page>''',
+        '''/shop/line/<model("ws.product.line"):line>/category/<model("product.public.category"):category>''',
+        '''/shop/line/<model("ws.product.line"):line>/category/<model("product.public.category"):category>/page/<int:page>'''
     ], type='http', auth="public", website=True, sitemap=sitemap_shop)
     def shop(self, page=0, category=None, search='', ppg=False, line=None, **post):
         add_qty = int(post.get('add_qty', 1))
@@ -151,6 +154,8 @@ class WebsiteLines(WebsiteSale):
         Line = request.env['ws.product.line']
         all_lines = Line.sudo().search([('visi','=',True)])
         if line:
+            if category and category not in line.product_catg_public_id:
+                category = Category
             line = Line.sudo().search([('id', '=', int(line))])
             if not line:
                 raise NotFound()
@@ -202,6 +207,8 @@ class WebsiteLines(WebsiteSale):
         request.context = dict(request.context, pricelist=pricelist.id, partner=request.env.user.partner_id)
 
         url = "/shop"
+        cat_url = "/shop"
+        line_url = "/shop"
         if search:
             post["search"] = search
         if attrib_list:
@@ -219,13 +226,18 @@ class WebsiteLines(WebsiteSale):
         else:
             search_categories = Category
 
+        cat_url = "/shop{}{}"
         if line:
+            url = "/shop/line/%s" % slug(line)
+            cat_url = cat_url.format("/line/%s{}"%(slug(line)),'{}')
             line_categs = line.product_catg_public_id.ids
             categs_domain.append(('id', 'in', line_categs))
         categs = Category.search(categs_domain)
 
+        line_url = "/shop{}{}"
         if category:
-            url = "/shop/category/%s" % slug(category)
+            url = url +"/category/%s" % slug(category)
+            line_url = line_url+"/category/" + slug(category)
 
         product_count = len(search_product)
         pager = request.website.pager(url=url, total=product_count, page=page, step=ppg, scope=7, url_args=post)
@@ -267,8 +279,11 @@ class WebsiteLines(WebsiteSale):
             'all_lines': all_lines,
             'line': line,
             'promo':promo,
+            'line_url': line_url,
+            'cat_url': cat_url,
 
         }
+        _log.warning(cat_url)
         if category:
             values['main_object'] = category
         return request.render("website_sale.products", values)
