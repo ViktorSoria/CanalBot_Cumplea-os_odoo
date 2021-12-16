@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="website_visitor_form_view" model="ir.ui.view">
+        <field name="name">website.visitor.form.view</field>
+        <field name="model">website.visitor</field>
+        <field name="inherit_id" ref="website.website_visitor_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='email']" position="after">
+                <field name="public_email"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

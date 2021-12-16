@@ -8,6 +8,12 @@ import logging
 _log = logging.getLogger("Website (%s) -------> " % __name__)
 
 
+class Visitor(models.Model):
+    _inherit = "website.visitor"
+
+    public_email = fields.Char("Correo envio publicidad")
+
+
 class Location(models.Model):
     _inherit = "stock.location"
 

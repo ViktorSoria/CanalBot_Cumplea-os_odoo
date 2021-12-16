@@ -124,4 +124,41 @@
 		</xpath>
     </template>
 <!--Paptic Header Shadow-->
+
+<!--    footer-->
+    <template inherit_id="website.custom_code_layout" id="footer_correo">
+        <xpath expr="//div[@id='footer']" position="before">
+            <div class="row">
+                <div class="container">
+                    <div class="col-log-8 offset-lg-2 o_colored_level">
+                        <h4>SUSCRIBETE PARA RECIBIR OFERTAS EXCLUSIVAS, PROMOCIONES Y NOTICIAS</h4>
+                        <form method="post" data-snippet="s_products_searchbar_input" action="/web/email_visitor" data-name="Correo Publicidad">
+                            <div role="search" class="input-group">
+                                <input type="email" name="email" class="form-control oe_search_box" placeholder="Tu dirección de Email"/>
+                                <div class="input-group-append">
+                                    <button type="submit" class="btn btn-primary oe_search_button">SUSCRIBIR</button>
+                                </div>
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+        <xpath expr="//div[@id='footer']" position="inside">
+            <div class="row">
+                <div class="container">
+                    <hr class="w-100 mx-auto" style="border-top-width: thin; border-top-style: solid; border-top-color: white;"/>
+                    <div class="col-lg-8 offset-lg-2 o_colored_level">
+                        <div class="row" style=" display: flex; justify-content: center; align-items: center;">
+                            <a href="/politicas" style="color: white;">
+                                <p>Aviso de privacidad / Todos los derechos reservados</p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
 </odoo>

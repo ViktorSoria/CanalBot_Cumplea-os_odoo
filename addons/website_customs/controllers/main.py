@@ -23,12 +23,16 @@ class WebsiteSaleStockCus(WebsiteSaleStock):
         for line in order.order_line:
             if line.product_id.type == 'product' and line.product_id.inventory_availability in ['always', 'threshold']:
                 cart_qty = sum(order.order_line.filtered(lambda p: p.product_id.id == line.product_id.id).mapped('product_uom_qty'))
+                """En caso de contar con el stock de todos los almacenes usar:
                 ware = request.env['stock.warehouse'].sudo().search([]).ids
                 avl_qty = line.product_id.with_context(warehouse=ware).virtual_available
+                """
+                avl_qty = line.product_id.with_context(warehouse=order.warehouse_id.id).virtual_available
                 if cart_qty > avl_qty:
                     values.append(_(
-                        'Ha solicitado %(quantity)s productos, pero hay %(available_qty)s disponible.',
+                        'Ha solicitado %(quantity)s %(product)s, pero hay %(available_qty)s disponible.\n',
                         quantity=cart_qty,
+                        product=line.product_id.display_name,
                         available_qty=avl_qty if avl_qty > 0 else 0
                     ))
         if values:
@@ -63,10 +67,20 @@ class WebsiteBackend(Home):
 
 class WebsiteSaleP(http.Controller):
 
+    @http.route('/web/email_visitor', type='http', auth='public', website=True,methods=['POST'])
+    def public_email_visitor(self, **kwargs):
+        _log.warning(kwargs)
+        email = kwargs.get('email')
+        if email:
+            Visitor = request.env['website.visitor'].sudo()
+            visitor = Visitor._get_visitor_from_request(False)
+            if visitor:
+                visitor.public_email = visitor.public_email + ',%s'%email if visitor.public_email else email
+        return request.redirect(request.httprequest.url_root)
+
     @http.route('/shop/products/filter_viewed', type='json', auth='public', website=True)
     def products_recently_viewed(self, **kwargs):
         res = {'products': []}
-        _log.warning(kwargs)
         domain = kwargs.get('domain',"[]")
         try:
             domain = json.loads(domain.replace("'",'"'))

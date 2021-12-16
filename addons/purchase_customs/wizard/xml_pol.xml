@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="xml_to_pol_wizard" model="ir.ui.view">
+        <field name="name">xml.to.pol.wizard.form</field>
+        <field name="model">xml.to.pol</field>
+        <field name="arch" type="xml">
+        <form>
+            <group>
+                <field name='xml_file' string="Desc file" widget="binary" filename="xml_file_name"/>
+                <field name='xml_file_name' string="Desc file" attrs="{'readonly':True, 'invisible':True}" />
+           </group>
+            <footer>
+                <button name="do_import" string="Importar" type="object" default_focus="1" class="oe_highlight"/>
+                <button string="Cancel" class="btn btn-secondary" special="cancel" />
+            </footer>
+        </form>
+        </field>
+    </record>
+</odoo>

@@ -10,6 +10,7 @@
         'template/assets.xml',
         'template/web.xml',
         'views/pricelist_views.xml',
+        'views/visitor_views.xml',
         'views/snippets.xml',
         'data/data.xml',
     ],
