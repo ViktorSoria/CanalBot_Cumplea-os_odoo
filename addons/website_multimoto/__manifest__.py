@@ -7,7 +7,7 @@
     'category': 'Website',
     'description': """
 This module adds new some features about website and ecommerce portal.""",
-    'depends': ['portal', 'point_of_sale', 'purchase',  'website_sale'],
+    'depends': ['portal', 'point_of_sale', 'purchase',  'website_sale','account'],
     'data': [
         'security/groups.xml',
         'security/ir.model.access.csv',

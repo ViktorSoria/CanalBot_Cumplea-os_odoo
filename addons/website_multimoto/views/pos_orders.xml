@@ -45,7 +45,7 @@
                             <span class='d-none d-md-inline'>Pedido #</span>
                             <span class='d-block d-md-none'>Ref.</span>
                         </th>
-                        <th class="text-right">Fecha de comprae</th>
+                        <th class="text-right">Fecha de compra</th>
                         <th class="text-center"/>
                         <th class="text-right">Total</th>
                     </tr>
@@ -62,8 +62,11 @@
                             <span class='d-none d-md-inline' t-field="order.date_order" t-options="{'time_only': True}"/>
                         </td>
                         <td class="text-center">
-                            <span t-if="order.state == 'done'"  class="badge badge-pill badge-success">
-                                <i class="fa fa-fw fa-check" role="img" aria-label="Done" title="Done"/>Done
+                            <span t-if="order.state == 'paid'"  class="badge badge-pill badge-success">
+                                <i class="fa fa-fw fa-check" role="img" aria-label="Done" title="Done"/>Pagado
+                            </span>
+                            <span t-if="order.state == 'invoiced'"  class="badge badge-pill badge-success">
+                                <i class="fa fa-fw fa-check" role="img" aria-label="invo" title="Facturado"/>Facturado
                             </span>
                         </td>
                         <td class="text-right"><span t-field="order.amount_total"/></td>
@@ -299,4 +302,33 @@
         </t>
     </template>
 
+<!--    modificacion facturas-->
+    <template id="portal_my_invoices" inherit_id="account.portal_my_invoices" name="Invoice">
+        <xpath expr="//thead/tr/th[@class='text-right']" position="before">
+            <th>Timbrada</th>
+            <th class="text-right">Total</th>
+            <t t-set="total" t-value="0"/>
+            <t t-set="total_pendiente" t-value="0"/>
+        </xpath>
+        <xpath expr="//tbody/t/tr/td[@class='text-right']" position="before">
+            <th>
+                <i class="fa fa-fw fa-check" t-if="invoice.l10n_mx_edi_cfdi_uuid"/>
+                <i class="fa fa-fw fa-remove" t-if="not invoice.l10n_mx_edi_cfdi_uuid"/>
+            </th>
+            <td class="text-right"><span t-esc="-invoice.amount_total if invoice.move_type == 'out_refund' else invoice.amount_total" t-options='{"widget": "monetary", "display_currency": invoice.currency_id}'/></td>
+            <t t-set="total" t-value="total + (-invoice.amount_total if invoice.move_type == 'out_refund' else invoice.amount_total)"/>
+            <t t-set="total_pendiente" t-value="total_pendiente + (-invoice.amount_residual if invoice.move_type == 'out_refund' else invoice.amount_residual)"/>
+        </xpath>
+        <xpath expr="//tbody/t" position="after">
+            <tr t-if="invoices">
+                <td/>
+                <td/>
+                <td/>
+                <td/>
+                <td>Totales:</td>
+                <td class="text-right"><span t-esc="total" t-options='{"widget": "monetary", "display_currency": invoices[0].currency_id}'/></td>
+                <td class="text-right"><span t-esc="total_pendiente" t-options='{"widget": "monetary", "display_currency": invoices[0].currency_id}'/></td>
+            </tr>
+        </xpath>
+    </template>
 </odoo>

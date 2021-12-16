@@ -8,8 +8,14 @@ import logging
 
 _log = logging.getLogger("_-_-_-_-_-_- pos sales py :::: %s" % __name__)
 
-
 class PosCustomerPortal(CustomerPortal):
+
+    def _prepare_portal_layout_values(self):
+        res = super()._prepare_portal_layout_values()
+        partner = request.env.user.partner_id
+        res['partner_total'] = partner.total_invoiced * 1.16
+        res['partner_credit'] = partner.credit
+        return res
 
     def _prepare_home_portal_values(self, counters):
         values = super()._prepare_home_portal_values(counters)
