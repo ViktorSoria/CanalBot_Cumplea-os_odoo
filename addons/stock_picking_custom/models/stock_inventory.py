@@ -199,7 +199,7 @@ class StockQuantWizard(models.TransientModel):
         if self.file_selection == 'excel':
             return self.compute_quants()
         else:
-            pass
+            return self.generate_report_pdf()
 
     def compute_quants(self):
         _log.info("compute quants")
@@ -214,7 +214,7 @@ class StockQuantWizard(models.TransientModel):
     def download_data(self):
         _log.info('Button')
         if self.location_id:
-            self.file_name = 'Existencias %s %s.xlsx' % (self.location_id.display_name, str(datetime.now()))
+            self.file_name = 'Existencias %s %s.xlsx' % (self.location_id.display_name, datetime.now().strftime('%Y-%m-%d %H-%M-%S'))
         else:
             self.file_name = 'Existencias %s.xlsx' % (str(datetime.now()))
         fp = io.BytesIO()
@@ -264,6 +264,42 @@ class StockQuantWizard(models.TransientModel):
                 'stock_quants_ids': [(6, 0, self._context.get('active_ids'))]
             })
             return wizard.download_data()
+
+    def generate_report_pdf(self):
+        self.stock_quants_ids = self.location_id.quant_ids
+        data = {'location_id': self.location_id.display_name, 'category_ids': self.category_ids.ids, 'quant_ids': self.stock_quants_ids.ids}
+        return self.env.ref('stock_picking_custom.report_stocks_pdf').report_action([], data=data)
+
+    class ReportStocks(models.AbstractModel):
+        _name = 'report.stock_picking_custom.template_stocks_pdf_report'
+
+        def _get_report_values(self, docids, data=None):
+            _log.info(data)
+            categories = self.env['pos.category'].search([('id', 'in', data['category_ids'])])
+            _log.info(categories)
+            _log.info(type(data['quant_ids']))
+            quants = self.env['stock.quant'].search([('id', 'in', data['quant_ids'])])
+            _log.info(quants)
+            if categories:
+                quants = quants.filtered(lambda x: x.product_id.pos_categ_id.id in categories.ids)
+            else:
+                categories = quants.mapped('product_id').mapped('pos_categ_id')
+            if not quants:
+                raise UserError(_('No se han encontrado existencias con la ubicación y las categorias seleccionadas'))
+            quant_reg = self.env['stock.quant']
+            data_quants = {category.display_name: [] for category in categories}
+            for quant in quants:
+                valores = {
+                    'default_code': str(quant.product_id.default_code) if quant.product_id.default_code else '',
+                    'product_name': quant.product_id.name[:60]+'...' if len(quant.product_id.name) >= 60 else quant.product_id.name,
+                    'available_quantity': quant.available_quantity,
+                    'price_unit': round(float(quant.value/quant.available_quantity), 2) if quant.available_quantity != 0 else 0.0,
+                    'price_total': round(quant.value, 2)
+                }
+                data_quants[quant.product_id.pos_categ_id.display_name].append(valores)
+            _log.info(data_quants)
+            data = {'date': datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 'location_id': data['location_id'], 'data_quants': data_quants}
+            return data
 
     class StockInventoryLineCustom(models.Model):
         _inherit = "stock.inventory.line"

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+    <odoo>
+
+    <template id="template_stocks_pdf_report">
+
+        <t t-call="web.html_container">
+            <t t-call="web.internal_layout">
+<!--                <div class="header"/>-->
+                <div class="page">
+                    <div class="oe_structure"/>
+                    <center>
+                        <h3>Existencias</h3>
+                    <span style="font-size: 14px;"><strong>Fecha</strong>:  <span t-esc="date"/>    <strong> Almacen</strong>:  <span t-esc="location_id"/></span>
+                    </center>
+                    <t t-foreach="data_quants" t-as="item">
+                    <span style="font-size: 20px;"><t t-esc="item"/></span>
+                        <table class="table table-condensed table-bordered table-striped">
+                            <thead>
+                                <th class="text-center" style="width: 15%; padding-top: 0px; padding-bottom: 0px; font-size: 10px;">Codigo</th>
+                                <th class="text-center" style="width: 71%; padding-top: 0px; padding-bottom: 0px; font-size: 10px;">Descripción</th>
+                                <th class="text-center" style="width: 3%; padding-top: 0px; padding-bottom: 0px; font-size: 10px;">Cantidad Teorica</th>
+                                <th class="text-center" style="width: 4%; padding-top: 0px; padding-bottom: 0px; font-size: 10px;">Precio Unitario</th>
+                                <th class="text-center" style="width: 4%; padding-top: 0px; padding-bottom: 0px; font-size: 10px;">Precio Total</th>
+                                <th class="text-center" style="width: 3%; padding-top: 0px; padding-bottom: 0px; font-size: 10px;">Cantidad Real</th>
+                            </thead>
+                            <tbody>
+                            <t  t-foreach="item_value" t-as="quant">
+                                <tr>
+                                    <td style="padding-top: 0px; padding-bottom: 0px; font-size: 12px;"><span t-esc="quant['default_code']"/></td>
+                                    <td style="padding-top: 0px; padding-bottom: 0px; font-size: 12px;"><span t-esc="quant['product_name']"/></td>
+                                    <td style="padding-top: 0px; padding-bottom: 0px; font-size: 12px;"><span t-esc="quant['available_quantity']"/></td>
+                                    <td style="padding-top: 0px; padding-bottom: 0px; font-size: 12px;"><span t-esc="quant['price_unit']"/></td>
+                                    <td style="padding-top: 0px; padding-bottom: 0px; font-size: 12px;"><span t-esc="quant['price_total']"/></td>
+                                    <td style="padding-top: 0px; padding-bottom: 0px; font-size: 12px;"></td>
+                                </tr>
+                            </t>
+                            </tbody>
+                        </table>
+                    </t>
+                </div>
+                <div class="footer o_standard_footer" style="border-top: 1px solid black;">
+                    <div class="row text-center">
+                        <div class="col col-12 text-center">
+                            <ul class="list-inline">
+                                <li class="list-inline-item">Page:</li>
+                                <li class="list-inline-item">
+                                    <span class="page"/>
+                                </li>
+                                <li class="list-inline-item">/</li>
+                                <li class="list-inline-item">
+                                    <span class="topage"/>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </t>
+        </t>
+    </template>
+
+    <record id="paperformat_stocks_pdf_report" model="report.paperformat">
+        <field name="name">Existencias</field>
+        <field name="default" eval="False"/>
+        <field name="format">A4</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">7</field>
+        <field name="margin_bottom">7</field>
+        <field name="margin_right">7</field>
+        <field name="margin_left">7</field>
+        <field name="header_line" eval="True"/>
+        <field name="header_spacing">25</field>
+    </record>
+
+    <report id="report_stocks_pdf"
+    model="report.order"
+    string="Existencias"
+    report_type="qweb-pdf"
+    name="stock_picking_custom.template_stocks_pdf_report"
+    paperformat="stock_picking_custom.paperformat_stocks_pdf_report"
+    menu="False"/>
+
+</odoo>
