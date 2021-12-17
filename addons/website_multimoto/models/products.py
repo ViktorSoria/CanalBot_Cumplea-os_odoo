@@ -62,4 +62,11 @@ class ProductTemplateCustom(models.Model):
         for rec in self:
             rec.terms_and_conditions = terms
 
-
+    @api.onchange('pos_categ_id')
+    def onchange_category(self):
+        if self.pos_categ_id:
+            if not self.public_categ_ids or len(self.public_categ_ids) == 1:
+                categ = self.env['product.public.category'].search([('name','=',self.pos_categ_id.name)])
+                if not categ:
+                    categ = self.env['product.public.category'].create({'name':self.pos_categ_id.name})
+                self.public_categ_ids = [(6,0,categ.ids)]
