@@ -136,13 +136,13 @@
                     <div class="col-lg-8 offset-lg-2 pt24 pb24 o_colored_level">
                         <h4>SUSCRIBETE PARA RECIBIR OFERTAS EXCLUSIVAS, PROMOCIONES Y NOTICIAS</h4>
                         <form method="post" data-snippet="s_products_searchbar_input" action="/web/email_visitor" data-name="Correo Publicidad">
-                            <div role="search" class="input-group">
+                            <div role="search" class="input-group offset-lg-2">
                                 <input type="email" name="email" class="form-control oe_search_box" placeholder="Tu dirección de Email"/>
                                 <div class="input-group-append">
                                     <button type="submit" class="btn btn-primary oe_search_button">SUSCRIBIR</button>
                                 </div>
-                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
                             </div>
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
                         </form>
                     </div>
                 </div>
