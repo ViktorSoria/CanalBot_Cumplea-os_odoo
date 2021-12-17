@@ -123,14 +123,17 @@
             </section>
 		</xpath>
     </template>
+
+    <!-- Carousel -->
+
 <!--Paptic Header Shadow-->
 
 <!--    footer-->
     <template inherit_id="website.custom_code_layout" id="footer_correo">
-        <xpath expr="//div[@id='footer']" position="before">
-            <div class="row">
+        <xpath expr="//div[@id='footer']/section[1]" position="before">
+            <div class="row" style="max-width: 95%;">
                 <div class="container">
-                    <div class="col-log-8 offset-lg-2 o_colored_level">
+                    <div class="col-lg-8 offset-lg-2 pt24 pb24 o_colored_level">
                         <h4>SUSCRIBETE PARA RECIBIR OFERTAS EXCLUSIVAS, PROMOCIONES Y NOTICIAS</h4>
                         <form method="post" data-snippet="s_products_searchbar_input" action="/web/email_visitor" data-name="Correo Publicidad">
                             <div role="search" class="input-group">
@@ -145,8 +148,8 @@
                 </div>
             </div>
         </xpath>
-        <xpath expr="//div[@id='footer']" position="inside">
-            <div class="row">
+        <xpath expr="//div[@id='footer']/section[1]" position="after">
+            <div class="row" style="max-width: 95%;">
                 <div class="container">
                     <hr class="w-100 mx-auto" style="border-top-width: thin; border-top-style: solid; border-top-color: white;"/>
                     <div class="col-lg-8 offset-lg-2 o_colored_level">
