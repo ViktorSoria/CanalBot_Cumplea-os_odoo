@@ -27,10 +27,14 @@ class WebsiteSaleStockCus(WebsiteSaleStock):
                 ware = request.env['stock.warehouse'].sudo().search([]).ids
                 avl_qty = line.product_id.with_context(warehouse=ware).virtual_available
                 """
-                avl_qty = line.product_id.with_context(warehouse=order.warehouse_id.id).virtual_available
+                if line.product_id.product_tmpl_id.promocion_remate:
+                    ware = request.env['stock.warehouse'].sudo().search([('code','in',['R-CDP','P-CDP'])]).ids
+                else:
+                    ware = order.warehouse_id.id
+                avl_qty = line.product_id.with_context(warehouse=ware).virtual_available
                 if cart_qty > avl_qty:
                     values.append(_(
-                        'Ha solicitado %(quantity)s %(product)s, pero hay %(available_qty)s disponible.\n',
+                        'Ha solicitado %(quantity)s %(product)s, pero hay %(available_qty)s disponible en el CEDIS.\n',
                         quantity=cart_qty,
                         product=line.product_id.display_name,
                         available_qty=avl_qty if avl_qty > 0 else 0
