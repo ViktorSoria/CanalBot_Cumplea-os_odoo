@@ -105,3 +105,17 @@ button.btn_cust{
         color: white;
     }
 }
+
+/* Visible para pantallas grandes */
+@media (max-width: 768px) {
+  .carousel-hide-st-768 {
+    display: none;
+  }
+}
+
+/* Visible para pantallas chicas */
+@media (min-width: 767px) {
+  .carousel-hide-bt-767 {
+    display: none;
+  }
+}
