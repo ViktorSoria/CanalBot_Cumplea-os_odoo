@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="payment_acquirer_view_form_inherit_credit" model="ir.ui.view">
+        <field name="name">payment.acquirer.view.form.inherit.credit</field>
+        <field name="model">payment.acquirer</field>
+        <field name="inherit_id" ref="payment.acquirer_form"/>
+        <field name="arch" type="xml">
+            <page name="acquirer_credentials" position="attributes">
+                <attribute name="attrs">{'invisible': [('provider', 'in', ['manual','transfer','credit'])]}</attribute>
+            </page>
+        </field>
+    </record>
+</odoo>
