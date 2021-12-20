@@ -330,6 +330,7 @@ class Template(models.Model):
 
     vendido = fields.Boolean("Mas vendido")
     nuevo = fields.Boolean("Mas nuevo")
+    promocion_remate = fields.Boolean("Esta en Promocion/remate")
 
     @api.model
     def product_update_fields(self):
@@ -350,7 +351,7 @@ class Template(models.Model):
                         where l.remate = true and s.quantity-s.reserved_quantity>0;"""
         self.env.cr.execute(query)
         remate = self._cr.fetchall()
-        query = "update product_template set nuevo=false,vendido=false,website_ribbon_id=null;"
+        query = "update product_template set nuevo=false,vendido=false,promocion_remate=false,website_ribbon_id=null;"
         self.env.cr.execute(query)
         self.env.cr.commit()
         ##Actualizar productos
@@ -361,9 +362,9 @@ class Template(models.Model):
         todos = self.env['product.template'].search([])
         todos._compute_quantities()
         for p in todos:
-            p.write({'is_published': p.sale_ok, 'website_sequence': 100000 - p.qty_available - (10000 if p.image_1920 else 0)})
-        promocion_obj.write({'website_ribbon_id':self.env.ref('website_customs.ribbon_15')})
-        remate_obj.write({'website_ribbon_id':self.env.ref('website_customs.ribbon_26')})
+            p.write({'is_published': p.sale_ok, 'website_sequence': 100000 - p.qty_available - (3000 if p.image_1920 else 0)})
+        promocion_obj.write({'website_ribbon_id':self.env.ref('website_customs.ribbon_15'),'promocion_remate':True})
+        remate_obj.write({'website_ribbon_id':self.env.ref('website_customs.ribbon_26'),'promocion_remate':True})
         ##Ajustar listas de precio
         listas = self.env['product.pricelist'].search([('relational_list','!=',False)])
         data_promo = listas._compute_price_rule_multi([(p,False,False) for p in promocion_obj])
@@ -510,15 +511,16 @@ class Template(models.Model):
         if self.env.context.get('website_sale_stock_get_quantity'):
             if combination_info['product_id']:
                 product = self.env['product.product'].sudo().browse(combination_info['product_id'])
-                ware = self.env['stock.warehouse'].sudo().search([]).ids
-                virtual_available = product.with_context(warehouse=ware).virtual_available
+                ware = self.env['stock.warehouse'].sudo().search([])
+                virtual_available = product.with_context(warehouse=ware.ids).virtual_available
+                virtual_available_cedis = product.with_context(warehouse=ware.filtered(lambda l: 'CDP' in l.code).ids).virtual_available
                 combination_info.update({
                     'virtual_available': virtual_available,
                     'virtual_available_formatted': self.env['ir.qweb.field.float'].value_to_html(virtual_available, {'precision': 0}),
                     'product_type': product.type,
                     'inventory_availability': product.inventory_availability,
                     'available_threshold': product.available_threshold,
-                    'custom_message': product.custom_message,
+                    'custom_message': product.custom_message + 'Disponible en CEDIS: ' +self.env['ir.qweb.field.float'].value_to_html(virtual_available_cedis, {'precision': 0}),
                     'product_template': product.product_tmpl_id.id,
                     'cart_qty': product.cart_qty,
                     'uom_name': product.uom_id.name,

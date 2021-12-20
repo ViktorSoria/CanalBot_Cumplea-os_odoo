@@ -90,7 +90,7 @@ button.btn_cust{
 .barra_busqueda{
     background: rgb(28, 62, 145);
     padding-top: 1px;
-    padding-bottom: 1px;
+    padding-bottom: 3px;
 }
 
 .faOpCart{
@@ -104,4 +104,40 @@ button.btn_cust{
     > a{
         color: white;
     }
+}
+
+/* Visible para pantallas grandes */
+@media (max-width: 768px) {
+  .carousel-hide-st-768 {
+    display: none;
+  }
+}
+
+/* Visible para pantallas chicas */
+@media (min-width: 767px) {
+  .carousel-hide-bt-767 {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .hideitem-bt-600px {
+    display: none;
+  }
+}
+
+/* Small screens */
+@media (min-width: 601px) {
+    .hideitem-st-601px {
+        display: none;
+    }
+    .search-601px{
+        margin-top: 10px;
+        width: 90%;
+        margin-bottom:3px;
+    }
+}
+
+.pc-5{
+    margin: 3px 5px 3px 5px;
 }
