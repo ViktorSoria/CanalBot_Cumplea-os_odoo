@@ -5,6 +5,7 @@ from odoo.exceptions import UserError
 import xlrd
 import tempfile
 import csv
+from lxml import etree
 from io import StringIO
 import base64
 import logging
@@ -12,21 +13,60 @@ import logging
 _logger = logging.getLogger("Moto Control")
 
 
+class XmlListConfig(list):
+    def __init__(self, aList):
+        for element in aList:
+            if element:
+                # treat like dict
+                if len(element) == 1 or element[0].tag != element[1].tag:
+                    self.append(XmlDictConfig(element))
+                # treat like list
+                elif element[0].tag == element[1].tag:
+                    self.append(XmlListConfig(element))
+            elif element.text:
+                text = element.text.strip()
+                if text:
+                    self.append(text)
+
+
+class XmlDictConfig(dict):
+    def __init__(self, parent_element):
+        if parent_element.items():
+            self.update(dict(parent_element.items()))
+        for element in parent_element:
+            if element:
+                if len(element) == 1 or element[0].tag != element[1].tag:
+                    aDict = XmlDictConfig(element)
+                else:
+                    aDict = {element[0].tag: XmlListConfig(element)}
+                if element.items():
+                    aDict.update(dict(element.items()))
+                self.update({element.tag: aDict})
+            elif element.items():
+                self.update({element.tag: dict(element.items())})
+            else:
+                self.update({element.tag: element.text})
+
+
 class PurchaseLoad(models.TransientModel):
     _name = "purchase.order.lines.load"
 
     purchase_id = fields.Many2one("purchase.order",'Order',required=True)
-    file_type = fields.Selection([('xls','Archivo XLS'),('csv','Archivo CSV')],string="Tipo",default="xls",required=True)
-    file = fields.Binary("Seleccionar Archivo",required=True)
+    file_type = fields.Selection([
+        ('xls', 'Archivo XLS'),
+        ('csv', 'Archivo CSV'),
+        ('xml', 'Archivo XML (factura)')
+    ], string="Tipo", default="xls", required=True)
+    file = fields.Binary("Seleccionar Archivo", required=True)
     product = fields.Selection([('default_code','Referencia Interna'),('barcode','Codigo de Barras'),
-                                ('name','Nombre')],string="Importar producto por",required=True,default="default_code")
+                                ('name','Nombre')], string="Importar producto por", required=True,default="default_code")
     detalles = fields.Selection([("product",'Producto'),("file",'Archivo')],string="Cargar detalles de",default="product",required=True)
 
+    @api.model
     def _get_product_purchase_description(self, product_lang):
         name = product_lang.display_name
         if product_lang.description_purchase:
             name += '\n' + product_lang.description_purchase
-
         return name
 
     def create_data(self):
@@ -55,7 +95,7 @@ class PurchaseLoad(models.TransientModel):
                 else:
                     d['price_unit'] = p.standard_price
                 data.append([0,0,d])
-        else:
+        elif self.file_type == 'csv':
             csv_file = base64.b64decode(self.file).decode()
             file_input = StringIO(csv_file)
             file_input.seek(0)
@@ -77,7 +117,42 @@ class PurchaseLoad(models.TransientModel):
                 else:
                     d['price_unit'] = p.standard_price
                 data.append([0, 0, d])
-        return [data,product]
+        elif self.file_type == 'xml' and self.file:
+            pre = "{http://www.sat.gob.mx/cfd/3}"
+            xml_element = etree.XML(base64.b64decode(self.file))
+            # xml_doc = etree.tostring(xml_element, encoding='unicode')
+            xmldict = XmlDictConfig(xml_element)
+            conceptos = xmldict[pre + "Conceptos"][pre + "Concepto"]
+            if len(conceptos) <= 0:
+                raise UserError("XML sin lineas de producto o mal formado.")
+            for co in conceptos:
+                # _logger.info("LINEA ::: %s" % co)
+                line_vals = {}
+                # Line information
+                # Select by default_code, name or barcode
+                if self.product == "default_code":
+                    product_id = self.env['product.template'].search(
+                        [('default_code', '=like', co['NoIdentificacion'])])
+                elif self.product == "barcode":
+                    product_id = self.env['product.template'].search(
+                        [('barcode', '=like', co['NoIdentificacion'])])
+                else:
+                    product_id = self.env['product.template'].search(
+                        [('name', '=like', co['NoIdentificacion'])])
+                if not product_id:
+                    product.append(str(co))
+                    continue
+                product_qty = float(co['Cantidad'])
+                product_uom_id = self.env['uom.uom'].search([('unspsc_code_id.code', '=like', co['ClaveUnidad'])])
+                if not product_uom_id:
+                    continue
+                line_vals['product_id'] = product_id.id
+                line_vals['product_qty'] = product_qty
+                line_vals['product_uom'] = product_uom_id.id
+                line_vals['price_unit'] = co['ValorUnitario'] if self.detalles == 'file' else product_id.standard_price
+                data.append((0, 0, line_vals))
+
+        return [data, product]
 
     def generate_lines(self):
         try:
