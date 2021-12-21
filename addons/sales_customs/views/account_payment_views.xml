@@ -26,4 +26,43 @@
             </xpath>
         </field>
     </record>
+    <template id="report_payment_document_ln10_inherit" inherit_id="l10n_mx_edi.report_payment_document_mx">
+        <xpath expr="//div[@class='page']/h3" position="before">
+            <t t-if="o.company_id">
+                <span t-field="o.company_id.l10n_mx_edi_colony_code"/>
+                <br/>
+                Regimen Fiscal:<span t-field="o.company_id.l10n_mx_edi_fiscal_regime"/>
+            </t>
+<!--            <span>OLIWIS</span>-->
+        </xpath>
+        <xpath expr="//span[@t-field='o.partner_id']" position="after">
+            <t t-if="o.partner_id.vat">
+                <br/>
+                <strong>RFC: </strong>
+                <span t-field="o.partner_id.vat"/>
+            </t>
+        </xpath>
+        <xpath expr="//span[@t-field='o.ref']" position="after">
+            <t t-if="is_cfdi_signed">
+                <br/>
+                <strong>Folio Fiscal:</strong>
+                <br/>
+                <span t-esc="cfdi_vals.get('uuid')"/>
+                <br/>
+                <strong>Sello del Certificado Digital del SAT</strong>
+                <br/>
+                <span t-esc="cfdi_vals.get('certificate_sat_number')"/>
+            </t>
+        </xpath>
+        <xpath expr="//t[@t-if='o.move_id.l10n_mx_edi_cfdi_uuid'][2]/table/thead/tr/th[1]" position="after">
+        <th class="text-right"><span>Serie</span></th>
+        <th class="text-right"><span>Folio</span></th>
+        </xpath>
+        <xpath expr="//t[@t-if='o.move_id.l10n_mx_edi_cfdi_uuid'][2]/table/tbody/tr/td[1]" position="after">
+            <t t-set="ser_fol" t-value="o.edi_document_ids[0].edi_format_id._l10n_mx_edi_get_serie_and_folio(inv)"/>
+            <td class="text-right"><span t-esc="ser_fol['serie_number']"/></td>
+            <td class="text-right"><span t-esc="ser_fol['folio_number']"/></td>
+        </xpath>
+
+    </template>
 </odoo>

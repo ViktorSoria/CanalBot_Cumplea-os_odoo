@@ -3,7 +3,7 @@
     "summary": "Módulo con customizaciones de lo relacionado con ventas",
     "author": "Tekniu: Isaac, Jehosafat",
     "depends": [
-        "base", "point_of_sale", "account", "pos_pay_control", "sale_stock", "stock", "sale", "sale_management", "purchase"
+        "base", "point_of_sale", "account", "pos_pay_control", "sale_stock", "stock", "sale", "sale_management", "purchase","l10n_mx_edi"
     ],
     "installable": True,
     "data": [
