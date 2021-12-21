@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_action_pin_auth,access_action_pin_auth,model_action_pin_auth,,1,1,1,1
