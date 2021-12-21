@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_mr_account_move_form_inherited" model="ir.ui.view">
+        <field name="name">view_mr_account_move_form_inherited</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='button_cancel']" position="replace">
+                <button name="restricted_button_cancel" string="Cancelar asiento" type="object" groups="account.group_account_invoice" attrs="{'invisible' : ['|', ('id', '=', False), ('state', '!=', 'draft')]}"/>
+            </xpath>
+        </field>
+    </record>
+
+     <record id="view_mr_account_move_edi_form_inherited" model="ir.ui.view">
+        <field name="name">view_mr_account_move_edi_form_inherited</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account_edi.view_move_form_inherit" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='button_cancel_posted_moves']" position="replace">
+                <button name="restricted_button_cancel_posted_moves" string="Solicitar la cancelación de EDI" type="object" groups="account.group_account_invoice" attrs="{'invisible' : [('edi_show_cancel_button', '=', False)]}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
