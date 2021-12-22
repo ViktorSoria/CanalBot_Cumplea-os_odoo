@@ -13,7 +13,10 @@ odoo.define("pos_product_available.PosModel", function (require) {
 
     exports.load_fields("product.product", ["qty_available", "type",'display_name']);
     var models = exports.PosModel.prototype.models;
-    models.find(e=>e.model=="product.product").context = function(self){ return { display_default_code: true, location:self.config.default_location_src_id[0]}; };
+
+    models.find(e=>e.model=="product.product").context = function(self){ return { global:true, display_default_code: true, location:self.config.default_location_src_id[0]}; };
+    models.find(e=>e.model=="product.pricelist.item").context = function(self){ return { global:true};};
+
     const ProductItem2 = (ProductItem) =>
         class extends ProductItem {
             constructor() {

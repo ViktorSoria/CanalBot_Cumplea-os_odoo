@@ -26,12 +26,16 @@ class loadData(models.Model):
         order = 'sequence, default_code, name'
         pos = self.env['pos.config'].search([])
         load = self.env['load.data.pos']
+        locations = {}
         for c in pos:
+            if locations.get(c.default_location_src_id.id):
+                pass
             domain = [['sale_ok','=',True],['available_in_pos','=',True]]
             context = {'location':c.default_location_src_id.id}
             res = self.env[model].with_context(context).search_read(domain=domain,fields=fields,order=order)
             text = json.dumps(res,default=str)
             load.create({'location_id':c.default_location_src_id.id,'name':model,'text':text})
+            locations[c.default_location_src_id.id] = True
         domain = [('pricelist_id', 'in', pos[0].available_pricelist_ids.ids)]
         res = self.env['product.pricelist.item'].search_read(domain=domain)
         text = json.dumps(res, default=str)
@@ -46,8 +50,7 @@ class controll(DataSet):
             res = request.env['load.data.pos'].search([('name','=','product.pricelist.item')],limit=1,order="create_date desc")
             res = json.loads(res.text)
         elif model == 'product.product' and kwargs.get('context',{}).get('global'):
-            pos = request.env['pos.config'].browse(kwargs['context']['pos_id'])
-            res = request.env['load.data.pos'].search([('name','=','product.product'),('location_id','=',pos.default_location_src_id.id)],limit=1,order="create_date desc")
+            res = request.env['load.data.pos'].search([('name','=','product.product'),('location_id','=',kwargs.get('context').get('location'))],limit=1,order="create_date desc")
             res = json.loads(res.text)
         if not res:
             res = super()._call_kw(model, method, args, kwargs)
