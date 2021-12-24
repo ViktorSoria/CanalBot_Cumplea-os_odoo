@@ -39,7 +39,7 @@ odoo.define("website_customs.stock_product_popup", function (require) {
             combination.stock = await self._rpc({
                 model: 'product.product',
                 method: 'available_qty',
-                args: [parseInt($(".product_id").val())],
+                args: [parseInt($(".product_id").val()),false,true],
             });
             let $message = $(QWeb.render(
                 'website_customs.stock_product_available',

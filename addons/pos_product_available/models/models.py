@@ -47,10 +47,10 @@ class controll(DataSet):
         res = None
         if model == 'product.pricelist.item' and kwargs.get('context',{}).get('global'):
             res = request.env['load.data.pos'].search([('name','=','product.pricelist.item')],limit=1,order="create_date desc")
-            res = json.loads(res.text)
+            res = json.loads(res.text) if res else False
         elif model == 'product.product' and kwargs.get('context',{}).get('global'):
             res = request.env['load.data.pos'].search([('name','=','product.product'),('location_id','=',kwargs.get('context').get('location'))],limit=1,order="create_date desc")
-            res = json.loads(res.text)
+            res = json.loads(res.text) if res else False
         if not res:
             res = super()._call_kw(model, method, args, kwargs)
         return res
