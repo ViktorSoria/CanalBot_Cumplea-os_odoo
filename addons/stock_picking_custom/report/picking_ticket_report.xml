@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+    <odoo>
+
+    <template id="template_picking_ticket_report">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.basic_layout">
+                    <div class="page">
+                        <div class="oe_structure"/>
+                        <center>
+                            <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" class="float-left" alt="Logo" style="max-height:100px; max-width:200px;"/>
+                            <h4 t-esc="o.company_id.name" />
+                            <br/>
+                            <h3>Orden a Surtir obtenida de:</h3>
+                            <h3 t-field="o.name"/>
+                            <t t-if="o.date_done">
+                                <h5 t-field="o.date_done"/>
+                            </t>
+                            <t t-if="o.date_done == false">
+                                <h4>
+                                <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/>
+                                </h4>
+                            </t>
+                        </center>
+
+                        <table class="table table-sm table-striped" t-if="o.move_ids_without_package">
+                            <thead>
+                                <tr>
+                                    <th name="th_product">
+                                        <strong>Producto</strong>
+                                    </th>
+                                    <th>
+                                        <strong>Demanda</strong>
+                                    </th>
+                                    <th>
+                                        <strong>Reservado</strong>
+                                    </th>
+                                    <th>
+                                        <strong>Hecho</strong>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="o.move_ids_without_package" t-as="ml">
+                                        <tr>
+                                            <td>
+                                                <t t-set="name_short" t-value="ml.product_id.display_name[:60]"/>
+                                                    <span t-esc="name_short"/>
+                                            </td>
+                                            <td>
+                                                <span t-field="ml.product_uom_qty"/>
+                                                <span t-field="ml.product_uom.name" groups="uom.group_uom"/>
+
+                                            </td>
+                                            <td>
+                                                <span t-esc="ml.reserved_availability"/>
+                                            </td>
+                                            <td>
+                                                    <span t-field="ml.quantity_done"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                              </tbody>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <record id="paperformat_picking_ticket_report" model="report.paperformat">
+        <field name="name">Ticket Albaran</field>
+        <field name="default" eval="False"/>
+        <field name="format">custom</field>
+        <field name="page_height">500</field>
+        <field name="page_width">80</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">0</field>
+        <field name="margin_bottom">0</field>
+        <field name="margin_right">5</field>
+        <field name="margin_left">5</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+    </record>
+
+    <report id="report_picking_ticket_pdf"
+    model="stock.picking"
+    string="Recibo Impresora de Tickets"
+    report_type="qweb-pdf"
+    name="stock_picking_custom.template_picking_ticket_report"
+    paperformat="stock_picking_custom.paperformat_picking_ticket_report"
+    menu="True"/>
+
+</odoo>

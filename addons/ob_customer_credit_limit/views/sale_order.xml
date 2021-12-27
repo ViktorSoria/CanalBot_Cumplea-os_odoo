@@ -5,6 +5,11 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_confirm'][2]" position="replace"/>
+            <xpath expr="//button[@id='action_confirm']" position="replace">
+                <button name="action_confirm" id="action_confirm" context="{'check_credit':True}" string="Confirmar" class="btn-primary" type="object" attrs="{'invisible': [('state', 'not in', ['sent'])]}"/>
+                <button name="action_confirm" string="Confirmar" context="{'check_credit':True}" type="object" attrs="{'invisible': [('state', 'not in', ['draft'])]}"/>
+            </xpath>
             <xpath expr="//header" position="after">
                 <div class="alert alert-danger text-center o_form_header" role="status"
                      attrs="{'invisible': [('amount_due', '&lt;=', 0)]}">

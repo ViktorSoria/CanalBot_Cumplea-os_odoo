@@ -11,6 +11,7 @@
         "report/picking_report.xml",
         "report/stock_quant_pack_report.xml",
         "report/stocks_pdf_report.xml",
+        "report/picking_ticket_report.xml",
         "views/stock_picking.xml",
         "views/stock_inventory_wizard.xml",
         "views/stock_inventory_views.xml",

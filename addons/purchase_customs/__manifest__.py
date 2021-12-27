@@ -9,8 +9,8 @@
     "installable": True,
     "data": [
         'security/ir.model.access.csv',
-        'views/purchase.xml',
-        'wizard/xml_pol.xml'
+        # 'views/purchase.xml',
+        # 'wizard/xml_pol.xml'
     ],
     "qweb": [
     ],

@@ -19,16 +19,28 @@ class SaleOrder(models.Model):
     def autorizar(self):
         self.write({'autorizado':True,'auto_usr':self.env.user.id})
 
+    def check_credit(self):
+        partner_id = self.partner_id
+        total_amount = self.amount_due + self.amount_total
+        if partner_id.credit_check:
+            fac_venci = self.env['account.move'].search([('partner_id', '=', partner_id.id), ('state', '=', 'posted'),
+                                                         ('payment_state', 'not in', ['paid', 'in_payment']),
+                                                         ('invoice_date_due', '<', fields.Date.today())])
+            if fac_venci or partner_id.credit_blocking <= total_amount:
+                return False
+        else:
+            return False
+
     def action_confirm(self):
         '''
         Check the partner credit limit and exisiting due of the partner
         before confirming the order. The order is only blocked if exisitng
         due is greater than blocking limit of the partner.
         '''
+        if not self.env.context.get('check_credit'):
+            return super(SaleOrder, self).action_confirm()
         partner_id = self.partner_id
         total_amount = self.amount_due + self.amount_total
-        _logger.warning(total_amount)
-        _logger.warning(partner_id.credit_check)
         existing_move = self.invoice_ids
         if partner_id.credit_check and not existing_move:
             context = dict(self.env.context or {})

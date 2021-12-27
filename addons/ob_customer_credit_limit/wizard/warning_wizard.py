@@ -15,7 +15,7 @@ class WarningWizard(models.TransientModel):
     sale_id = fields.Many2one('sale.order', string="Sale Order")
 
     def action_confirm(self):
-        self.sale_id.with_context(warning=True).action_confirm()
+        self.sale_id.with_context(warning=True,check_credit=True).action_confirm()
 
     def action_autori(self):
         self.sale_id.write({'necesita':True})

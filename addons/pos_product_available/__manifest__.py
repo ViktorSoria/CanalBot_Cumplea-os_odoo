@@ -8,7 +8,7 @@
     "license": "Other OSI approved licence",  # MIT
     "depends": ["point_of_sale", "stock",'l10n_mx_edi'],
     "external_dependencies": {"python": [], "bin": []},
-    "data": ["data.xml", "views/views.xml"],
+    "data": ["data.xml", "views/views.xml",'security/ir.model.access.csv'],
     "qweb": ["static/src/xml/pos.xml"],
     "post_load": None,
     "pre_init_hook": None,
