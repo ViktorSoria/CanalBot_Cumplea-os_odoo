@@ -1,0 +1,38 @@
+/*
+div section div div div.carousel-item{
+    background-size: calc(100%) calc(100%);
+    background-position: top center;
+}
+*/
+@media only screen and (min-width: 770px){
+    div section.Movil{
+        display: none;
+    }
+}
+
+@media only screen and (max-width: 770px){
+    div section.Computadora{
+        display: none;
+    }
+    div section.Movil,
+    div section.banner_secundario{
+        height: 130px;
+    }
+
+    div section div div div.carousel-item{
+        background-size: auto auto;
+        background-position: top center;
+    }
+
+    div section div div ul.carousel-indicators{
+        display: none;
+    }
+    div header nav div div ul li{width: 50px;}
+    div header nav div div ul li.nav-item{width: 15px; align-content: center;}
+    div header section div div div.row{
+        padding-left: 25px;
+    }
+    @media only screen and (max-width: 400px){
+        div header nav div a.logo span img.img{width: auto; height: auto;}
+    }
+}

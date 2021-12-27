@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <template inherit_id="website.custom_code_layout" id="footer_correo">
+        <!--
+        <xpath expr="//div[@id='footer']" position="inside">
+            <div class="row">
+                <div class="container">
+                    <hr class="mx-auto" style="width:70%; border-top-width: thin; border-top-style: solid; border-top-color: white;"/>
+                    <div class="col-lg-8 offset-lg-2 o_colored_level">
+                        <div class="row" style=" display: flex; justify-content: center; align-items: center;">
+                            <a href="/politicas" style="color: white;">
+                                <p>Aviso de privacidad / Todos los derechos reservados</p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+
+        <xpath expr="//div[@id='footer']" position="before">
+            <section class="s_text_block">
+                <div class="row">
+                    <div class="container">
+                        <div class="col-log-8 offset-lg-2 o_colored_level">
+                            <h4>SUSCRIBETE PARA RECIBIR OFERTAS EXCLUSIVAS, PROMOCIONES Y NOTICIAS</h4>
+                            <form method="get" data-snippet="s_products_searchbar_input" class="o_wsale_products_searchbar_form o_wait_lazy_js s_wsale_products_searchbar_input" action="/shop" data-name="Products Search">
+                                <div role="search" class="input-group offset-lg-2">
+                                    <input type="email" name="correo" class="search-query form-control oe_search_box" placeholder="Tu dirección de Email"/>
+                                        <div class="input-group-append">
+                                            <button type="submit" class="btn btn-primary oe_search_button">SUSCRIBIR</button>
+                                        </div>
+                                    </div>
+                                <input name="order" type="hidden" class="o_wsale_search_order_by" value=""/>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </xpath>
+        -->
+    </template>
+</odoo>
