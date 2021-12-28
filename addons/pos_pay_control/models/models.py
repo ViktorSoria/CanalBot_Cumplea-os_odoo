@@ -24,7 +24,7 @@ class User(models.Model):
     _inherit = "res.users"
 
     user_pay = fields.Boolean("Pago de pedidos")
-    clave = fields.Integer("Clave adminitracion")
+    clave = fields.Integer("Clave administración")
 
     def autorize(self,code):
         code = int(code) if code else 0
