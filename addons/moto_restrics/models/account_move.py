@@ -35,3 +35,20 @@ class AccountMoveMmRestricted(models.Model):
                 'ori_model': "account.move"
             }
         }
+
+    def restricted_action_post(self):
+        if self.move_type in ['out_refund', 'in_refund']:
+            return {
+                'name': "Introduce PIN de administrador",
+                'type': 'ir.actions.act_window',
+                'res_model': 'action.pin.auth',
+                'target': 'new',
+                'view_mode': 'form',
+                'context': {
+                    'ori_method': "action_post",
+                    'ori_id': self.id,
+                    'ori_model': "account.move",
+                }
+            }
+        else:
+            self.action_post()
