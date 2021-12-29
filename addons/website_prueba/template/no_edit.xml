@@ -13,6 +13,14 @@
             <field name="pricelist_id" position="attributes">
                 <attribute name="readonly">True</attribute>
             </field>
+
+            <xpath expr="//page/field[@name='order_line']/tree/field[@name='price_unit']" position="before">
+                <field name="cambiar_precio_unitario" invisible="True"/>
+            </xpath>
+
+            <xpath expr="//page/field[@name='order_line']/tree/field[@name='price_unit']" position="attributes">
+                <attribute name="attrs">  {'readonly': ['|',('qty_invoiced', '&gt;', 0),('cambiar_precio_unitario','=',False)]}</attribute>
+            </xpath>
         </field>
     </record>
 
@@ -43,7 +51,7 @@
         <field name="model">account.move</field>
         <field name="inherit_id" ref="account.view_move_form"/>
         <field name="arch" type="xml">
-            <field name="partner_id" position="attributes">
+            <field name="price_unit" position="attributes">
                 <attribute name="options">{'no_create':True, 'no_create_edit':True}</attribute>
             </field>
         </field>
