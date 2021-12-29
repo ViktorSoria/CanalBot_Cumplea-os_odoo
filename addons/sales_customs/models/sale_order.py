@@ -2,6 +2,8 @@
 
 from odoo import models
 import logging
+from odoo.exceptions import UserError
+
 
 _log = logging.getLogger("sale_order (%s) -------> " % __name__)
 
@@ -27,8 +29,11 @@ class SaleOrderCust(models.Model):
         ]
         all_stock_quant = self.env['stock.quant'].search(sq_domain)
         bk_lines = []
+        delete_lines = []
         for line in self.order_line:
             quant_id = all_stock_quant.filtered(lambda sq: sq.product_id.id == line.product_id.id)
+            if quant_id.available_quantity <= 0:
+                delete_lines.append(line.id)
             if quant_id.available_quantity < line.product_uom_qty:
                 # Create new line.
                 bk_line = (0, 0, {
@@ -47,5 +52,10 @@ class SaleOrderCust(models.Model):
                 'pricelist_id': self.pricelist_id.id,
                 'order_line': bk_lines
             })
+        if len(delete_lines) > 0:
+            # _log.info("Borrando las lineas:: %s" % delete_lines)
+            self.order_line = [(2, line_id) for line_id in delete_lines]
+        if not self.order_line or len(self.order_line.ids) <= 0:
+            raise UserError("No es posible confirmar un pedido sin lineas de pedido o sin stock en todas sus lineas")
         res = super(SaleOrderCust, self).action_confirm()
         return res
