@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+	<template id="assets_frontend_1" inherit_id="website.assets_frontend" name="Website prueba">
+		<xpath expr="//link[last()]" position="before">
+            <link rel="stylesheet" type="text/css" href="/website_prueba/static/src/css/estilos.css"/>
+			<link rel="stylesheet" type="text/css" href="/website_prueba/static/src/css/web.css"/>
+		</xpath>
+	</template>
+</odoo>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<odoo>
+    <record id="no_edit_pricelist_quotes" model="ir.ui.view">
+        <field name="name">Evitar_modificacion_lista_precios</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="attributes">
+                <attribute name="options">{'no_create':True, 'no_create_edit':True}</attribute>
+            </field>
+
+            <field name="pricelist_id" position="attributes">
+                <attribute name="readonly">True</attribute>
+            </field>
+
+            <xpath expr="//page/field[@name='order_line']/tree/field[@name='price_unit']" position="before">
+                <field name="cambiar_precio_unitario" invisible="True"/>
+            </xpath>
+
+            <xpath expr="//page/field[@name='order_line']/tree/field[@name='price_unit']" position="attributes">
+                <attribute name="attrs">  {'readonly': ['|',('qty_invoiced', '&gt;', 0),('cambiar_precio_unitario','=',False)]}</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="no_edit_pointOfSale" model="ir.ui.view">
+        <field name="name">Evitar_modificacion_punto_ventas</field>
+        <field name="model">pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="attributes">
+                <attribute name="options">{'no_create':True, 'no_create_edit':True}</attribute>
+            </field>
+        </field>
+    </record>
+
+    <record id="no_edit_account" model="ir.ui.view">
+        <field name="name">Evitar_modificacion_contabilidad</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_form"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="attributes">
+                <attribute name="options">{'no_create':True, 'no_create_edit':True}</attribute>
+            </field>
+        </field>
+    </record>
+
+     <record id="no_edit_account_invoice" model="ir.ui.view">
+        <field name="name">Evitar_modificacion_facturas_contabilidad</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <field name="price_unit" position="attributes">
+                <attribute name="options">{'no_create':True, 'no_create_edit':True}</attribute>
+            </field>
+        </field>
+    </record>
+</odoo>
