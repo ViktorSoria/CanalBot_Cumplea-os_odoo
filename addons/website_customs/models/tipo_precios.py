@@ -64,6 +64,11 @@ class SaleOrderLine(models.Model):
 
         return product[field_name] * uom_factor * cur_factor, currency_id
 
+    cambiar_precio_unitario = fields.Boolean(string='Modificar precio unitario', compute='PermisoPrecioUnitario', default=False)
+
+    def PermisoPrecioUnitario(self):
+        self.cambiar_precio_unitario = self.env.user.has_group('website_customs.group_edit_unit_price')
+
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
