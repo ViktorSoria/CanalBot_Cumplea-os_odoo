@@ -66,6 +66,13 @@ class Pospaymentm(models.Model):
     cargo = fields.Float("Cargo porcentual")
     es_puntos = fields.Boolean("Es Puntos electronicos")
 
+    def name_get(self):
+        result = []
+        for s in self:
+            name = s.name + (' +{}%'.format(s.cargo) if s.cargo >0 else '')
+            result.append((s.id, name))
+        return result
+
 
 class Posconfig(models.Model):
     _inherit = "pos.config"
