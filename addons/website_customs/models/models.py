@@ -243,7 +243,7 @@ class Product(models.Model):
             obj = self.with_context(warehouse=ware)
         return super(Product,obj)._compute_quantities_dict(lot_id=lot_id, owner_id=owner_id, package_id=package_id, from_date=from_date, to_date=to_date)
 
-    def available_qty(self,location=False):
+    def available_qty(self,location=False,promo_remate=False):
         if not location:
             location = self.env['stock.location'].sudo().search([('usage','=','internal')])
         else:
@@ -253,7 +253,11 @@ class Product(models.Model):
             quants += self.env['stock.quant'].sudo()._gather(self, l)
         ware = self.env['stock.warehouse'].sudo().search([])
         ware = {w.lot_stock_id.id:w.name for w in ware}
-        exis = [("%s"%ware.get(q.location_id.id,q.location_id.display_name), q.available_quantity) for q in quants]
+        if promo_remate and self.product_tmpl_id.promocion_remate:
+            exis = [("%s" % ware.get(q.location_id.id, q.location_id.display_name), q.available_quantity) for q in
+                    quants if q.location_id.promocion or q.location_id.remate]
+        else:
+            exis = [("%s"%ware.get(q.location_id.id,q.location_id.display_name), q.available_quantity) for q in quants]
         return exis
 
     def price_compute(self, price_type, uom=False, currency=False, company=None):
@@ -333,6 +337,14 @@ class Template(models.Model):
     promocion_remate = fields.Boolean("Esta en Promocion/remate")
 
     @api.model
+    def update_secuence(self):
+        todos = self.env['product.template'].search([])
+        todos._compute_quantities()
+        for p in todos:
+            p.write({'is_published': p.sale_ok,
+                     'website_sequence': 100000 - p.qty_available - (3000 if p.image_1920 else 0)})
+
+    @api.model
     def product_update_fields(self):
         """Hacemos las actualizaciones necesarias para el sitio web
            *secuencia *lo mas nuevo *lo mas vendido *promocion *remate"""
@@ -359,10 +371,6 @@ class Template(models.Model):
         vendido.write({'vendido':True})
         promocion_obj = self.env['product.template'].search([('id', 'in', promocion)])
         remate_obj = self.env['product.template'].search([('id', 'in', remate)])
-        todos = self.env['product.template'].search([])
-        todos._compute_quantities()
-        for p in todos:
-            p.write({'is_published': p.sale_ok, 'website_sequence': 100000 - p.qty_available - (3000 if p.image_1920 else 0)})
         promocion_obj.write({'website_ribbon_id':self.env.ref('website_customs.ribbon_15'),'promocion_remate':True})
         remate_obj.write({'website_ribbon_id':self.env.ref('website_customs.ribbon_26'),'promocion_remate':True})
         ##Ajustar listas de precio
@@ -390,6 +398,8 @@ class Template(models.Model):
                     'pricelist_id':lista_rel.id
                 }
                 self.env['product.pricelist.item'].create(data)
+        self.env.cr.commit()
+        self.update_secuence()
     
     def price_compute(self, price_type, uom=False, currency=False, company=None):
         # TDE FIXME: delegate to template or not ? fields are reencoded here ...
@@ -512,15 +522,27 @@ class Template(models.Model):
             if combination_info['product_id']:
                 product = self.env['product.product'].sudo().browse(combination_info['product_id'])
                 ware = self.env['stock.warehouse'].sudo().search([])
-                virtual_available = product.with_context(warehouse=ware.ids).virtual_available
-                virtual_available_cedis = product.with_context(warehouse=ware.filtered(lambda l: 'CDP' in l.code).ids).virtual_available
+                if self.promocion_remate:
+                    location = self.env['stock.location'].sudo().search([('usage','=','internal'),'|',('promocion','=',True),('remate','=',True)])
+                    promo_cedis_ware = ware.filtered(lambda l: l.code in ['R-CDP','P-CDP'])
+                    virtual_available = product.with_context(location=location.ids).free_qty
+                    virtual_available_cedis = product.with_context(warehouse=promo_cedis_ware.ids).free_qty
+                    message_stock = 'Disponible en Promoción: ' + self.env['ir.qweb.field.float'].value_to_html(virtual_available_cedis,
+                                                                                            {'precision': 0}),
+                else:
+                    cedis_ware = ware.filtered(lambda l: 'CDP' in l.code)
+                    virtual_available = product.with_context(warehouse=ware.ids).free_qty
+                    virtual_available_cedis = product.with_context(warehouse=cedis_ware.ids).free_qty
+                    message_stock = 'Disponible en CEDIS: ' + self.env['ir.qweb.field.float'].value_to_html(
+                        virtual_available_cedis,
+                        {'precision': 0}),
                 combination_info.update({
                     'virtual_available': virtual_available,
                     'virtual_available_formatted': self.env['ir.qweb.field.float'].value_to_html(virtual_available, {'precision': 0}),
                     'product_type': product.type,
                     'inventory_availability': product.inventory_availability,
                     'available_threshold': product.available_threshold,
-                    'custom_message': product.custom_message + 'Disponible en CEDIS: ' +self.env['ir.qweb.field.float'].value_to_html(virtual_available_cedis, {'precision': 0}),
+                    'custom_message': product.custom_message + message_stock if product.custom_message else message_stock,
                     'product_template': product.product_tmpl_id.id,
                     'cart_qty': product.cart_qty,
                     'uom_name': product.uom_id.name,

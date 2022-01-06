@@ -11,11 +11,15 @@
             <form>
                 <group>
                     <group>
-                        <field name="start_date"/>
-                        <field name="end_date"/>
+                        <field name="start_date" attrs="{'invisible':[('sobre_fac','=',True)]}"/>
+                        <field name="end_date" attrs="{'invisible':[('sobre_fac','=',True)]}"/>
+                        <field name="end_date" string ="A la Fecha" attrs="{'invisible':[('sobre_fac','=',False)]}"/>
+                        <field name="metodos_pago" attrs="{'invisible':[('sobre_fac','=',False)],'required':[('sobre_fac','=',True)]}"/>
                     </group>
                     <group>
-                        <field name="re_fac"/>
+                        <field name="re_fac" attrs="{'invisible':[('sobre_fac','=',True)]}"/>
+                        <field name="cantidad" attrs="{'invisible':[('sobre_fac','=',False)]}"/>
+                        <field name="sobre_fac"/>
                     </group>
                 </group>
                 <group>

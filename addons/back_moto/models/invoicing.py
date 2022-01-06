@@ -1,7 +1,7 @@
 
 
 from odoo import fields, models, api
-import json
+import random
 import werkzeug.urls
 from datetime import datetime
 from odoo.exceptions import UserError
@@ -28,48 +28,69 @@ class InvoiceOrder(models.TransientModel):
     current_user_pos_ids = fields.Many2many('pos.config', 'pos_invoice_default', string="Permitidos",
                                             default=get_current_pos)
     period = fields.Char("Periodo facturado",compute="cal_period")
+    sobre_fac = fields.Boolean("Sobre Facturacion")
+    cantidad = fields.Float("Cantidad")
+    metodos_pago = fields.Many2one("pos.payment.method",string="Metodo de pago")
 
     def cal_period(self):
         period = ""
-        if self.start_date:
-            period +=" desde %s"%str(self.start_date)
-        period += " hasta " + str(self.start_date or datetime.now())
+        if self.sobre_fac:
+            period += "facturacion al " + str(self.start_date or datetime.now())
+        else:
+            if self.start_date:
+                period +=" desde %s"%str(self.start_date)
+            period += " hasta " + str(self.start_date or datetime.now())
         self.period = period
 
     def generate_invoice(self):
+        if not self.sobre_fac:
+            return self._generate_invoice()
+        else:
+            return self._generate_invoice_sobre()
+
+    def _generate_invoice_sobre(self):
+        invoice_ids = []
+        pos_orders = self.generate_orders_random(self.cantidad,self.pos_config_ids)
+        for pos,orders in pos_orders.items():
+            if not orders:
+                continue
+            data = self.default_values_invoice()
+            data.update({
+                'invoice_origin': "Sucursal %s %s"%(pos,self.period),
+                'l10n_mx_edi_payment_method_id': self.metodos_pago.l10n_mx_edi_payment_method_id.id
+            })
+            lines = []
+            for order in orders:
+                lines.append((0,0,self.create_line_invoice(order['name'],order['total'])))
+            data['invoice_line_ids'] = lines
+            invoice = self.env['account.move'].create(data)
+            invoice_ids.append(invoice.id)
+        action = self.env["ir.actions.actions"]._for_xml_id("account.action_move_out_invoice_type")
+        action['domain'] = [('id','in',invoice_ids)]
+        action['context'] = {'default_move_type': 'out_invoice', 'move_type': 'out_invoice', 'journal_type': 'sale'}
+        return action
+
+    def _generate_invoice(self):
         invoice_ids = []
         orders = self._search_orders()
-        _logger.warning("Obtuvimos ordenes")
         methods = orders.mapped('payment_ids.payment_method_id.l10n_mx_edi_payment_method_id')
-        _logger.warning("Obtuvimos metodos de pago")
         method_orderes = self._split_orders_by_method(orders,methods,self.pos_config_ids)
-        _logger.warning("Ordenamos las dos listas")
-        _logger.warning("Vamos a crear aprox %d facturas"%(len(methods)*len(self.pos_config_ids)))
-        i=1
         for method,pos_orders in method_orderes.items():
             for pos,order_ids in pos_orders.items():
                 if not order_ids:
                     continue
                 data = self.default_values_invoice()
-                _logger.warning("Factura %d tiene %d ordenes" % (i, len(order_ids)))
                 data.update({
                     'invoice_origin': "Sucursal %s %s"%(pos,self.period),
                     'l10n_mx_edi_payment_method_id': method
                 })
                 lines = []
-                j=0
                 for order in order_ids:
-                    j +=1
                     lines.append((0,0,self.create_line_invoice(order.name,order.amount_total)))
-                    if j%10==0:
-                        _logger.warning("LLevamos %d lineas"%j)
                 data['invoice_line_ids'] = lines
                 invoice = self.env['account.move'].create(data)
-                _logger.warning("Terminamos de crear")
                 invoice_ids.append(invoice.id)
                 order_ids.write({'account_move': invoice.id, 'state': 'invoiced','fac_global':True})
-                _logger.warning("Factura %d"%i)
-                i+=1
         action = self.env["ir.actions.actions"]._for_xml_id("account.action_move_out_invoice_type")
         action['domain'] = [('id','in',invoice_ids)]
         action['context'] = {'default_move_type': 'out_invoice', 'move_type': 'out_invoice', 'journal_type': 'sale'}
@@ -131,4 +152,19 @@ class InvoiceOrder(models.TransientModel):
             'price_unit': total,
             'tax_ids': [(6, 0, product.taxes_id.ids)],
         }
+        return data
+
+    def generate_orders_random(self,total,pos_conf):
+        data = {p.name:[] for p in pos_conf}
+        names = pos_conf.mapped('name')
+        minimo,maximo = 100,max(total//5,200)
+        sequence = random.randrange(0,100)
+        while total > 0:
+            ran = random.randrange(minimo,maximo)
+            cantidad = min(total,ran)
+            pos = random.choice(names)
+            name = pos+"/{id}{ran}".format(id=self.id,ran=sequence)
+            sequence += random.randrange(0,100)
+            data[pos].append({'total':cantidad,'name':name})
+            total -= cantidad
         return data
