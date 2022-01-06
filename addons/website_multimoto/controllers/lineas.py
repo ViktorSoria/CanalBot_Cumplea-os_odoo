@@ -197,8 +197,9 @@ class WebsiteLines(WebsiteSale):
         if post.get('promocion_remate') and post.get('promocion_remate') not in [0,'0','false']:
             promo['promocion_remate'][1] = 1
             promo['promocion_remate'][2] = base.replace('&promocion_remate=1','')
-            temp = request.env['product.pricelist'].search([('promocion','=','True')],limit=1).mapped('item_ids.product_tmpl_id.id')
-            domain.append(('id', 'in', temp))
+            domain.append(('promocion_remate', '=', True))
+        else:
+            domain.append(('promocion_remate', '=', False))
         keep = QueryURL('/shop', category=category and int(category), search=search, attrib=attrib_list,
                         order=post.get('order'))
 
