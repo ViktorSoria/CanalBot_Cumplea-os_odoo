@@ -157,7 +157,7 @@ class InvoiceOrder(models.TransientModel):
     def generate_orders_random(self,total,pos_conf):
         data = {p.name:[] for p in pos_conf}
         names = pos_conf.mapped('name')
-        minimo,maximo = 100,max(total//5,200)
+        minimo,maximo = 100,max(total//5,200,50000)
         sequence = random.randrange(0,100)
         while total > 0:
             ran = random.randrange(minimo,maximo)
