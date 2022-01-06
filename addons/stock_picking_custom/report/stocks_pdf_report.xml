@@ -17,11 +17,10 @@
                         <table class="table table-condensed table-bordered table-striped">
                             <thead>
                                 <th class="text-center" style="width: 15%; padding-top: 0px; padding-bottom: 0px; font-size: 10px;">Codigo</th>
-                                <th class="text-center" style="width: 71%; padding-top: 0px; padding-bottom: 0px; font-size: 10px;">Descripción</th>
-                                <th class="text-center" style="width: 3%; padding-top: 0px; padding-bottom: 0px; font-size: 10px;">Cantidad Teorica</th>
-                                <th class="text-center" style="width: 4%; padding-top: 0px; padding-bottom: 0px; font-size: 10px;">Precio Unitario</th>
-                                <th class="text-center" style="width: 4%; padding-top: 0px; padding-bottom: 0px; font-size: 10px;">Precio Total</th>
-                                <th class="text-center" style="width: 3%; padding-top: 0px; padding-bottom: 0px; font-size: 10px;">Cantidad Real</th>
+                                <th class="text-center" style="width: 73%; padding-top: 0px; padding-bottom: 0px; font-size: 10px;">Descripción</th>
+                                <th class="text-center" style="width: 4%; padding-top: 0px; padding-bottom: 0px; font-size: 10px;">Cantidad Teorica</th>
+                                <th class="text-center" style="width: 4%; padding-top: 0px; padding-bottom: 0px; font-size: 10px;">Cantidad Real</th>
+                                <th class="text-center" style="width: 4%; padding-top: 0px; padding-bottom: 0px; font-size: 10px;">Diferencia</th>
                             </thead>
                             <tbody>
                             <t  t-foreach="item_value" t-as="quant">
@@ -29,8 +28,7 @@
                                     <td style="padding-top: 0px; padding-bottom: 0px; font-size: 12px;"><span t-esc="quant['default_code']"/></td>
                                     <td style="padding-top: 0px; padding-bottom: 0px; font-size: 12px;"><span t-esc="quant['product_name']"/></td>
                                     <td style="padding-top: 0px; padding-bottom: 0px; font-size: 12px;"><span t-esc="quant['available_quantity']"/></td>
-                                    <td style="padding-top: 0px; padding-bottom: 0px; font-size: 12px;"><span t-esc="quant['price_unit']"/></td>
-                                    <td style="padding-top: 0px; padding-bottom: 0px; font-size: 12px;"><span t-esc="quant['price_total']"/></td>
+                                    <td style="padding-top: 0px; padding-bottom: 0px; font-size: 12px;"></td>
                                     <td style="padding-top: 0px; padding-bottom: 0px; font-size: 12px;"></td>
                                 </tr>
                             </t>
