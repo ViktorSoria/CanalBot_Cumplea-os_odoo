@@ -50,3 +50,12 @@ class AccountPaymentCustom(models.Model):
 
         objeto = self.with_context(date_SAT=date_SAT, date_PAY=date_PAY)
         return super(AccountPaymentCustom, objeto).action_process_edi_web_services()
+
+
+class PermisoFacturascreditos(models.Model):
+    _inherit = "account.move"
+
+    permiso_saldo_aFavor = fields.Boolean(string="Aplicacion de saldos a favor en facturas", compute="creditInvoicePermission")
+
+    def creditInvoicePermission(self):
+        self.permiso_saldo_aFavor = self.env.user.has_group('sales_customs.group_edition_invoices_credits')

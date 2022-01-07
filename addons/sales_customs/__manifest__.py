@@ -8,6 +8,7 @@
     "installable": True,
     "data": [
         'data/assets.xml',
+        'security/groups.xml',
         'views/pos_order_views.xml',
         'views/account_payment_views.xml',
         'views/orders_views.xml',

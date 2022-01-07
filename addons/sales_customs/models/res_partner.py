@@ -12,6 +12,10 @@ class ResPartnerCustom(models.Model):
     _inherit = "res.partner"
 
     phone = fields.Char(required=True)
+    permiso_lista_precios = fields.Boolean(string="Permitir modificar lista de precios", compute="priceListPermission")
+
+    def priceListPermission(self):
+        self.permiso_lista_precios = self.env.user.has_group('sales_customs.group_edition_price_list')
 
 
 class ResUsersCustom(models.Model):
