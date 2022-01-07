@@ -7,7 +7,7 @@
     ],
     "installable": True,
     "data": [
-        'security/permisos.xml',
+        'security/groups.xml',
         'template/assets.xml',
         'template/web.xml',
         'views/pricelist_views.xml',

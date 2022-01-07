@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
     <record id="group_edit_unit_price" model="res.groups">
-            <field name="name">Permitir modificar precio unitario</field>
+            <field name="name">Modificar precio unitario</field>
     </record>
 </odoo>
