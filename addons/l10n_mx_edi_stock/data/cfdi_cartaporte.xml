@@ -15,7 +15,7 @@
             xmlns:cartaporte20="http://www.sat.gob.mx/CartaPorte20"
             xmlns:cfdi="http://www.sat.gob.mx/cfd/3"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:schemaLocation="http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd http://www.sat.gob.mx/CartaPorte20 http://www.sat.gob.mx/sitio_internet/cfd/CartaPorte/CartaPorte20.xsd http://www.sat.gob.mx/sitio_internet/cfd/CartaPorte20/CartaPorte20.xsd">
+            xsi:schemaLocation="http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd http://www.sat.gob.mx/CartaPorte20 http://www.sat.gob.mx/sitio_internet/cfd/CartaPorte/CartaPorte20.xsd">
             <cfdi:CfdiRelacionados t-if="origin_uuids" t-att-TipoRelacion="origin_type">
                 <t t-foreach="origin_uuids" t-as="uuid">
                     <cfdi:CfdiRelacionado t-att-UUID="uuid"/>
@@ -57,10 +57,10 @@
                             t-att-FechaHoraSalidaLlegada="cfdi_date"
                             t-att-RFCRemitenteDestinatario="supplier.vat">
                             <cartaporte20:Domicilio
-                                t-att-Calle="supplier.street"
-                                t-att-CodigoPostal="supplier.zip"
-                                t-att-Estado="supplier.state_id.code"
-                                t-att-Pais="supplier.country_id.l10n_mx_edi_code"/>
+                                t-att-Calle="origin.street"
+                                t-att-CodigoPostal="origin.zip"
+                                t-att-Estado="origin.state_id.code"
+                                t-att-Pais="origin.country_id.l10n_mx_edi_code"/>
                         </cartaporte20:Ubicacion>
                         <cartaporte20:Ubicacion
                             TipoUbicacion="Destino"
@@ -87,7 +87,7 @@
                                 t-att-Cantidad="format_float(move.quantity_done, 6)"
                                 t-att-ClaveUnidad="move.product_uom.unspsc_code_id.code"
                                 t-att-Descripcion="move.description_picking or move.product_id.name"
-
+                                t-att-MaterialPeligroso="'No' if move.product_id.unspsc_code_id.peligroso == '0,1' else None"
                                 t-att-PesoEnKg="format_float(move.weight, 3)">
                                 <cartaporte20:CantidadTransporta
                                     t-att-Cantidad="format_float(move.quantity_done, 6)"

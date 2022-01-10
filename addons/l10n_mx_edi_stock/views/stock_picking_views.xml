@@ -5,6 +5,12 @@
         <field name="name">stock.picking.edi.form</field>
         <field name="inherit_id" ref="stock.view_picking_form" />
         <field name="arch" type="xml">
+            <xpath expr="//field[@name='origin']" position="before">
+                <field name="date_cfdi" attrs="{'invisible': ['|',('state', '!=', 'done'),
+                                         ('l10n_mx_edi_transport_type', '=', False)],
+                                         'readonly': [('l10n_mx_edi_status', 'not in', [False, 'to_send'])],
+                                         'required': [('state', '=', 'done'),('l10n_mx_edi_transport_type', '!=', False)]}"/>
+            </xpath>
             <xpath expr="//field[@name='origin']" position="after">
                 <field name="country_code" invisible="1"/>
                 <field name="l10n_mx_edi_is_export" invisible="1"/>
@@ -16,7 +22,7 @@
                                          ('l10n_mx_edi_status', '=', False)]}"/>
                  <field
                      name="l10n_mx_edi_transport_type"
-                     attrs="{'invisible': ['|', ('country_code', '!=', 'MX'), ('picking_type_code', '!=', 'outgoing')],
+                     attrs="{'invisible': [('country_code', '!=', 'MX')],
                              'readonly': [('l10n_mx_edi_status', 'not in', [False, 'to_send'])]}"/>
                 <field
                     name="l10n_mx_edi_cfdi_uuid"
@@ -65,10 +71,9 @@
                     name="l10n_mx_edi_action_send_delivery_guide"
                     type="object"
                     string="Generate Delivery Guide"
-                    attrs="{'invisible':['|', '|', '|',
+                    attrs="{'invisible':['|', '|',
                                         ('state', '!=', 'done'),
                                         ('country_code', '!=', 'MX'),
-                                        ('picking_type_code', '!=', 'outgoing'),
                                         ('l10n_mx_edi_status', 'not in', [False, 'cancelled'])]}"/>
                 <button
                     name="l10n_mx_edi_action_update_sat_status"
@@ -80,6 +85,11 @@
                     type="object"
                     string="Cancel Delivery Guide"
                     attrs="{'invisible': [('l10n_mx_edi_status', '!=', 'sent')]}"/>
+            </xpath>
+            <xpath expr="//group[@name='other_infos']" position="after">
+                    <group>
+                        <button type="object" string="Recalcular peso" name="cal_weight"/>
+                    </group>
             </xpath>
             <xpath expr="//notebook" position="inside">
                  <page string="MX EDI" name="mx_edi" attrs="{'invisible': [('l10n_mx_edi_transport_type', '!=', '01')]}">

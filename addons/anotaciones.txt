@@ -2,12 +2,13 @@ multiusr
 tek2101
 
 quitamos demo edi_mx_extended ya no se requiere la dependencia
-agregamos token maps en parametros del sistema (quitar calculo de distancia)
 quitamos dependencia web_map
 arreglar codigos en reporte albaran l10n_mx_edi_cartaporte_report_delivery_document
 hacer traduccion de campos y botones en vista
 traduccion errores
-agregar validacion estado (no solo codigo postal)
+*agregar validacion estado (no solo codigo postal)
+*validacion peso de productos
+*agregar columna material peligroso en productos
 
 
 Usuarios

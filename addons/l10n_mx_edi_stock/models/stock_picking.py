@@ -77,6 +77,15 @@ class Picking(models.Model):
         copy=False,
         help='The vehicle used for Federal Transport')
     l10n_mx_edi_cfdi_file_id = fields.Many2one('ir.attachment', string='CFDI file', copy=False)
+    date_cfdi = fields.Datetime("Fecha de timbrado")
+
+    def _action_done(self):
+        super()._action_done()
+        self.write({'date_cfdi':fields.Datetime.now()})
+
+    def cal_weight(self):
+        self.move_lines._cal_move_weight()
+        self._cal_weight()
 
     @api.depends('partner_id')
     def _l10n_mx_edi_compute_is_export(self):
@@ -116,6 +125,8 @@ class Picking(models.Model):
                 raise UserError(_('A valid certificate was not found'))
             if record.l10n_mx_edi_transport_type == '01' and not record.l10n_mx_edi_distance:
                 raise UserError(_('Distance in KM must be specified when using federal transport'))
+            if record.weight < 0.001:
+                raise UserError(_('Revise el peso de los productos, el total no puede ser 0'))
 
     # -------------------------------------------------------------------------
     # XML
@@ -136,13 +147,15 @@ class Picking(models.Model):
                     origin_type = split_origin[0]
                     origin_uuids = split_origin[1].split(',')
             values = {
-                'cfdi_date': record.date_done.astimezone(mx_tz).strftime(date_fmt),
+                # 'cfdi_date': record.date_done.astimezone(mx_tz).strftime(date_fmt),
+                'cfdi_date': record.date_cfdi.astimezone(mx_tz).strftime(date_fmt),
                 'scheduled_date': record.scheduled_date.astimezone(mx_tz).strftime(date_fmt),
                 'folio_number': name_numbers[-1].group(),
                 'origin_type': origin_type,
                 'origin_uuids': origin_uuids,
                 'serie': re.sub('\W+', '', record.name[:name_numbers[-1].start()]),
                 'lugar_expedicion': warehouse_zip,
+                'origin': record.picking_type_id.warehouse_id.partner_id,
                 'supplier': record.company_id,
                 'customer': record.partner_id.commercial_partner_id,
                 'moves': record.move_lines.filtered(lambda ml: ml.quantity_done > 0),

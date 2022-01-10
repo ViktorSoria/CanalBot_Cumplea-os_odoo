@@ -32,6 +32,7 @@ class ProductCode(models.Model):
     applies_to = fields.Selection([('product', 'Product'), ('uom', 'UoM'),], required=True,
         help='Indicate if this code could be used in products or in UoM',)
     active = fields.Boolean()
+    peligroso = fields.Selection([('0','0'),('1','1'),('0,1','0,1')])
 
     def name_get(self):
         result = []
