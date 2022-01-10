@@ -95,21 +95,8 @@
                  <page string="MX EDI" name="mx_edi" attrs="{'invisible': [('l10n_mx_edi_transport_type', '!=', '01')]}">
                     <group>
                         <group string="Distance " name="mx_edi_group_distance">
-                            <button name="l10n_mx_edi_action_set_partner_coordinates" type="object" string="Get Coordinates"/>
-                            <button
-                                name="l10n_mx_edi_action_calculate_distance"
-                                type="object"
-                                string="Compute Distance"
-                                attrs="{'invisible': ['|', '|', '|',
-                                                     ('l10n_mx_edi_src_lat', '=', 0),
-                                                     ('l10n_mx_edi_src_lon', '=', 0),
-                                                     ('l10n_mx_edi_des_lat', '=', 0),
-                                                     ('l10n_mx_edi_des_lon', '=', 0)]}"/>
-                            <field name="l10n_mx_edi_src_lat"/>
-                            <field name="l10n_mx_edi_src_lon"/>
-                            <field name="l10n_mx_edi_des_lat"/>
-                            <field name="l10n_mx_edi_des_lon"/>
                             <field name="l10n_mx_edi_distance" attrs="{'readonly': [('l10n_mx_edi_status', '=', 'sent')]}"/>
+                            <button type="object" string="Recalcular peso" name="cal_weight"/>
                         </group>
                         <group string="Transport" name="mx_edi_group_transport">
                             <field
