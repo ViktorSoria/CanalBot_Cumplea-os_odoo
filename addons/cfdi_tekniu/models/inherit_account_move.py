@@ -85,7 +85,7 @@ class AccountEdiFormat(models.Model):
         # Check if response xml is base64 encoded.
         # Check if is str and not bytes.
         if isinstance(xml_signed, str):
-            xml_signed.encode('UTF-8'),
+            xml_signed = xml_signed.encode('UTF-8'),
         if xml_signed.decode('UTF-8').find('<?xml version=') >= 0 and xml_signed.decode('UTF-8').find(
                 'encoding=') >= 0:
             xml_signed = base64.encodebytes(xml_signed)
