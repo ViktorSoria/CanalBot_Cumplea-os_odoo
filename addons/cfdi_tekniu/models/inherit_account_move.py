@@ -81,26 +81,6 @@ class AccountEdiFormat(models.Model):
             return {'errors': errors}
         xml_signed = result.get('xml', None)
         _logger.warning(xml_signed)
-
-        # Check if response xml is base64 encoded.
-        # Check if is str and not bytes.
-        if isinstance(xml_signed, str):
-            xml_signed = xml_signed.encode('UTF-8'),
-        if xml_signed.decode('UTF-8').find('<?xml version=') >= 0 and xml_signed.decode('UTF-8').find(
-                'encoding=') >= 0:
-            xml_signed = base64.encodebytes(xml_signed)
-        else:
-            b64_cfdi = xml_signed
-            while True:
-                try:
-                    va = base64.decodebytes(b64_cfdi)
-                    if va.decode('UTF-8').find('<?xml version=') >= 0 and va.decode('UTF-8').find('encoding=') >= 0:
-                        xml_signed = b64_cfdi
-                        break
-                    else:
-                        b64_cfdi = va
-                except Exception:
-                    _logger.warning(" CFDI no pudo ser entendido por el sistema.")
         return {
             'cfdi_signed': xml_signed,
             'cfdi_encoding': 'base64',
