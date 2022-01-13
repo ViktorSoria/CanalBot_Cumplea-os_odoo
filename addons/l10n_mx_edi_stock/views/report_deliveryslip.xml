@@ -318,140 +318,161 @@
                         </div>
                         <br/><br/>
                         <!-- MERCANCIAS -->
-                        <h4>Mercancias</h4><br/>
-                        <table class="table">
-                            <tr>
-                                <th>Núm. Total de Mercancias</th>
-                                <th>Unidad</th>
-                                <th>Peso Neto total</th>
-                                <th>Peso Bruto total</th>
-                                <th>Cargo por Tasación</th>
-                            </tr>
-                            <tr>
-                                <td>6</td>
-                                <td>KGM</td>
-                                <td></td>
-                                <td>37.5kg</td>
-                                <td></td>
-                            </tr>
-                        </table>
-                        <t t-foreach="o.move_ids_without_package" t-as="line">
-                            <div class="bneg">
-                                <div class="row" style="width: 100%; margin-left: 1px;">
-                                    <div class="col-4">
-                                        <strong>Embalaje: </strong><br/>
-                                        <strong>Nombre de unidad de peso: </strong><br/>
-                                        <strong>Material o residuo peligroso: </strong><br/>
+                        <div class="bneg">
+                            <h4>Mercancias</h4><br/>
+                            <table class="table">
+                                <tr>
+                                    <th>Núm. Total de Mercancias</th>
+                                    <th>Unidad</th>
+                                    <th>Peso Neto total</th>
+                                    <th>Peso Bruto total</th>
+                                    <th>Cargo por Tasación</th>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>KGM</td>
+                                    <td></td>
+                                    <td>37.5kg</td>
+                                    <td></td>
+                                </tr>
+                            </table>
+                            <t t-foreach="o.move_ids_without_package" t-as="line">
+                                <div class="bneg">
+                                    <div class="row" style="width: 100%; margin-left: 1px;">
+                                        <div class="col-6">
+                                            <strong>Nombre de unidad de peso: </strong> Kilogramo<br/>
+                                            <strong>Material o residuo peligroso: </strong><br/><span t-esc="'No' if line.product_id.unspsc_code_id.peligroso == '0,1' else None"/>
+                                        </div>
+                                        <div class="col-6">
+                                            <strong>Bienes transportados: </strong><span t-field="line.product_id.unspsc_code_id.code"/>
+                                        </div>
                                     </div>
-                                    <div class="col-8">
-                                        <strong>Bienes transportados: </strong><span t-field="line.product_id.unspsc_code_id.code"/>
-                                    </div>
-                                </div>
-                                <!-- titles -->
-                                <div class="row smallfont bb" style="width: 100%; margin-left: 1px;">
-                                    <div class="col-1 ht neg">Piezas</div>
-                                    <div class="col-1 ht neg">Cantidad</div>
-                                    <div class="col-1 ht neg">Clave STCC</div>
-                                    <div class="col-1 ht neg">Clave Unidad</div>
-                                    <div class="col-3 ht neg">Descripción</div>
-                                    <div class="col-5 ht neg">
-                                        <div class="row">
-                                            <div class="col-12 ht">
-                                                <center>Estimados</center>
+                                    <!-- titles -->
+                                    <div class="row smallfont bb" style="width: 100%; margin-left: 1px;">
+                                        <div class="col-1 ht neg">Piezas</div>
+                                        <div class="col-1 ht neg">Cantidad</div>
+                                        <div class="col-1 ht neg">Clave STCC</div>
+                                        <div class="col-1 ht neg">Clave Unidad</div>
+                                        <div class="col-3 ht neg">Descripción</div>
+                                        <div class="col-5 ht neg">
+                                            <div class="row">
+                                                <div class="col-12 ht">
+                                                    <center>Estimados</center>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-3 ht">Unidad</div>
+                                                <div class="col-3 ht">Peso Kg</div>
+                                                <div class="col-3 ht">P. Neto</div>
+                                                <div class="col-3 ht">P. Bruto</div>
                                             </div>
                                         </div>
+                                    </div>
+                                    <!-- Values -->
+                                    <div class="row smallfont" style="width: 100%; margin-left: 1px;">
+                                    <div class="col-1">-</div>
+                                    <div class="col-1"><span t-field="line.quantity_done"/></div>
+                                    <div class="col-1">-</div>
+                                    <div class="col-1"><span t-field="line.product_uom.unspsc_code_id.code"/></div>
+                                    <div class="col-3"><span t-field="line.product_id.name"/></div>
+                                    <div class="col-5">
                                         <div class="row">
-                                            <div class="col-3 ht">Unidad</div>
-                                            <div class="col-3 ht">Peso Kg</div>
-                                            <div class="col-3 ht">P. Neto</div>
-                                            <div class="col-3 ht">P. Bruto</div>
+                                            <div class="col-3">-</div>
+                                            <div class="col-3"><span t-field="line.peso"/></div>
+                                            <div class="col-3">-</div>
+                                            <div class="col-3">-</div>
                                         </div>
                                     </div>
                                 </div>
-                                <!-- Values -->
-                                <div class="row smallfont" style="width: 100%; margin-left: 1px;">
-                                <div class="col-1">-</div>
-                                <div class="col-1"><span t-field="line.quantity_done"/></div>
-                                <div class="col-1">-</div>
-                                <div class="col-1"><span t-field="line.product_uom.unspsc_code_id.code"/></div>
-                                <div class="col-3"><span t-field="line.product_id.name"/></div>
-                                <div class="col-5">
-                                    <div class="row">
-                                        <div class="col-3">-</div>
-                                        <div class="col-3"><span t-field="line.peso"/></div>
-                                        <div class="col-3">-</div>
-                                        <div class="col-3">-</div>
-                                    </div>
                                 </div>
-                            </div>
-                            </div>
-                        </t>
-
+                            </t>
+                        </div>
                         <!-- Autotransporte federal -->
                         <br/>
-                        <h4>Autotransporte Federeal</h4>
-                        <div class="row smallfont" style="width: 100%; margin-left: 1px;">
-                            <div class="col-2 nopadding"><!--title-->
-                                <strong>Nombre de permiso SCT: </strong>
-                            </div>
-                            <div class="col-6 nopadding"><!--value-->
-                                <span t-field="o.l10n_mx_edi_vehicle_id.transport_perm_sct"/>
-                            </div>
-                            <div class="col-2 nopadding"><!--title-->
-                                <strong>No. de permiso SCT: </strong>
-                            </div>
-                            <div class="col-2 nopadding"><!--value-->
-                                <span t-field="o.l10n_mx_edi_vehicle_id.name"/>
-                            </div>
+                        <div class="bneg">
+                            <h4>Autotransporte Federeal</h4>
+                            <div class="row smallfont" style="width: 100%; margin-left: 1px;">
+                                <div class="col-2 nopadding"><!--title-->
+                                    <strong>Nombre de permiso SCT: </strong>
+                                </div>
+                                <div class="col-6 nopadding"><!--value-->
+                                    <span t-field="o.l10n_mx_edi_vehicle_id.transport_perm_sct"/>
+                                </div>
+                                <div class="col-2 nopadding"><!--title-->
+                                    <strong>No. de permiso SCT: </strong>
+                                </div>
+                                <div class="col-2 nopadding"><!--value-->
+                                    <span t-field="o.l10n_mx_edi_vehicle_id.name"/>
+                                </div>
 
+                            </div>
+                            <div class="row smallfont" style="width: 100%; margin-left: 1px;">
+                                <div class="col-2 nopadding"><!--title-->
+                                    <strong>Configuración vehicular: </strong>
+                                </div>
+                                <div class="col-6 nopadding"><!--value-->
+                                    <span t-field="o.l10n_mx_edi_vehicle_id.vehicle_config"/>
+                                </div>
+                                <div class="col-2 nopadding"><!--title-->
+                                    <strong>Placa: </strong>
+                                </div>
+                                <div class="col-2 nopadding"><!--value-->
+                                    <span t-field="o.l10n_mx_edi_vehicle_id.vehicle_licence"/>
+                                </div>
+
+                            </div>
+                            <div class="row smallfont" style="width: 100%; margin-left: 1px;">
+                                <div class="col-2 nopadding"><!--title-->
+                                    <strong>Compañia Aseguradora: </strong>
+                                </div>
+                                <div class="col-6 nopadding"><!--value-->
+                                    <span t-field="o.l10n_mx_edi_vehicle_id.transport_insurer"/>
+                                </div>
+                                <div class="col-2 nopadding"><!--title-->
+                                    <strong>Año/Modelo: </strong>
+                                </div>
+                                <div class="col-2 nopadding"><!--value-->
+                                    <span t-field="o.l10n_mx_edi_vehicle_id.vehicle_model"/>
+                                </div>
+
+                            </div>
+                            <div class="row smallfont" style="width: 100%; margin-left: 1px;">
+                                <div class="col-2 nopadding"><!--title-->
+                                </div>
+                                <div class="col-6 nopadding"><!--value-->
+                                </div>
+                                <div class="col-2 nopadding"><!--title-->
+                                    <strong>No. Poliza de Resp. Civil: </strong>
+                                </div>
+                                <div class="col-2 nopadding"><!--value-->
+                                    <span t-field="o.l10n_mx_edi_vehicle_id.transport_insurance_policy"/>
+                                </div>
+
+                            </div>
                         </div>
-                        <div class="row smallfont" style="width: 100%; margin-left: 1px;">
-                            <div class="col-2 nopadding"><!--title-->
-                                <strong>Configuración vehicular: </strong>
-                            </div>
-                            <div class="col-6 nopadding"><!--value-->
-                                <span t-field="o.l10n_mx_edi_vehicle_id.vehicle_config"/>
-                            </div>
-                            <div class="col-2 nopadding"><!--title-->
-                                <strong>Placa: </strong>
-                            </div>
-                            <div class="col-2 nopadding"><!--value-->
-                                <span t-field="o.l10n_mx_edi_vehicle_id.vehicle_licence"/>
-                            </div>
-
-                        </div>
-                        <div class="row smallfont" style="width: 100%; margin-left: 1px;">
-                            <div class="col-2 nopadding"><!--title-->
-                                <strong>Compañia Aseguradora: </strong>
-                            </div>
-                            <div class="col-6 nopadding"><!--value-->
-                                <span t-field="o.l10n_mx_edi_vehicle_id.transport_insurer"/>
-                            </div>
-                            <div class="col-2 nopadding"><!--title-->
-                                <strong>Año/Modelo: </strong>
-                            </div>
-                            <div class="col-2 nopadding"><!--value-->
-                                <span t-field="o.l10n_mx_edi_vehicle_id.vehicle_model"/>
-                            </div>
-
-                        </div>
-                        <div class="row smallfont" style="width: 100%; margin-left: 1px;">
-                            <div class="col-2 nopadding"><!--title-->
-                            </div>
-                            <div class="col-6 nopadding"><!--value-->
-                            </div>
-                            <div class="col-2 nopadding"><!--title-->
-                                <strong>No. Poliza de Resp. Civil: </strong>
-                            </div>
-                            <div class="col-2 nopadding"><!--value-->
-                                <span t-field="o.l10n_mx_edi_vehicle_id.transport_insurance_policy"/>
-                            </div>
-
-                        </div>
-
                         <!-- Figura del transporte -->
-                        <h4>Figura del transporte</h4><br/>
+                        <br/>
+                        <div class="bneg">
+                            <h4>Figura del transporte</h4>
+                            <t t-foreach="o.l10n_mx_edi_vehicle_id.figure_ids" t-as="inter">
+                                <div class="row smallfont">
+                                    <div class="col-6">
+                                        <strong><span t-field="inter.type"/></strong><br/>
+                                        <strong>Nombre: </strong><span t-field="inter.operator_id"/><br/>
+                                        <strong>Licencia: </strong><span t-field="inter.operator_id.l10n_mx_edi_operator_licence"/><br/>
+                                    </div>
+                                    <div class="col-6">
+                                        <t t-if="inter.part_ids">
+                                            Partes:<br/>
+                                            <t t-foreach="inter.part_ids" t-as="part">
+                                                <strong>Nombre: </strong><span t-field="part.name"/><br/>
+                                            </t>
+                                        </t>
 
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
                         <!-- Sellos fiscales. -->
                         <div class="row border-bottom mt-3 pt-2 pb-3" id='complement'>
                             <div t-if="cfdi_vals.get('sello')" class="barcode col-3">
