@@ -180,8 +180,29 @@
     </template>
 
     <!-- Carta porte report -->
+    <template id="carta_porte_styles">
+        <style>
+            .smallfont{
+                font-size: 13px !important;
+            }
+            .neg{
+                font-weight: bold;
+            }
+            .bneg{
+                border: solid 1px black;
+            }
+            .bb{
+                border-bottom: solid 1px gray;
+            }
+            .ht{
+                padding: 0px;
+                text-align: center;
+            }
+        </style>
+    </template>
 
     <template id="report_carta_porte_document">
+
         <t t-call="web.html_container">
             <t t-call="web.external_layout">
                 <t t-set="o" t-value="o.with_context(lang=o.partner_id.lang)" />
@@ -194,6 +215,7 @@
                 </t>
 
                 <div class="page">
+                    <t t-call="l10n_mx_edi_stock.carta_porte_styles"/>
                     <h2>
                         <span t-field="o.name"/>
                     </h2>
@@ -213,7 +235,7 @@
                         </div>
                     </div>
                     <!-- Table: like a invoice -->
-                    <table class="table table-sm o_main_table table-striped" name="cartaporte_table">
+                    <table class="table table-sm o_main_table table-striped smallfont" name="cartaporte_table">
                         <thead>
                             <tr>
                                 <th name="th_clav_prod_serv" class="text-left"><span>Clave Producto/Servicio</span></th>
@@ -244,130 +266,6 @@
                             </t>
                         </tbody>
                     </table>
-
-                    <!-- la carta porte aquí -->
-                    <!--<t t-set="cfdi_vals" t-value="o._l10n_mx_edi_decode_cfdi()"/>
-                    <t t-if="o.l10n_mx_edi_status == 'sent'">
-                        <div class="row border-top mt-3" t-if="o.l10n_mx_edi_transport_type == '01' and o.l10n_mx_edi_vehicle_id" id="delivery_guide_details">
-                            <div class="col-12">
-                                <div class="row pt-3" id="mx_edi_row_1">
-                                    <div class="col-2">
-                                        <strong>Licence Plate</strong>
-                                        <p t-field="o.l10n_mx_edi_vehicle_id.vehicle_licence"/>
-                                    </div>
-                                    <div class="col-2">
-                                        <strong>SCT Permit No</strong>
-                                        <p t-field="o.l10n_mx_edi_vehicle_id.name"/>
-                                    </div>
-                                    <div class="col-2">
-                                        <strong>Insurer</strong>
-                                        <p t-field="o.l10n_mx_edi_vehicle_id.transport_insurer"/>
-                                    </div>
-                                    <div class="col-2">
-                                        <strong>Policy No</strong>
-                                        <p t-field="o.l10n_mx_edi_vehicle_id.transport_insurance_policy"/>
-                                    </div>
-                                    <div class="col-2">
-                                        <strong>Model</strong>
-                                        <p t-field="o.l10n_mx_edi_vehicle_id.vehicle_model"/>
-                                    </div>
-                                    <div class="col-2">
-                                        <strong>Distance (KM)</strong>
-                                        <p t-field="o.l10n_mx_edi_distance"/>
-                                    </div>
-                                </div>
-                                <div class="row mt-3" id="mx_edi_row_2">
-                                    <div t-att-class="'col-6' if not o.l10n_mx_edi_is_export else 'col-4'">
-                                        <strong>SCT Permit Type</strong>
-                                        <p t-field="o.l10n_mx_edi_vehicle_id.transport_perm_sct"/>
-                                    </div>
-                                    <div t-att-class="'col-6' if not o.l10n_mx_edi_is_export else 'col-5'">
-                                        <strong>Vehicle Configuration</strong>
-                                        <p t-field="o.l10n_mx_edi_vehicle_id.vehicle_config"/>
-                                    </div>
-                                </div>
-                                <div class="row mt-3" id="mx_edi_row_3">
-                                    <div class="col-5">
-                                        <strong>Trailers</strong>
-                                        <table class="table">
-                                            <tr>
-                                                <th>Plate</th>
-                                                <th>Type</th>
-                                            </tr>
-                                            <t t-foreach="o.l10n_mx_edi_vehicle_id.trailer_ids" t-as="trailer">
-                                                <tr>
-                                                    <td><t t-esc="trailer.name"/></td>
-                                                    <td><t t-esc="trailer.sub_type"/></td>
-                                                </tr>
-                                            </t>
-                                        </table>
-                                    </div>
-                                    <div class="col-7">
-                                        <strong>Intermediaries</strong>
-                                        <table class="table">
-                                            <tr>
-                                                <th>Type</th>
-                                                <th>Operator</th>
-                                                <th>License</th>
-                                                <th>Parts</th>
-                                            </tr>
-                                            <t t-foreach="o.l10n_mx_edi_vehicle_id.figure_ids" t-as="figure">
-                                                <tr>
-                                                    <td><t t-esc="figure.type"/></td>
-                                                    <td><t t-esc="figure.operator_id.display_name"/></td>
-                                                    <td><t t-esc="figure.operator_id.l10n_mx_edi_operator_licence" t-if="figure.type == '01'"/></td>
-                                                    <td><t t-esc="', '.join(figure.part_ids.mapped('code'))" t-if="figure.type in ('02', '03')"/></td>
-                                                </tr>
-                                            </t>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row border-bottom mt-3 pt-2 pb-3" id='complement'>
-                            <div t-if="cfdi_vals.get('sello')" class="barcode col-3">
-                                <img alt="Barcode" t-att-src="'/report/barcode/?type=QR&amp;value=%s&amp;width=180&amp;height=180' % quote_plus(
-                                    'https://verificacfdi.facturaelectronica.sat.gob.mx/default.aspx?' + keep_query(
-                                        re=cfdi_vals.get('supplier_rfc'), rr=cfdi_vals.get('customer_rfc'), tt=0.00, id=cfdi_vals.get('uuid'))
-                                        + '&amp;fe=%s' % quote_plus(cfdi_vals['sello'][-8:], 'utf-8', 'strict', '=/').replace('%2B', '+'))"/>
-                            </div>
-                            <div class="complement-details col-9">
-                                <div class="digital-stamp">
-                                    <span>Digital stamp of the emitter</span>
-                                </div>
-                                <div class="digital-stamp-content">
-                                    <span t-esc="cfdi_vals.get('sello')"/>
-                                </div>
-                                <div class="digital-stamp">
-                                    <span>Digital stamp SAT</span>
-                                </div>
-                                <div class="digital-stamp-content">
-                                    <span t-esc="cfdi_vals.get('sello_sat')"/>
-                                </div>
-                                <div class="digital-stamp">
-                                    <span>Original chain complement of digital certification SAT</span>
-                                </div>
-                                <div class="digital-stamp-content">
-                                    <span class="nowrap" t-esc="cfdi_vals.get('cadena')"/>
-                                </div>
-                                <div class="digital-stamp">
-                                    <span>Extra Info</span>
-                                </div>
-                                <div class="digital-stamp-content">
-                                    <span>Emitter certificate:</span> <span t-esc="cfdi_vals.get('certificate_number')"/>
-                                    <span> | SAT Certificate:</span> <span t-esc="cfdi_vals.get('certificate_sat_number')"/>
-                                    <span> | Expedition place:</span> <span t-esc="cfdi_vals.get('expedition')"/>
-                                    <span> | Fiscal Regime:</span><span t-esc="cfdi_vals.get('fiscal_regime')"/>
-                                    <span> | Emission Date:</span> <span t-esc="cfdi_vals.get('emission_date_str')"/>
-                                    <span> | Certification Date:</span> <span t-esc="cfdi_vals.get('stamp_date')"/>
-                                    <span> | Fiscal Folio:</span> <span t-esc="cfdi_vals.get('uuid')"/>
-                                </div>
-                                <div class="digital-stamp-content text-center">
-                                    <strong>This document is a printed representation of a CFDI</strong>
-                                </div>
-                            </div>
-                        </div>
-                    </t>-->
                 </div>
             </t>
         </t>
@@ -377,6 +275,7 @@
                 <t t-if="o.l10n_mx_edi_status == 'sent'">
                     <t t-set="o" t-value="o.with_context(lang=o.partner_id.lang)" />
                     <div class="page">
+                        <t t-call="l10n_mx_edi_stock.carta_porte_styles"/>
                         <div class="row">
                             <div class="col-6"><h3>Complemento Carta Porte 2.0</h3></div>
                             <div class="col-6"/>
@@ -389,70 +288,101 @@
                         </div>
                         <!-- Ubicaciones -->
                         <br/>
-                        <h4>Origen</h4><br/>
-                        <div class="row" style="border: 1px;">
+                        <h4>Origen</h4>
+                        <div class="row">
                             <div class="col-6">
-                                <table class="table table-sm">
-                                    <tr>
-                                        <td><strong>Fecha </strong></td>
+                                <strong>Fecha: </strong><span t-field="o.l10n_mx_edi_fecha_salida" t-options='{"widget": "date"}'/><br/>
     <!--                                    <td><t t-field="o.date_cfdi" t-options='{"widget": "date"}'/></td>-->
-                                        <td>123123Tssdf</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Domicilio: </strong></td>
-                                        <td>Domicilio de origen</td>
-                                    </tr>
-                                </table>
+                                <strong>Domicilio: </strong>Domicilio de origen
                             </div>
                             <div class="col-6">
-                                <table class="table table-sm">
-                                    <tr>
-                                        <td><strong>R.F.C: </strong></td>
-                                        <td><t t-esc="cfdi_vals.get('supplier_rfc')"/></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>ID Ubicación: </strong></td>
-                                        <td>Domicilio de origen</td>
-                                    </tr>
-                                </table>
+                                <strong>R.F.C: </strong><t t-esc="cfdi_vals.get('supplier_rfc')"/><br/>
+                                <strong>ID Ubicación: </strong>Domicilio de origen<br/>
                             </div>
                         </div>
-                        <br/><br/>
-                        <h4>Destino</h4><br/>
+                        <br/>
+                        <h4>Destino</h4>
                         <div class="row" style="border: 1px;">
                             <div class="col-6">
-                                <table class="table table-sm">
-                                    <tr>
-                                        <td><strong>Fecha </strong></td>
-                                        <td>123123Tssdf</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Domicilio: </strong></td>
-                                        <td>Domicilio destino</td>
-                                    </tr>
-                                </table>
+                                <strong>Fecha </strong>123123Tssdf<br/>
+                                <strong>Domicilio: </strong>Domicilio destino<br/>
                             </div>
                             <div class="col-6">
-                                <table class="table table-sm">
-                                    <tr>
-                                        <td><strong>R.F.C: </strong></td>
-                                        <td><t t-esc="cfdi_vals.get('customer_rfc')"/></td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>ID Ubicación: </strong></td>
-                                        <td>00000001x</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Distancia recorrida: </strong></td>
-                                        <td>00000001x</td>
-                                    </tr>
-                                </table>
+                                <strong>R.F.C: </strong><t t-esc="cfdi_vals.get('customer_rfc')"/><br/>
+                                <strong>ID Ubicación: </strong>00000001x<br/>
+                                <strong>Distancia recorrida: </strong>00000001x<br/>
                             </div>
                         </div>
                         <br/><br/>
                         <!-- MERCANCIAS -->
                         <h4>Mercancias</h4><br/>
-
+                        <table class="table">
+                            <tr>
+                                <th>Núm. Total de Mercancias</th>
+                                <th>Unidad</th>
+                                <th>Peso Neto total</th>
+                                <th>Peso Bruto total</th>
+                                <th>Cargo por Tasación</th>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>KGM</td>
+                                <td></td>
+                                <td>37.5kg</td>
+                                <td></td>
+                            </tr>
+                        </table>
+                        <t t-foreach="o.move_ids_without_package" t-as="line">
+                            <div class="bneg">
+                                <div class="row" style="width: 100%; margin-left: 1px;">
+                                    <div class="col-4">
+                                        <strong>Embalaje: </strong><br/>
+                                        <strong>Nombre de unidad de peso: </strong><br/>
+                                        <strong>Material o residuo peligroso: </strong><br/>
+                                    </div>
+                                    <div class="col-8">
+                                        <strong>Bienes transportados: </strong><span t-field="line.product_id.unspsc_code_id.code"/>
+                                    </div>
+                                </div>
+                                <!-- titles -->
+                                <div class="row smallfont bb" style="width: 100%; margin-left: 1px;">
+                                    <div class="col-1 ht neg">Piezas</div>
+                                    <div class="col-1 ht neg">Cantidad</div>
+                                    <div class="col-1 ht neg">Clave STCC</div>
+                                    <div class="col-1 ht neg">Clave Unidad</div>
+                                    <div class="col-3 ht neg">Descripción</div>
+                                    <div class="col-5 ht neg">
+                                        <div class="row">
+                                            <div class="col-12 ht">
+                                                <center>Estimados</center>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-3 ht">Unidad</div>
+                                            <div class="col-3 ht">Peso Kg</div>
+                                            <div class="col-3 ht">P. Neto</div>
+                                            <div class="col-3 ht">P. Bruto</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Values -->
+                                <div class="row smallfont" style="width: 100%; margin-left: 1px;">
+                                <div class="col-1">-</div>
+                                <div class="col-1"><span t-field="line.quantity_done"/></div>
+                                <div class="col-1">-</div>
+                                <div class="col-1"><span t-field="line.product_uom.unspsc_code_id.code"/></div>
+                                <div class="col-3"><span t-field="line.product_id.name"/></div>
+                                <div class="col-5">
+                                    <div class="row">
+                                        <div class="col-3">-</div>
+                                        <div class="col-3"><span t-field="line.peso"/></div>
+                                        <div class="col-3">-</div>
+                                        <div class="col-3">-</div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        </t>
 
                         <!-- Autotransporte federal -->
                         <h4>Autotransporte Federeal</h4><br/>
