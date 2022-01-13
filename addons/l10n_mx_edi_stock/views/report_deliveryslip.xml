@@ -291,34 +291,37 @@
                         </div>
                         <!-- Ubicaciones -->
                         <br/>
-                        <h4>Origen</h4>
-                        <div class="row">
-                            <div class="col-6">
+
+                        <div class="row" style="width: 100%; margin-left: 1px;">
+                            <div class="col-6 nopadding">
+                                <h4>Origen</h4>
                                 <strong>Fecha: </strong><span t-field="o.l10n_mx_edi_fecha_salida" t-options='{"widget": "date"}'/><br/>
-    <!--                                    <td><t t-field="o.date_cfdi" t-options='{"widget": "date"}'/></td>-->
-                                <strong>Domicilio: </strong>Domicilio de origen
-                            </div>
-                            <div class="col-6">
+                                <strong>Domicilio: </strong><address t-field="o.partner_id" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}' />
                                 <strong>R.F.C: </strong><t t-esc="cfdi_vals.get('supplier_rfc')"/><br/>
                                 <strong>ID Ubicación: </strong>Domicilio de origen<br/>
                             </div>
+                            <div class="col-6 nopadding">
+                                <h4>Destino</h4>
+                                <strong>Fecha </strong><span t-field="o.l10n_mx_edi_fecha_llegada" t-options='{"widget": "date"}'/><br/>
+                                <strong>Domicilio: </strong><address t-field="o.partner_id" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}' />
+                                <strong>R.F.C: </strong><t t-esc="cfdi_vals.get('customer_rfc')"/><br/>
+                                <strong>ID Ubicación: </strong>-<br/>
+                                <strong>Distancia recorrida: </strong><span t-field="o.l10n_mx_edi_distance"/><br/>
+                            </div>
                         </div>
                         <br/>
-                        <h4>Destino</h4>
-                        <div class="row" style="border: 1px;">
+
+                       <!-- <div class="row" style="border: 1px;">
                             <div class="col-6">
-                                <strong>Fecha </strong>123123Tssdf<br/>
-                                <strong>Domicilio: </strong>Domicilio destino<br/>
+
                             </div>
                             <div class="col-6">
-                                <strong>R.F.C: </strong><t t-esc="cfdi_vals.get('customer_rfc')"/><br/>
-                                <strong>ID Ubicación: </strong>00000001x<br/>
-                                <strong>Distancia recorrida: </strong>00000001x<br/>
+
                             </div>
-                        </div>
-                        <br/><br/>
+                        </div>-->
+                        <br/>
                         <!-- MERCANCIAS -->
-                        <div class="bneg">
+                        <div class="bneg smallfont">
                             <h4>Mercancias</h4><br/>
                             <table class="table">
                                 <tr>
