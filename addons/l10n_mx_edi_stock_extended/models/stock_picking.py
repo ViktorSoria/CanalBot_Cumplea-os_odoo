@@ -2,6 +2,9 @@
 
 from odoo import api, models, fields, tools, _
 from odoo.exceptions import UserError
+import logging
+_logger = logging.getLogger("Pasarela tekniu: ")
+
 
 class Picking(models.Model):
     _inherit = 'stock.picking'
@@ -22,5 +25,5 @@ class Picking(models.Model):
              'example: 15  48  3009  0001235')
 
     def _l10n_mx_edi_check_comex_availability(self):
-        if self.filtered(lambda p: not p.partner_id.zip or not p.partner_id.state_id):
-            raise UserError(_('A zip code and state are required to generate a delivery guide'))
+        if self.filtered(lambda p: p.l10n_mx_edi_transport_type == '01' and (not p.l10n_mx_edi_destino.zip or not p.l10n_mx_edi_destino.state_id)):
+            raise UserError(_('No esta establecido el codigo postal o el estado del origin'))

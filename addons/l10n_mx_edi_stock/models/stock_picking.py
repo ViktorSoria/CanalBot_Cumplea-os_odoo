@@ -91,6 +91,7 @@ class Picking(models.Model):
             self.l10n_mx_edi_origen = self.picking_type_id.warehouse_id.partner_id
             self.l10n_mx_edi_fecha_salida = self.scheduled_date
             self.l10n_mx_edi_fecha_llegada = self.date_done
+        self._origin.cal_weight()
 
     def _action_done(self):
         super()._action_done()
@@ -138,8 +139,8 @@ class Picking(models.Model):
                 raise UserError(_('A valid certificate was not found'))
             if record.l10n_mx_edi_transport_type == '01' and not record.l10n_mx_edi_distance:
                 raise UserError(_('Distance in KM must be specified when using federal transport'))
-            if record.weight < 0.001:
-                raise UserError(_('Revise el peso de los productos, el total no puede ser 0'))
+            if record.weight < 0.001 and record.l10n_mx_edi_transport_type == '01':
+                raise UserError(_('Revise el peso de los productos, el total no puede ser 0. Si ya ajusto los pesos, presione el boton Recalcular peso.'))
 
     # -------------------------------------------------------------------------
     # XML
