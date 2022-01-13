@@ -71,7 +71,8 @@
                     name="l10n_mx_edi_action_send_delivery_guide"
                     type="object"
                     string="Generate Delivery Guide"
-                    attrs="{'invisible':['|', '|',
+                    attrs="{'invisible':['|', '|','|',
+                                        ('l10n_mx_edi_transport_type', '=', False),
                                         ('state', '!=', 'done'),
                                         ('country_code', '!=', 'MX'),
                                         ('l10n_mx_edi_status', 'not in', [False, 'cancelled'])]}"/>
@@ -94,19 +95,41 @@
             <xpath expr="//notebook" position="inside">
                  <page string="MX EDI" name="mx_edi" attrs="{'invisible': [('l10n_mx_edi_transport_type', '!=', '01')]}">
                     <group>
-                        <group string="Distance " name="mx_edi_group_distance">
+                        <group string="Recorrido" name="mx_edi_group_distance">
                             <field name="l10n_mx_edi_distance" attrs="{'readonly': [('l10n_mx_edi_status', '=', 'sent')]}"/>
+                            <field name="l10n_mx_edi_origen"
+                                attrs="{'invisible': [('l10n_mx_edi_transport_type', '!=', '01')],
+                                        'required': [('l10n_mx_edi_transport_type', '=', '01')],
+                                        'readonly': [('l10n_mx_edi_status', '=', 'sent')]}"/>
+                            <field name="l10n_mx_edi_destino"
+                                attrs="{'invisible': [('l10n_mx_edi_transport_type', '!=', '01')],
+                                        'required': [('l10n_mx_edi_transport_type', '=', '01')],
+                                        'readonly': [('l10n_mx_edi_status', '=', 'sent')]}"/>
                             <button type="object" string="Recalcular peso" name="cal_weight"/>
                         </group>
                         <group string="Transport" name="mx_edi_group_transport">
-                            <field
-                                name="l10n_mx_edi_vehicle_id"
+                            <field name="l10n_mx_edi_vehicle_id"
+                                attrs="{'invisible': [('l10n_mx_edi_transport_type', '!=', '01')],
+                                        'required': [('l10n_mx_edi_transport_type', '=', '01')],
+                                        'readonly': [('l10n_mx_edi_status', '=', 'sent')]}"/>
+                            <field name="l10n_mx_edi_operador"
+                                attrs="{'invisible': [('l10n_mx_edi_transport_type', '!=', '01')],
+                                        'required': [('l10n_mx_edi_transport_type', '=', '01')],
+                                        'readonly': [('l10n_mx_edi_status', '=', 'sent')]}"/>
+                            <field name="l10n_mx_edi_fecha_salida"
+                                attrs="{'invisible': [('l10n_mx_edi_transport_type', '!=', '01')],
+                                        'required': [('l10n_mx_edi_transport_type', '=', '01')],
+                                        'readonly': [('l10n_mx_edi_status', '=', 'sent')]}"/>
+                            <field name="l10n_mx_edi_fecha_llegada"
                                 attrs="{'invisible': [('l10n_mx_edi_transport_type', '!=', '01')],
                                         'required': [('l10n_mx_edi_transport_type', '=', '01')],
                                         'readonly': [('l10n_mx_edi_status', '=', 'sent')]}"/>
                         </group>
                     </group>
                 </page>
+            </xpath>
+            <xpath expr="//page[@name='operations']//field[@name='product_uom']" position="after">
+                <field name="peso"/>
             </xpath>
         </field>
     </record>

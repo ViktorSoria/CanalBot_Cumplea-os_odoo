@@ -115,12 +115,12 @@ class Vehicle(models.Model):
             args += ['|', (self._rec_name, operator, name), ('vehicle_licence', operator, name)]
         return self._search(args, limit=limit, access_rights_uid=name_get_uid)
 
-    @api.constrains('figure_ids')
-    def _check_figures(self):
-        for vehicle in self:
-            operators = vehicle.figure_ids.filtered(lambda f: f.type == '01')
-            if not operators:
-                raise ValidationError(_("The vehicle intermediaries must contain at least one intermediary of type: Operator"))
+    # @api.constrains('figure_ids')
+    # def _check_figures(self):
+    #     for vehicle in self:
+    #         operators = vehicle.figure_ids.filtered(lambda f: f.type == '01')
+    #         if not operators:
+    #             raise ValidationError(_("The vehicle intermediaries must contain at least one intermediary of type: Operator"))
 
     @api.constrains('trailer_ids')
     def _check_trailers(self):
