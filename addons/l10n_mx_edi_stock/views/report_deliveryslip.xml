@@ -198,6 +198,9 @@
                 padding: 0px;
                 text-align: center;
             }
+            .nopadding{
+                padding: 0px;
+            }
         </style>
     </template>
 
@@ -385,7 +388,66 @@
                         </t>
 
                         <!-- Autotransporte federal -->
-                        <h4>Autotransporte Federeal</h4><br/>
+                        <br/>
+                        <h4>Autotransporte Federeal</h4>
+                        <div class="row smallfont" style="width: 100%; margin-left: 1px;">
+                            <div class="col-2 nopadding"><!--title-->
+                                <strong>Nombre de permiso SCT: </strong>
+                            </div>
+                            <div class="col-6 nopadding"><!--value-->
+                                <span t-field="o.l10n_mx_edi_vehicle_id.transport_perm_sct"/>
+                            </div>
+                            <div class="col-2 nopadding"><!--title-->
+                                <strong>No. de permiso SCT: </strong>
+                            </div>
+                            <div class="col-2 nopadding"><!--value-->
+                                <span t-field="o.l10n_mx_edi_vehicle_id.name"/>
+                            </div>
+
+                        </div>
+                        <div class="row smallfont" style="width: 100%; margin-left: 1px;">
+                            <div class="col-2 nopadding"><!--title-->
+                                <strong>Configuración vehicular: </strong>
+                            </div>
+                            <div class="col-6 nopadding"><!--value-->
+                                <span t-field="o.l10n_mx_edi_vehicle_id.vehicle_config"/>
+                            </div>
+                            <div class="col-2 nopadding"><!--title-->
+                                <strong>Placa: </strong>
+                            </div>
+                            <div class="col-2 nopadding"><!--value-->
+                                <span t-field="o.l10n_mx_edi_vehicle_id.vehicle_licence"/>
+                            </div>
+
+                        </div>
+                        <div class="row smallfont" style="width: 100%; margin-left: 1px;">
+                            <div class="col-2 nopadding"><!--title-->
+                                <strong>Compañia Aseguradora: </strong>
+                            </div>
+                            <div class="col-6 nopadding"><!--value-->
+                                <span t-field="o.l10n_mx_edi_vehicle_id.transport_insurer"/>
+                            </div>
+                            <div class="col-2 nopadding"><!--title-->
+                                <strong>Año/Modelo: </strong>
+                            </div>
+                            <div class="col-2 nopadding"><!--value-->
+                                <span t-field="o.l10n_mx_edi_vehicle_id.vehicle_model"/>
+                            </div>
+
+                        </div>
+                        <div class="row smallfont" style="width: 100%; margin-left: 1px;">
+                            <div class="col-2 nopadding"><!--title-->
+                            </div>
+                            <div class="col-6 nopadding"><!--value-->
+                            </div>
+                            <div class="col-2 nopadding"><!--title-->
+                                <strong>No. Poliza de Resp. Civil: </strong>
+                            </div>
+                            <div class="col-2 nopadding"><!--value-->
+                                <span t-field="o.l10n_mx_edi_vehicle_id.transport_insurance_policy"/>
+                            </div>
+
+                        </div>
 
                         <!-- Figura del transporte -->
                         <h4>Figura del transporte</h4><br/>
