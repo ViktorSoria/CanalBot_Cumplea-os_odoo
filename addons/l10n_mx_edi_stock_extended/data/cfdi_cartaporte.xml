@@ -7,9 +7,9 @@
             <attribute name="t-att-Municipio">origin.city_id.l10n_mx_edi_code</attribute>
         </xpath>
 
-        <xpath expr="//*[@t-att-Calle='record.partner_id.street']" position="attributes">
-            <attribute name="t-att-Colonia">record.partner_id.l10n_mx_edi_colony_code</attribute>
-            <attribute name="t-att-Municipio">record.partner_id.city_id.l10n_mx_edi_code</attribute>
+        <xpath expr="//*[@t-att-Calle='customer.street']" position="attributes">
+            <attribute name="t-att-Colonia">customer.l10n_mx_edi_colony_code</attribute>
+            <attribute name="t-att-Municipio">customer.city_id.l10n_mx_edi_code</attribute>
         </xpath>
 
         <xpath expr="//*[name()='cartaporte20:Mercancia']" position="attributes">
