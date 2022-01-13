@@ -181,8 +181,8 @@ class Certificate(models.Model):
             record.serial_number = ('%x' % serial_number)[1::2]
             record.date_start = before.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
             record.date_end = after.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
-            if mexican_dt > after:
-                raise ValidationError(_('The certificate is expired since %s', record.date_end))
+            # if mexican_dt > after:
+            #     raise ValidationError(_('The certificate is expired since %s', record.date_end))
             # Check the pair key/password
             try:
                 key_pem = self.get_pem_key(self.key, self.password)
