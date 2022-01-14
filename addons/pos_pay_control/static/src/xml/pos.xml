@@ -121,6 +121,45 @@
            </div>
        </div>
    </t>
+    <t t-name="Buttonreceive" owl="1">
+        <div role="dialog" class="modal-dialog">
+           <div class="popup">
+                <p class="title">
+                   <t t-esc="props.title"/>
+                    <br/>
+                </p>
+               <div class="body" style="overflow: auto; height: 250px;">
+                   <table class="table">
+                       <tr>
+                           <th>No.</th>
+                           <th>Pedido</th>
+                           <th>Punto de Venta</th>
+                           <th>Vendedor</th>
+                       </tr>
+                       <t t-set="i" t-value="1"/>
+                       <t t-foreach="props.orders" t-as="o">
+                           <tr class="tam" t-att-order-id="o.id" t-on-click="selection" t-att-sname="o.pos_name">
+                               <td t-esc="i"/>
+                               <td t-esc="o.orden"/>
+                               <td t-esc="o.pos_name"/>
+                               <td t-esc="o.cajero"/>
+                           </tr>
+                           <t t-set="i" t-value="i+1"/>
+                       </t>
+                   </table>
+               </div>
+               <div class="footer">
+                   <div class="button" t-on-click="GetOrder">
+                       <t t-esc="props.confirmText"/>
+                   </div>
+
+                   <div class="button cancel" t-on-click="cancel">
+                       <t t-esc="props.cancelText"/>
+                   </div>
+                </div>
+            </div>
+        </div>
+    </t>
 
     <t t-name="OrderReceipt" t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension" owl="1">
         <xpath expr="//t[@t-if='receipt.cashier']" position="after">
@@ -164,13 +203,20 @@
                             <strong>Informacion Extra</strong>
                         </div>
                         <div class="digital-stamp-content">
-                            <span>Certificado del Emisor:</span> <span t-esc="cfdi_vals.certificate_number"/>
-                            <span> | Certificado del Sat:</span> <span t-esc="cfdi_vals.certificate_sat_number"/>
-                            <span> | Lugar de Expedición:</span> <span t-esc="cfdi_vals.expedition"/>
-                            <span> | Regimen Fiscal:</span><span t-esc="cfdi_vals.fiscal_regime"/>
-                            <span> | Fecha de Emisión:</span> <span t-esc="cfdi_vals.emission_date_str"/>
-                            <span> | Fecha de certificación:</span> <span t-esc="cfdi_vals.stamp_date"/>
-                            <span> | Folio Fiscal:</span> <span t-esc="cfdi_vals.uuid"/>
+                            <span>Certificado del Emisor:</span>
+                            <span t-esc="cfdi_vals.certificate_number"/>
+                            <span> | Certificado del Sat:</span>
+                            <span t-esc="cfdi_vals.certificate_sat_number"/>
+                            <span> | Lugar de Expedición:</span>
+                            <span t-esc="cfdi_vals.expedition"/>
+                            <span> | Regimen Fiscal:</span>
+                            <span t-esc="cfdi_vals.fiscal_regime"/>
+                            <span> | Fecha de Emisión:</span>
+                            <span t-esc="cfdi_vals.emission_date_str"/>
+                            <span> | Fecha de certificación:</span>
+                            <span t-esc="cfdi_vals.stamp_date"/>
+                            <span> | Folio Fiscal:</span>
+                            <span t-esc="cfdi_vals.uuid"/>
                         </div>
                         <div class="digital-stamp-content text-center">
                             <strong>Este documento es una representación impresa de un CFDI</strong>
@@ -202,16 +248,16 @@
                         <WrappedProductNameLines line="line" />
                     </t>-->
                     <!--<t t-else="">-->
-                        <div t-esc="line.product_name_wrapped[0]"/>
-                        <WrappedProductNameLines line="line" />
-                        <t t-if="line.display_discount_policy == 'without_discount' and line.price != line.price_lst">
+                    <div t-esc="line.product_name_wrapped[0]"/>
+                    <WrappedProductNameLines line="line"/>
+                    <t t-if="line.display_discount_policy == 'without_discount' and line.price != line.price_lst">
                             <div class="pos-receipt-left-padding">
-                                <t t-esc="env.pos.format_currency_no_symbol(line.price_lst)" />
+                                <t t-esc="env.pos.format_currency_no_symbol(line.price_lst)"/>
                                 ->
-                                <t t-esc="env.pos.format_currency_no_symbol(line.price)" />
+                                <t t-esc="env.pos.format_currency_no_symbol(line.price)"/>
                             </div>
                         </t>
-                        <t t-elif="line.discount !== 0">
+                    <t t-elif="line.discount !== 0">
                             <div class="pos-receipt-left-padding">
                                 <t t-if="env.pos.config.iface_tax_included === 'total'">
                                     <t t-esc="env.pos.format_currency_no_symbol(line.price_with_tax_before_discount)"/>
@@ -221,19 +267,19 @@
                                 </t>
                             </div>
                         </t>
-                        <t t-if="line.discount !== 0">
+                    <t t-if="line.discount !== 0">
                             <div class="pos-receipt-left-padding">
-                                Discount: <t t-esc="line.discount" />%
+                                Discount: <t t-esc="line.discount"/>%
                             </div>
                         </t>
-                        <div class="pos-receipt-left-padding">
+                    <div class="pos-receipt-left-padding">
                             <t t-esc="Math.round(line.quantity * Math.pow(10, env.pos.dp['Product Unit of Measure'])) / Math.pow(10, env.pos.dp['Product Unit of Measure'])"/>
-                            &#160;
-                            <t t-if="!line.is_in_unit" t-esc="line.unit_name" />
-                            x
-                            <t t-esc="env.pos.format_currency_no_symbol(line.price_display_one)" />
-                            <span class="price_display pos-receipt-right-align">
-                                <t t-esc="env.pos.format_currency_no_symbol(line.price_display)" />
+                        &#160;
+                        <t t-if="!line.is_in_unit" t-esc="line.unit_name"/>
+                        x
+                        <t t-esc="env.pos.format_currency_no_symbol(line.price_display_one)"/>
+                        <span class="price_display pos-receipt-right-align">
+                                <t t-esc="env.pos.format_currency_no_symbol(line.price_display)"/>
                             </span>
                         </div>
                     <!--</t>-->
@@ -316,19 +362,22 @@
                     opacity: 1;
                 }
             </style>
-            <div class="product-name cut-text" style="padding-top: 1px;" t-attf-id="article_product_{{props.product.id}}">
+            <div class="product-name cut-text" style="padding-top: 1px;"
+                 t-attf-id="article_product_{{props.product.id}}">
 <!--                <t t-esc="props.product.short_name"/>-->
                 <t t-esc="props.product.display_name"/>
             </div>
 
-            <div class="product-name tooltip" style="padding-top: 1px;" t-attf-id="article_product_{{props.product.id}}">
+            <div class="product-name tooltip" style="padding-top: 1px;"
+                 t-attf-id="article_product_{{props.product.id}}">
 <!--                <t t-esc="props.product.short_name"/>-->
                 <t t-esc="props.product.display_name"/>
             </div>
         </xpath>
     </t>
 
-    <t t-name="WrappedProductNameLines" t-inherit="point_of_sale.WrappedProductNameLines" t-inherit-mode="extension" owl="1">
+    <t t-name="WrappedProductNameLines" t-inherit="point_of_sale.WrappedProductNameLines" t-inherit-mode="extension"
+       owl="1">
         <xpath expr="//t[@t-as='wrapped_line']" position="replace">
             <t t-foreach="props.line.product_name_wrapped.slice(1,2)" t-as="wrapped_line"><t t-esc="wrapped_line"/></t>
         </xpath>
@@ -343,7 +392,8 @@
         </xpath>
     </t>
 
-    <t t-name="ProductsWidgetControlPanel" t-inherit="point_of_sale.ProductsWidgetControlPanel" t-inherit-mode="extension" owl="1">
+    <t t-name="ProductsWidgetControlPanel" t-inherit="point_of_sale.ProductsWidgetControlPanel"
+       t-inherit-mode="extension" owl="1">
         <xpath expr="//div[@class='products-widget-control']" position="attributes">
             <attribute name="style">overflow: auto;max-height: 240px;min-height: 60px;</attribute>
         </xpath>
