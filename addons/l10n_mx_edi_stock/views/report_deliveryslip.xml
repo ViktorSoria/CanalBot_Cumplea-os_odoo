@@ -295,7 +295,7 @@
                             <div class="col-6 nopadding">
                                 <h4>Origen</h4>
                                 <strong>Fecha: </strong><span t-field="o.l10n_mx_edi_fecha_salida" t-options='{"widget": "date"}'/><br/>
-                                <strong>Domicilio: </strong><address t-field="o.partner_id" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}' />
+                                <strong>Domicilio: </strong><address t-field="o.l10n_mx_edi_origen" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}' />
                                 <strong>R.F.C: </strong><t t-esc="cfdi_vals.get('supplier_rfc')"/><br/>
                                 <strong>ID Ubicación: </strong>Domicilio de origen<br/>
                             </div>
@@ -331,10 +331,10 @@
                                     <th>Cargo por Tasación</th>
                                 </tr>
                                 <tr>
-                                    <td>6</td>
+                                    <td><span t-esc="o.total_mercancias()"/></td>
                                     <td>KGM</td>
                                     <td></td>
-                                    <td>37.5kg</td>
+                                    <td><span t-field="o.weight"/> Kg</td>
                                     <td></td>
                                 </tr>
                             </table>

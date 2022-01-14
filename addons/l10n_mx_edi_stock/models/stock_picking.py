@@ -400,3 +400,9 @@ class Picking(models.Model):
                 record.l10n_mx_edi_sat_status = 'not_found'
             else:
                 record.l10n_mx_edi_sat_status = 'none'
+
+    def total_mercancias(self):
+        total = 0
+        for line in self.move_ids_without_package:
+            total += line.quantity_done
+        return total
