@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
+<!--
+
     <template id="l10n_mx_edi_cartaporte_report_delivery_document" inherit_id="stock.report_delivery_document">
         <xpath expr="//div[@name='signature']" position="after">
             <t t-set="cfdi_vals" t-value="o._l10n_mx_edi_decode_cfdi()"/>
@@ -125,19 +127,10 @@
                 </div>
             </t>
         </xpath>
-<!--        <xpath expr="//th[@name='th_sml_product']" position="before">-->
-<!--            <t t-if="o.l10n_mx_edi_status == 'sent'">-->
-<!--                <th name="th_sm_product_unspsc_code"><strong>Code</strong></th>-->
-<!--            </t>-->
-<!--        </xpath>-->
-<!--        <xpath expr="//th[@name='th_sml_quantity']" position="after">-->
-<!--            <t t-if="o.l10n_mx_edi_status == 'sent'">-->
-<!--                <th name="th_sm_uom_unspsc_code"><strong>UOM</strong></th>-->
-<!--                <th name="th_sm_weight"><strong>Weight</strong></th>-->
-<!--            </t>-->
-<!--        </xpath>-->
     </template>
+-->
 
+    <!--
     <template id="l10n_mx_edi_cartaporte_report_delivery_has_serial_move_line" inherit_id="stock.stock_report_delivery_has_serial_move_line">
          <xpath expr="//td" position="before">
             <t t-if="o.l10n_mx_edi_status == 'sent'">
@@ -158,7 +151,7 @@
         </xpath>
     </template>
 
-    <template id="l10n_mx_edi_cartaporte_report_delivery_aggregated_move_lines" inherit_id="stock.stock_report_delivery_aggregated_move_lines">
+   <template id="l10n_mx_edi_cartaporte_report_delivery_aggregated_move_lines" inherit_id="stock.stock_report_delivery_aggregated_move_lines">
         <xpath expr="//td" position="before">
             <t t-if="o.l10n_mx_edi_status == 'sent'">
                 <td>
@@ -178,6 +171,9 @@
             </t>
         </xpath>
     </template>
+    -->
+
+
     <!-- Carta porte report -->
     <template id="carta_porte_styles">
         <style>
