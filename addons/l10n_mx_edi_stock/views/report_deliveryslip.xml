@@ -379,7 +379,7 @@
                                     <div class="col-3"><span t-field="line.product_id.name"/></div>
                                     <div class="col-5">
                                         <div class="row">
-                                            <div class="col-3">-</div>
+                                            <div class="col-3"><span t-field="line.product_uom"/></div>
                                             <div class="col-3"><span t-field="line.peso"/></div>
                                             <div class="col-3">-</div>
                                             <div class="col-3">-</div>
