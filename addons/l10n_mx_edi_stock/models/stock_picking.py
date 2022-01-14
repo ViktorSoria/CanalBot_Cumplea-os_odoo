@@ -104,7 +104,7 @@ class Picking(models.Model):
     @api.depends('partner_id')
     def _l10n_mx_edi_compute_is_export(self):
         for record in self:
-            record.l10n_mx_edi_is_export = record.partner_id.country_id.code != 'MX'
+            record.l10n_mx_edi_is_export = record.l10n_mx_edi_destino.country_id.code != 'MX'
 
     @api.depends('l10n_mx_edi_status')
     def _l10n_mx_edi_compute_edi_content(self):
@@ -133,8 +133,9 @@ class Picking(models.Model):
         for record in self:
             if not record.l10n_mx_edi_transport_type:
                 raise UserError(_('You must select a transport type to generate the delivery guide'))
-            if record.move_line_ids.mapped('product_id').filtered(lambda product: not product.unspsc_code_id):
-                raise UserError(_('All products require a UNSPSC Code'))
+            prod = record.move_line_ids.mapped('product_id').filtered(lambda product: not product.unspsc_code_id)
+            if prod:
+                raise UserError(_('All products require a UNSPSC Code') + str(prod.mapped("default_code")))
             if not record.company_id.l10n_mx_edi_certificate_ids.sudo().get_valid_certificate():
                 raise UserError(_('A valid certificate was not found'))
             if record.l10n_mx_edi_transport_type == '01' and not record.l10n_mx_edi_distance:
