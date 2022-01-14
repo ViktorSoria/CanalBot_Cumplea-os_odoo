@@ -6,6 +6,7 @@ import ssl
 import subprocess
 import tempfile
 from datetime import datetime
+from lxml import etree, objectify
 
 _logger = logging.getLogger(__name__)
 
@@ -126,6 +127,35 @@ class Certificate(models.Model):
         cadena_crypted = crypto.sign(private_key, bytes(cadena.encode()), encrypt)
         return base64.b64encode(cadena_crypted)
 
+    @api.model
+    def _get_cadena_chain(self, xml_tree, xslt_path):
+        """ Use the provided XSLT document to generate a pipe-delimited string
+        :param xml_tree: the source lxml document
+        :param xslt_path: Path to the XSLT document
+        :return: string
+        """
+        cadena_transformer = etree.parse(tools.file_open(xslt_path))
+        return str(etree.XSLT(cadena_transformer)(xml_tree))
+
+    def _certify_and_stamp(self, xml_content_str, xslt_path):
+        """ Appends the Sello stamp, certificate, and serial number to CFDI documents
+        :param xml_content_str: The XML document string to certify and stamp
+        :param xslt_path: Path to the XSLT used to generate the cadena chain (pipe delimited string of important values)
+        :return: A string of the XML with appended attributes: NoCertificado, Certificado, Sello
+        """
+        # TODO: replace function _l10n_mx_edi_add_digital_stamp in l10n_mx_reports/models/trial_balance.py (fix module dependencies too)
+        # TODO: improve functions _l10n_mx_edi_export_payment_cfdi & _l10n_mx_edi_export_invoice_cfdi in l10n_mx_edi/models/account_edi_format.py
+        self.ensure_one()
+        if not xml_content_str:
+            return None
+        tree = objectify.fromstring(xml_content_str)
+        tree.attrib['NoCertificado'] = self.serial_number
+        tree.attrib['Certificado'] = self.get_data()[0]
+        cadena_chain = self._get_cadena_chain(tree, xslt_path)
+        sello = self.get_encrypted_cadena(cadena_chain)
+        tree.attrib['Sello'] = sello
+        return etree.tostring(tree, pretty_print=True, xml_declaration=True, encoding='UTF-8')
+
     @api.constrains('content', 'key', 'password')
     def _check_credentials(self):
         '''Check the validity of content/key/password and fill the fields
@@ -151,14 +181,14 @@ class Certificate(models.Model):
             record.serial_number = ('%x' % serial_number)[1::2]
             record.date_start = before.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
             record.date_end = after.strftime(DEFAULT_SERVER_DATETIME_FORMAT)
-            if mexican_dt > after:
-                raise ValidationError(_('The certificate is expired since %s', record.date_end))
+            # if mexican_dt > after:
+            #     raise ValidationError(_('The certificate is expired since %s', record.date_end))
             # Check the pair key/password
             try:
                 key_pem = self.get_pem_key(self.key, self.password)
                 crypto.load_privatekey(crypto.FILETYPE_PEM, key_pem)
-            except Exception as e:
-                raise ValidationError(_('The certificate key and/or password is/are invalid.'+str(e)+str(self.key)+str(self.password)))
+            except Exception:
+                raise ValidationError(_('The certificate key and/or password is/are invalid.'))
 
     def unlink(self):
         mx_edi = self.env.ref('l10n_mx_edi.edi_cfdi_3_3')

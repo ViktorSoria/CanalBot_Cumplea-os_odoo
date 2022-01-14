@@ -1,9 +1,17 @@
-Instalacion
-ubuntu server https://blogdesistemas.com/instalar-ubuntu-server-20-04/
-ssh https://voragine.net/linux/acceso-ssh-seguro-servidor-autenticacion-clave-publica
-odoo https://odooperu.org/?p=1413 https://rborja.net/como-instalar-odoo14-en-ubuntu/
-
 multiusr
 tek2101
 
-falta calcular secuencia website
+quitamos demo edi_mx_extended ya no se requiere la dependencia
+quitamos dependencia web_map
+arreglar codigos en reporte albaran l10n_mx_edi_cartaporte_report_delivery_document
+hacer traduccion de campos y botones en vista
+traduccion errores
+*agregar validacion estado (no solo codigo postal)
+*validacion peso de productos
+*agregar columna material peligroso en productos
+
+
+Usuarios
+Direccion empresa y destino
+trailers
+conductores

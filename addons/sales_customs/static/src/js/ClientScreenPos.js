@@ -1,7 +1,6 @@
 odoo.define('sales_customs.ClientDetailsEdit', function (require) {
 "use strict";
 
-    console.log(" ==== Si carga el js ==== 6");
     const { _t } = require('web.core');
     const PosComponent = require('point_of_sale.PosComponent');
     const Registries = require('point_of_sale.Registries');

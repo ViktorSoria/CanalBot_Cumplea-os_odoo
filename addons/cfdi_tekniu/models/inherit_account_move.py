@@ -38,11 +38,11 @@ class AccountEdiFormat(models.Model):
         res['customer_rfc'] = self.env['res.partner'].l10n_mx_edi_get_customer_rfc(res['customer_rfc'])
         return res
 
-    def _l10n_mx_edi_get_tekniu_credentials(self, move):
+    def _l10n_mx_edi_get_tekniu_credentials_company(self, company_id):
         """Extrae las credenciales de la compañia"""
-        test = move.company_id.l10n_mx_edi_pac_test_env
-        username = move.company_id.l10n_mx_edi_pac_username
-        password = move.company_id.l10n_mx_edi_pac_password
+        test = company_id.l10n_mx_edi_pac_test_env
+        username = company_id.l10n_mx_edi_pac_username
+        password = company_id.l10n_mx_edi_pac_password
         url = 'https://facturacion.tekniu.mx/facturacion_gw'
         if not username or not password:
             return {
@@ -56,7 +56,10 @@ class AccountEdiFormat(models.Model):
             'test': test
         }
 
-    def _l10n_mx_edi_tekniu_sign(self,move,credentials,cfdi):
+    def _l10n_mx_edi_get_tekniu_credentials(self, move):
+        return self._l10n_mx_edi_get_tekniu_credentials_company(move.company_id)
+
+    def _l10n_mx_edi_tekniu_sign_service(self, credentials,cfdi):
         """Envio a la pasarela de tekniu (pagos y facturas)"""
         url = credentials['sign_url']
         pre_xml = cfdi.decode('utf-8')
@@ -68,23 +71,28 @@ class AccountEdiFormat(models.Model):
             'Prueba': credentials['test']
         }
         try:
-            response = requests.post(url,auth=None, verify=False, data=json.dumps({'params':json_invoice}),headers={"Content-type": "application/json"})
+            response = requests.post(url, auth=None, verify=False, data=json.dumps({'params': json_invoice}),
+                                     headers={"Content-type": "application/json"})
         except Exception as e:
             return {'errors': [str(e)]}
-        result = response.json().get('result',{})
-        code = result.get('code','')
-        msg = result.get('description','')
+        result = response.json().get('result', {})
+        code = result.get('code', '')
+        msg = result.get('description', '')
         errors = []
         if code or msg:
             errors.append(_("Code : %s") % code)
             errors.append(_("Message : %s") % msg)
             return {'errors': errors}
         xml_signed = result.get('xml', None)
-        _logger.warning(xml_signed)
+        if type(xml_signed)==str:
+            xml_signed = xml_signed.encode()
         return {
             'cfdi_signed': xml_signed,
             'cfdi_encoding': 'base64',
         }
+
+    def _l10n_mx_edi_tekniu_sign(self,move,credentials,cfdi):
+        return self._l10n_mx_edi_tekniu_sign_service(credentials,cfdi)
 
     def _l10n_mx_edi_tekniu_sign_invoice(self, invoice, credentials, cfdi):
         return self._l10n_mx_edi_tekniu_sign(invoice, credentials, cfdi)
@@ -98,15 +106,18 @@ class AccountEdiFormat(models.Model):
     def _l10n_mx_edi_tekniu_cancel_payment(self, move, credentials, cfdi):
         return self._l10n_mx_edi_tekniu_cancel(move, credentials, cfdi)
 
-    def _l10n_mx_edi_tekniu_cancel(self,move,credentials,cfdi):
+    def _l10n_mx_edi_tekniu_cancel(self, move, credentials, cfdi):
+        return self._l10n_mx_edi_solfact_cancel_service(move.l10n_mx_edi_cfdi_uuid, move.company_id, credentials)
+
+    def _l10n_mx_edi_tekniu_cancel_service(self,uuid,company_id,credentials):
         """CANCEL for Tekniu."""
         url = credentials['cancel_url']
         json_invoice = {
             'Cliente': {'Usuario': credentials['username'], 'Password': credentials['password']},
             'Service': 'Cancelar',
             'Prueba': credentials['test'],
-            'rfc': move.company_id.partner_id.l10n_mx_edi_get_customer_rfc(),
-            'Uuid': move.l10n_mx_edi_cfdi_uuid,
+            'rfc': company_id.partner_id.l10n_mx_edi_get_customer_rfc(),
+            'Uuid': uuid,
             'Pass_pfx': '',
             'pfx_b64': '',
             'generate_pfx': True,
@@ -116,7 +127,6 @@ class AccountEdiFormat(models.Model):
         except Exception as e:
             return {'errors': [str(e)]}
         result = response.json().get('result',{})
-        _logger.warning(result)
         validate = result.get('validate',False)
         code = result.get('code','')
         msg = result.get('description','')
@@ -124,6 +134,5 @@ class AccountEdiFormat(models.Model):
         if not validate:
             errors.append(_("Code : %s") % code)
             errors.append(_("Message : %s") % msg)
-            _logger.warning(errors)
             return {'errors': errors}
         return {'success': True}

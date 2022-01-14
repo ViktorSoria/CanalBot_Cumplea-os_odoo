@@ -23,7 +23,7 @@
                         <div>
                             <div class="o_row">
                                 <field name="l10n_mx_edi_colony" placeholder="Colony..."/>
-                                <field name="l10n_mx_edi_colony_code" placeholder="Colony Code..." attrs="{'invisible': [('type', '!=', 'invoice')]}"/>
+                                <field name="l10n_mx_edi_colony_code" placeholder="Colony Code..."/>
                             </div>
                         </div>
                         <field name="city" placeholder="City" class="o_address_city"/>
