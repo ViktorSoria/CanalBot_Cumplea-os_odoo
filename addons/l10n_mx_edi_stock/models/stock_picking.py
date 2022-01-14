@@ -78,6 +78,20 @@ class Picking(models.Model):
         help='The vehicle used for Federal Transport')
     l10n_mx_edi_cfdi_file_id = fields.Many2one('ir.attachment', string='CFDI file', copy=False)
     date_cfdi = fields.Datetime("Fecha de timbrado")
+    l10n_mx_edi_fecha_salida = fields.Datetime("Fecha Salida",copy=False)
+    l10n_mx_edi_fecha_llegada = fields.Datetime("Fecha llegada",copy=False)
+    l10n_mx_edi_operador = fields.Many2one("res.partner","Operador",copy=False)
+    l10n_mx_edi_origen = fields.Many2one("res.partner","Origen",copy=False)
+    l10n_mx_edi_destino = fields.Many2one("res.partner","Destino",copy=False)
+
+    @api.onchange('l10n_mx_edi_transport_type')
+    def onchange_type_cfdi(self):
+        if self.l10n_mx_edi_transport_type:
+            self.l10n_mx_edi_destino = self.partner_id
+            self.l10n_mx_edi_origen = self.picking_type_id.warehouse_id.partner_id
+            self.l10n_mx_edi_fecha_salida = self.scheduled_date
+            self.l10n_mx_edi_fecha_llegada = self.date_done
+        self._origin.cal_weight()
 
     def _action_done(self):
         super()._action_done()
@@ -90,7 +104,7 @@ class Picking(models.Model):
     @api.depends('partner_id')
     def _l10n_mx_edi_compute_is_export(self):
         for record in self:
-            record.l10n_mx_edi_is_export = record.partner_id.country_id.code != 'MX'
+            record.l10n_mx_edi_is_export = record.l10n_mx_edi_destino.country_id.code != 'MX'
 
     @api.depends('l10n_mx_edi_status')
     def _l10n_mx_edi_compute_edi_content(self):
@@ -119,14 +133,15 @@ class Picking(models.Model):
         for record in self:
             if not record.l10n_mx_edi_transport_type:
                 raise UserError(_('You must select a transport type to generate the delivery guide'))
-            if record.move_line_ids.mapped('product_id').filtered(lambda product: not product.unspsc_code_id):
-                raise UserError(_('All products require a UNSPSC Code'))
+            prod = record.move_line_ids.mapped('product_id').filtered(lambda product: not product.unspsc_code_id)
+            if prod:
+                raise UserError(_('All products require a UNSPSC Code') + str(prod.mapped("default_code")))
             if not record.company_id.l10n_mx_edi_certificate_ids.sudo().get_valid_certificate():
                 raise UserError(_('A valid certificate was not found'))
             if record.l10n_mx_edi_transport_type == '01' and not record.l10n_mx_edi_distance:
                 raise UserError(_('Distance in KM must be specified when using federal transport'))
-            if record.weight < 0.001:
-                raise UserError(_('Revise el peso de los productos, el total no puede ser 0'))
+            if record.weight < 0.001 and record.l10n_mx_edi_transport_type == '01':
+                raise UserError(_('Revise el peso de los productos, el total no puede ser 0. Si ya ajusto los pesos, presione el boton Recalcular peso.'))
 
     # -------------------------------------------------------------------------
     # XML
@@ -139,7 +154,7 @@ class Picking(models.Model):
             name_numbers = list(re.finditer('\d+', record.name))
             mx_tz = self.env['account.move']._l10n_mx_edi_get_cfdi_partner_timezone(record.picking_type_id.warehouse_id.partner_id or record.company_id.partner_id)
             date_fmt = '%Y-%m-%dT%H:%M:%S'
-            warehouse_zip = record.picking_type_id.warehouse_id.partner_id and record.picking_type_id.warehouse_id.partner_id.zip or record.company_id.zip
+            warehouse_zip = record.l10n_mx_edi_origen.zip or record.company_id.zip
             origin_type, origin_uuids = None, []
             if record.l10n_mx_edi_origin and '|' in record.l10n_mx_edi_origin:
                 split_origin = record.l10n_mx_edi_origin.split('|')
@@ -148,16 +163,18 @@ class Picking(models.Model):
                     origin_uuids = split_origin[1].split(',')
             values = {
                 # 'cfdi_date': record.date_done.astimezone(mx_tz).strftime(date_fmt),
+                # 'scheduled_date': record.scheduled_date.astimezone(mx_tz).strftime(date_fmt),
                 'cfdi_date': record.date_cfdi.astimezone(mx_tz).strftime(date_fmt),
-                'scheduled_date': record.scheduled_date.astimezone(mx_tz).strftime(date_fmt),
+                'salida': record.l10n_mx_edi_fecha_salida.astimezone(mx_tz).strftime(date_fmt),
+                'llegada': record.l10n_mx_edi_fecha_llegada.astimezone(mx_tz).strftime(date_fmt),
                 'folio_number': name_numbers[-1].group(),
                 'origin_type': origin_type,
                 'origin_uuids': origin_uuids,
                 'serie': re.sub('\W+', '', record.name[:name_numbers[-1].start()]),
                 'lugar_expedicion': warehouse_zip,
-                'origin': record.picking_type_id.warehouse_id.partner_id,
+                'origin': record.l10n_mx_edi_origen,
                 'supplier': record.company_id,
-                'customer': record.partner_id.commercial_partner_id,
+                'customer': record.l10n_mx_edi_destino,
                 'moves': record.move_lines.filtered(lambda ml: ml.quantity_done > 0),
                 'record': record,
                 'format_float': format_float,
@@ -384,3 +401,9 @@ class Picking(models.Model):
                 record.l10n_mx_edi_sat_status = 'not_found'
             else:
                 record.l10n_mx_edi_sat_status = 'none'
+
+    def total_mercancias(self):
+        total = 0
+        for line in self.move_ids_without_package:
+            total += line.quantity_done
+        return total

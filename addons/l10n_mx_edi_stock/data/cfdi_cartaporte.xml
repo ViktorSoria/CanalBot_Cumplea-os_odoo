@@ -48,13 +48,13 @@
                     t-att-TotalDistRec="record.l10n_mx_edi_distance"
                     t-att-EntradaSalidaMerc="'Salida' if record.l10n_mx_edi_is_export else None"
                     t-att-ViaEntradaSalida="record.l10n_mx_edi_transport_type if record.l10n_mx_edi_is_export else None"
-                    t-att-PaisOrigenDestino="record.partner_id.country_id.l10n_mx_edi_code if record.l10n_mx_edi_is_export else None"
+                    t-att-PaisOrigenDestino="customer.country_id.l10n_mx_edi_code if record.l10n_mx_edi_is_export else None"
                     Version="2.0">
                     <cartaporte20:Ubicaciones>
                         <cartaporte20:Ubicacion
                             TipoUbicacion="Origen"
                             t-att-IDUbicacion="'OR' + str(record.location_id.id).rjust(6,'0')"
-                            t-att-FechaHoraSalidaLlegada="cfdi_date"
+                            t-att-FechaHoraSalidaLlegada="salida"
                             t-att-RFCRemitenteDestinatario="supplier.vat">
                             <cartaporte20:Domicilio
                                 t-att-Calle="origin.street"
@@ -66,15 +66,15 @@
                             TipoUbicacion="Destino"
                             t-att-IDUbicacion="'DE' + str(record.location_dest_id.id).rjust(6,'0')"
                             t-att-DistanciaRecorrida="record.l10n_mx_edi_distance"
-                            t-att-FechaHoraSalidaLlegada="scheduled_date"
-                            t-att-RFCRemitenteDestinatario="customer.vat if not record.l10n_mx_edi_is_export else 'XEXX010101000'"
+                            t-att-FechaHoraSalidaLlegada="llegada"
+                            t-att-RFCRemitenteDestinatario="supplier.vat"
                             t-att-NumRegIdTrib="customer.vat if record.l10n_mx_edi_is_export else None"
-                            t-att-ResidenciaFiscal="record.partner_id.country_id.l10n_mx_edi_code if record.l10n_mx_edi_is_export else None">
+                            t-att-ResidenciaFiscal="customer.country_id.l10n_mx_edi_code if record.l10n_mx_edi_is_export else None">
                             <cartaporte20:Domicilio
-                                t-att-Calle="record.partner_id.street"
-                                t-att-CodigoPostal="record.partner_id.zip"
-                                t-att-Estado="record.partner_id.state_id.code"
-                                t-att-Pais="record.partner_id.country_id.l10n_mx_edi_code"/>
+                                t-att-Calle="customer.street"
+                                t-att-CodigoPostal="customer.zip"
+                                t-att-Estado="customer.state_id.code"
+                                t-att-Pais="customer.country_id.l10n_mx_edi_code"/>
                         </cartaporte20:Ubicacion>
                     </cartaporte20:Ubicaciones>
                     <cartaporte20:Mercancias
@@ -115,6 +115,11 @@
                         </cartaporte20:Autotransporte>
                     </cartaporte20:Mercancias>
                     <cartaporte20:FiguraTransporte>
+                        <cartaporte20:TiposFigura
+                            TipoFigura="01"
+                            t-att-RFCFigura="record.l10n_mx_edi_operador.vat"
+                            t-att-NumLicencia="record.l10n_mx_edi_operador.l10n_mx_edi_operator_licence">
+                        </cartaporte20:TiposFigura>
                         <t t-foreach="record.l10n_mx_edi_vehicle_id.figure_ids.sorted(lambda f: f.type)" t-as="figure">
                             <cartaporte20:TiposFigura
                                 t-att-TipoFigura="figure.type"

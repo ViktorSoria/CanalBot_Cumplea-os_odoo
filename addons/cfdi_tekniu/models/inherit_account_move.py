@@ -84,7 +84,8 @@ class AccountEdiFormat(models.Model):
             errors.append(_("Message : %s") % msg)
             return {'errors': errors}
         xml_signed = result.get('xml', None)
-        _logger.warning(xml_signed)
+        if type(xml_signed)==str:
+            xml_signed = xml_signed.encode()
         return {
             'cfdi_signed': xml_signed,
             'cfdi_encoding': 'base64',

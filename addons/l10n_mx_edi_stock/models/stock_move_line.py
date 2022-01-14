@@ -2,6 +2,25 @@
 
 from odoo import api, models, fields
 
+
+class StockMove(models.Model):
+    _inherit = 'stock.move'
+
+    peso = fields.Float('Peso')
+
+    @api.onchange('product_id')
+    def onchange_product_peso(self):
+        if self.product_id:
+            self.peso = self.product_id.weight
+        else:
+            self.peso = 0
+
+    @api.onchange('peso')
+    def onchange_peso(self):
+        if self.peso and self.product_id:
+            self.product_id.weight = self.peso
+
+
 class StockMoveLine(models.Model):
     _inherit = 'stock.move.line'
 
