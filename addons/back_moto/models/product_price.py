@@ -168,13 +168,13 @@ class Pricelist(models.Model):
 class Line(models.Model):
     _inherit="sale.order.line"
 
-    @api.depends(
-        'product_id', 'customer_lead', 'product_uom_qty', 'product_uom', 'order_id.commitment_date',
-        'move_ids', 'move_ids.forecast_expected_date', 'move_ids.forecast_availability')
-    def _compute_qty_at_date(self):
-        obj = self
-        ware = self.mapped('warehouse_id')[:1]
-        if ware:
-            location = ware.lot_stock_id.id
-            obj = self.with_context(location=location)
-        super(Line,obj)._compute_qty_at_date()
+    # @api.depends(
+    #     'product_id', 'customer_lead', 'product_uom_qty', 'product_uom', 'order_id.commitment_date',
+    #     'move_ids', 'move_ids.forecast_expected_date', 'move_ids.forecast_availability')
+    # def _compute_qty_at_date(self):
+    #     obj = self
+    #     ware = self.mapped('warehouse_id')[:1]
+    #     if ware:
+    #         location = ware.lot_stock_id.id
+    #         obj = self.with_context(location=location)
+    #     super(Line,obj)._compute_qty_at_date()
