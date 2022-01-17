@@ -139,10 +139,15 @@ class PosSession(models.Model):
 
     def recibe(self, id=False):
         orders = self.orders
-        if id and orders.browse(id):
-            order = orders.browse(id)
-            data = order.json
+        if id and orders.browse(int(id)):
+            order = orders.browse(int(id))
+            data = order.mapped('json')
             order.received = True
+            return data
+        if not id:
+            orders_filt = orders.filtered(lambda x: not x.received)
+            orders_filt.write({'received': True})
+            data = orders_filt.mapped('json')
             return data
 
 

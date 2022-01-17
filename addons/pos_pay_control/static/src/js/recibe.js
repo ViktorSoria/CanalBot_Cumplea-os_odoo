@@ -25,7 +25,24 @@ odoo.define("pos_pay_control.ResOrder", function (require) {
             }
             loop();
         }
-        async ReceiveOrders(){
+        async ReceiveOrders() {
+            var orders = await this.rpc({
+                model: 'pos.session',
+                method: 'recibe',
+                args: [this.env.pos.pos_session.id]
+            });
+            if (orders && orders.length>0) {
+                orders.forEach(order => {
+                    this.env.pos.import_orders(order);
+                });
+                let eti = $("div[badge]");
+                eti[0].setAttribute('badge', this.env.pos.get_order_list().length);
+                this.playSound('/pos_pay_control/static/src/sound/rin.wav');
+                return orders
+            }
+            return orders
+        }
+        async SeeOrders(){
             return await this.rpc({
                 model: 'pos.session',
                 method: 'ver',
@@ -33,7 +50,7 @@ odoo.define("pos_pay_control.ResOrder", function (require) {
             });
         }
         async onClick(event) {
-            let orders = await this.ReceiveOrders();
+            let orders = await this.SeeOrders();
             await this.showPopup("Buttonreceive", {'orders':orders});
         }
 
