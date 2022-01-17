@@ -107,7 +107,7 @@ class AccountEdiFormat(models.Model):
         return self._l10n_mx_edi_tekniu_cancel(move, credentials, cfdi)
 
     def _l10n_mx_edi_tekniu_cancel(self, move, credentials, cfdi):
-        return self._l10n_mx_edi_solfact_cancel_service(move.l10n_mx_edi_cfdi_uuid, move.company_id, credentials)
+        return self._l10n_mx_edi_tekniu_cancel_service(move.l10n_mx_edi_cfdi_uuid, move.company_id, credentials)
 
     def _l10n_mx_edi_tekniu_cancel_service(self,uuid,company_id,credentials):
         """CANCEL for Tekniu."""
