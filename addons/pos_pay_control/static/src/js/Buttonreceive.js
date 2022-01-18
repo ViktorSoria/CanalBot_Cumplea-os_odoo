@@ -12,17 +12,8 @@ odoo.define('pos_product_available.Buttonreceive', function (require) {
         }
         selection(event){
             this.state.name = event.target.getAttribute('sname');
-            this.state.inputValue = event.target.getAttribute('order-id');
+            this.state.inputValue = event.target.getAttribute('orderid');
         }
-//        async getPayload() {
-//            return {value:this.state.inputValue,order:this.env.pos.get_order().name};
-//        }
-//        async confirmAndPrint(event){
-//            let pay = await this.getPayload();
-//            pay.print = true;
-//            this.props.resolve({ confirmed: true, payload: pay});
-//            this.trigger('close-popup');
-//        }
         async GetOrder() {
             var orders = await this.rpc({
                 model: 'pos.session',
@@ -36,8 +27,8 @@ odoo.define('pos_product_available.Buttonreceive', function (require) {
                 let eti = $("div[badge]");
                 eti[0].setAttribute('badge', this.env.pos.get_order_list().length);
                 this.playSound('/pos_pay_control/static/src/sound/rin.wav');
-                return orders
             }
+            this.trigger('close-popup');
             return orders
         }
     }

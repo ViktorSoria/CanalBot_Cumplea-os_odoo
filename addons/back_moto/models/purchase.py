@@ -130,25 +130,17 @@ class PurchaseLoad(models.TransientModel):
                 line_vals = {}
                 # Line information
                 # Select by default_code, name or barcode
-                if self.product == "default_code":
-                    product_id = self.env['product.template'].search(
-                        [('default_code', '=like', co['NoIdentificacion'])])
-                elif self.product == "barcode":
-                    product_id = self.env['product.template'].search(
-                        [('barcode', '=like', co['NoIdentificacion'])])
-                else:
-                    product_id = self.env['product.template'].search(
-                        [('name', '=like', co['NoIdentificacion'])])
+                product_id = self.env['product.product'].search([(self.product, '=', co['NoIdentificacion'])], limit=1)
                 if not product_id:
                     product.append(str(co))
                     continue
                 product_qty = float(co['Cantidad'])
-                product_uom_id = self.env['uom.uom'].search([('unspsc_code_id.code', '=like', co['ClaveUnidad'])])
-                if not product_uom_id:
-                    continue
+                # product_uom_id = self.env['uom.uom'].search([('unspsc_code_id.code', '=like', co['ClaveUnidad'])])
+                # if not product_uom_id:
+                #     continue
                 line_vals['product_id'] = product_id.id
                 line_vals['product_qty'] = product_qty
-                line_vals['product_uom'] = product_uom_id.id
+                # line_vals['product_uom'] = product_uom_id.id
                 line_vals['price_unit'] = co['ValorUnitario'] if self.detalles == 'file' else product_id.standard_price
                 data.append((0, 0, line_vals))
 

@@ -171,10 +171,10 @@ class Picking(models.Model):
                 if len(split_origin) == 2:
                     origin_type = split_origin[0]
                     origin_uuids = split_origin[1].split(',')
-            move_lines = record.move_lines.filtered(lambda ml: ml.quantity_done > 0)
+            move_lines = record.move_lines
             # Add children move lines
             for cm in record.l10n_mx_edi_children_moves:
-                move_lines += cm.move_lines.filtered(lambda ml: ml.quantity_done > 0)
+                move_lines += cm.move_lines
             _log.info('LINEAS %s ' % move_lines)
             values = {
                 # 'cfdi_date': record.date_done.astimezone(mx_tz).strftime(date_fmt),
@@ -437,5 +437,5 @@ class Picking(models.Model):
     def total_mercancias(self):
         total = 0
         for line in self.move_ids_without_package:
-            total += line.quantity_done
+            total += line.quantity_done or line.product_uom_qty
         return total
