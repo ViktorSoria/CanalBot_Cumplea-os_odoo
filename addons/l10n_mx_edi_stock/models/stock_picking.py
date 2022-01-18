@@ -175,7 +175,7 @@ class Picking(models.Model):
                 'origin': record.l10n_mx_edi_origen,
                 'supplier': record.company_id,
                 'customer': record.l10n_mx_edi_destino,
-                'moves': record.move_lines.filtered(lambda ml: ml.quantity_done > 0),
+                'moves': record.move_lines,
                 'record': record,
                 'format_float': format_float,
                 'weight_uom': self.env['product.template']._get_weight_uom_id_from_ir_config_parameter(),
@@ -405,5 +405,5 @@ class Picking(models.Model):
     def total_mercancias(self):
         total = 0
         for line in self.move_ids_without_package:
-            total += line.quantity_done
+            total += line.quantity_done or line.product_uom_qty
         return total

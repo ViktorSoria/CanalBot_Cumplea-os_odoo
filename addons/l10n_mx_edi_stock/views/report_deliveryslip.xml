@@ -369,7 +369,10 @@
                                     <!-- Values -->
                                     <div class="row smallfont" style="width: 100%; margin-left: 1px;">
                                     <div class="col-1">-</div>
-                                    <div class="col-1"><span t-field="line.quantity_done"/></div>
+                                    <div class="col-1">
+                                        <span t-if="line.quantity_done>0" t-field="line.quantity_done"/>
+                                        <span t-if="line.quantity_done==0" t-field="line.product_uom_qty"/>
+                                    </div>
                                     <div class="col-1">-</div>
                                     <div class="col-1"><span t-field="line.product_uom.unspsc_code_id.code"/></div>
                                     <div class="col-3"><span t-field="line.product_id.name"/></div>
@@ -452,6 +455,13 @@
                         <br/>
                         <div class="bneg">
                             <h4>Figura del transporte</h4>
+                            <div class="row smallfont">
+                                    <div class="col-6">
+                                        <strong>Operador</strong><br/>
+                                        <strong>Nombre: </strong><span t-field="o.l10n_mx_edi_operador"/><br/>
+                                        <strong>Licencia: </strong><span t-field="o.l10n_mx_edi_operador.l10n_mx_edi_operator_licence"/><br/>
+                                    </div>
+                                </div>
                             <t t-foreach="o.l10n_mx_edi_vehicle_id.figure_ids" t-as="inter">
                                 <div class="row smallfont">
                                     <div class="col-6">
