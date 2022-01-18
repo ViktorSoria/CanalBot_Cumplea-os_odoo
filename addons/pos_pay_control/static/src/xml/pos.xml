@@ -121,42 +121,6 @@
            </div>
        </div>
    </t>
-    <t t-name="Buttonreceive" owl="1">
-        <div role="dialog" class="modal-dialog">
-           <div class="popup">
-                <p class="title">
-                   <t t-esc="props.title"/>
-                </p>
-               <input type="text" t-model="state.name" t-ref="session" disabled="1"
-                           style="box-shadow: 0px 0px 0px 3px #6EC89B;"/>
-               <div class="body" style="overflow: auto; height: 250px;">
-                   <table class="table">
-                       <tr>
-                           <th>Pedido</th>
-                           <th>Punto de Venta</th>
-                           <th>Vendedor</th>
-                       </tr>
-                       <t t-foreach="props.orders" t-as="o">
-                           <tr class="tam" t-att-orderid="o.id" t-on-click="selection" t-att-sname="o.orden">
-                               <td t-esc="o.orden" t-att-orderid="o.id" t-att-sname="o.orden"/>
-                               <td t-esc="o.pos_name" t-att-orderid="o.id" t-att-sname="o.orden"/>
-                               <td t-esc="o.cajero" t-att-orderid="o.id" t-att-sname="o.orden"/>
-                           </tr>
-                       </t>
-                   </table>
-               </div>
-               <div class="footer">
-                   <div class="button" t-on-click="GetOrder">
-                       <t t-esc="props.confirmText"/>
-                   </div>
-
-                   <div class="button cancel" t-on-click="cancel">
-                       <t t-esc="props.cancelText"/>
-                   </div>
-                </div>
-            </div>
-        </div>
-    </t>
 
     <t t-name="OrderReceipt" t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension" owl="1">
         <xpath expr="//t[@t-if='receipt.cashier']" position="after">

@@ -7,7 +7,6 @@
             <script type="text/javascript" src="/pos_pay_control/static/src/js/OrderReceiptLight.js"/>
             <script type="text/javascript" src="/pos_pay_control/static/src/js/cargo.js"/>
             <script type="text/javascript" src="/pos_pay_control/static/src/js/Buttonsend.js"/>
-            <script type="text/javascript" src="/pos_pay_control/static/src/js/Buttonreceive.js"/>
             <script type="text/javascript" src="/pos_pay_control/static/src/js/OrderReceipt.js"/>
             <script type="text/javascript" src="/pos_pay_control/static/src/js/ProductScreenCustom.js"/>
             <script type="text/javascript" src="/pos_pay_control/static/src/js/envio.js"/>
