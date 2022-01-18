@@ -125,7 +125,7 @@
                     </group>
                      <group>
                          <group name="mx_edi_group_trans_hijas" string="Movimientos relacionados">
-                             <field name="l10n_mx_edi_parent_move"/>
+                             <field name="l10n_mx_edi_parent_move" invisible="1"/>
                              <field name="l10n_mx_edi_children_moves"
                                     options="{'no_create': True, 'no_create_edit':True}"
                                     widget="many2many_tags"

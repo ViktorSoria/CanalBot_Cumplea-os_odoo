@@ -52,14 +52,16 @@
         <div class="row" style="width: 100%; margin-left: 1px;">
             <div class="col-6 nopadding">
                 <h4>Origen</h4>
-                <strong>Fecha: </strong><span t-field="o.l10n_mx_edi_fecha_salida" t-options='{"widget": "date"}'/><br/>
+<!--                <strong>Fecha: </strong><span t-field="o.l10n_mx_edi_fecha_salida" t-options='{"widget": "date"}'/><br/>-->
+                <strong>Fecha </strong><span t-esc="context_timestamp(o.l10n_mx_edi_fecha_salida).strftime('%m/%d/%Y')"/><br/>
                 <strong>Domicilio: </strong><address t-field="o.l10n_mx_edi_origen" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}' />
                 <strong>R.F.C: </strong><t t-esc="cfdi_vals.get('supplier_rfc')"/><br/>
                 <strong>ID Ubicación: </strong><span t-esc="'OR' + str(o.location_id.id).rjust(6,'0')"/><br/>
             </div>
             <div class="col-6 nopadding">
                 <h4>Destino</h4>
-                <strong>Fecha </strong><span t-field="o.l10n_mx_edi_fecha_llegada" t-options='{"widget": "date"}'/><br/>
+<!--                <strong>Fecha </strong><span t-field="o.l10n_mx_edi_fecha_llegada" t-options='{"widget": "date"}'/><br/>-->
+                <strong>Fecha </strong><span t-esc="context_timestamp(o.l10n_mx_edi_fecha_llegada).strftime('%m/%d/%Y')"/><br/>
                 <strong>Domicilio: </strong><address t-field="o.l10n_mx_edi_destino" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}' />
                 <strong>R.F.C: </strong><t t-esc="cfdi_vals.get('customer_rfc')"/><br/>
                 <strong>ID Ubicación: </strong><span t-esc="'DE' + str(o.location_dest_id.id).rjust(6,'0')"/><br/>
