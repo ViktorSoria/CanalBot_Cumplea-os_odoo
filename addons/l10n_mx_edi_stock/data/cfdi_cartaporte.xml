@@ -32,7 +32,7 @@
             <cfdi:Conceptos>
                 <t t-foreach="moves" t-as="move" t-key="move_index">
                     <cfdi:Concepto
-                        t-att-Cantidad="format_float(move.quantity_done, 6)"
+                        t-att-Cantidad="format_float(move.quantity_done or move.product_uom_qty, 6)"
                         t-att-ClaveProdServ="move.product_id.unspsc_code_id.code"
                         t-att-ClaveUnidad="move.product_uom.unspsc_code_id.code"
                         t-att-Descripcion="move.description_picking or move.product_id.name"
@@ -84,13 +84,13 @@
                         <t t-foreach="moves" t-as="move" t-key="move_index">
                             <cartaporte20:Mercancia
                                 t-att-BienesTransp="move.product_id.unspsc_code_id.code"
-                                t-att-Cantidad="format_float(move.quantity_done, 6)"
+                                t-att-Cantidad="format_float(move.quantity_done or move.product_uom_qty, 6)"
                                 t-att-ClaveUnidad="move.product_uom.unspsc_code_id.code"
                                 t-att-Descripcion="move.description_picking or move.product_id.name"
                                 t-att-MaterialPeligroso="'No' if move.product_id.unspsc_code_id.peligroso == '0,1' else None"
                                 t-att-PesoEnKg="format_float(move.weight, 3)">
                                 <cartaporte20:CantidadTransporta
-                                    t-att-Cantidad="format_float(move.quantity_done, 6)"
+                                    t-att-Cantidad="format_float(move.quantity_done or move.product_uom_qty, 6)"
                                     t-att-IDOrigen="'OR' + str(record.location_id.id).rjust(6,'0')"
                                     t-att-IDDestino="'DE' + str(record.location_dest_id.id).rjust(6,'0')" />
                             </cartaporte20:Mercancia>
