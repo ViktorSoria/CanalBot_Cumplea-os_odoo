@@ -150,7 +150,7 @@ class Picking(models.Model):
                 raise UserError(_('A valid certificate was not found'))
             if record.l10n_mx_edi_transport_type == '01' and not record.l10n_mx_edi_distance:
                 raise UserError(_('Distance in KM must be specified when using federal transport'))
-            if record.weight < 0.001 and record.l10n_mx_edi_transport_type == '01':
+            if record.l10n_mx_edi_transport_type == '01' and (record.weight < 0.001 or record.l10n_mx_edi_children_moves.filtered(lambda l: l.weight < 0.001)):
                 raise UserError(_('Revise el peso de los productos, el total no puede ser 0. Si ya ajusto los pesos, presione el boton Recalcular peso.'))
 
     # -------------------------------------------------------------------------

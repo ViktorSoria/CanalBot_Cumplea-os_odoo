@@ -129,11 +129,12 @@
                 <field name="peso"/>
             </xpath>
             <xpath expr="//field[@name='location_dest_id']" position="after">
-                <field name="l10n_mx_edi_parent_move" attrs="{'invisible':[('l10n_mx_edi_parent_move', '=', False)]}"/>
-                <field name="l10n_mx_edi_children_moves" attrs="{'invisible':[('l10n_mx_edi_children_moves', '=', [])]}"
+                <field name="l10n_mx_edi_parent_move" string="Movimiento Relacionado" attrs="{'invisible':[('l10n_mx_edi_parent_move', '=', False)]}" readonly="1"/>
+                <field name="l10n_mx_edi_children_moves" string="Movimientos Relacionados"
+                       attrs="{'invisible':['|',('l10n_mx_edi_transport_type', '=', False),('l10n_mx_edi_parent_move', '!=', False)],
+                       'readonly':[('l10n_mx_edi_status', '=', 'sent')]}"
                         options="{'no_create': True, 'no_create_edit':True}"
-                        widget="many2many_tags"
-                        domain="[('state', '=', 'done'), ('partner_id', '=', partner_id)]"/>
+                        widget="many2many_tags"/>
             </xpath>
         </field>
     </record>
