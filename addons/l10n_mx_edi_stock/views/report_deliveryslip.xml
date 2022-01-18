@@ -35,6 +35,208 @@
         </style>
     </template>
 
+    <template id="complement_carta_porte">
+        <div class="row">
+                            <div class="col-6"><h3>Complemento Carta Porte 2.0</h3></div>
+                            <div class="col-6"/>
+                        </div>
+        <div class="row">
+            <div class="col-12">
+                <strong>Total de distancia recorrida: </strong><span t-field="o.l10n_mx_edi_distance"/><br/>
+                <strong>Transporte internacional: </strong>No
+            </div>
+        </div>
+        <!-- Ubicaciones -->
+        <br/>
+
+        <div class="row" style="width: 100%; margin-left: 1px;">
+            <div class="col-6 nopadding">
+                <h4>Origen</h4>
+                <strong>Fecha: </strong><span t-field="o.l10n_mx_edi_fecha_salida" t-options='{"widget": "date"}'/><br/>
+                <strong>Domicilio: </strong><address t-field="o.l10n_mx_edi_origen" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}' />
+                <strong>R.F.C: </strong><t t-esc="cfdi_vals.get('supplier_rfc')"/><br/>
+                <strong>ID Ubicación: </strong><span t-esc="'OR' + str(o.location_id.id).rjust(6,'0')"/><br/>
+            </div>
+            <div class="col-6 nopadding">
+                <h4>Destino</h4>
+                <strong>Fecha </strong><span t-field="o.l10n_mx_edi_fecha_llegada" t-options='{"widget": "date"}'/><br/>
+                <strong>Domicilio: </strong><address t-field="o.l10n_mx_edi_destino" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}' />
+                <strong>R.F.C: </strong><t t-esc="cfdi_vals.get('customer_rfc')"/><br/>
+                <strong>ID Ubicación: </strong><span t-esc="'DE' + str(o.location_dest_id.id).rjust(6,'0')"/><br/>
+                <strong>Distancia recorrida: </strong><span t-field="o.l10n_mx_edi_distance"/><br/>
+            </div>
+        </div>
+        <br/>
+
+        <br/>
+        <!-- MERCANCIAS -->
+        <div class="bneg smallfont">
+            <h4>Mercancias</h4><br/>
+            <table class="table">
+                <tr>
+                    <th>Núm. Total de Mercancias</th>
+                    <th>Unidad</th>
+                    <th>Peso Neto total</th>
+                    <th>Peso Bruto total</th>
+                    <th>Cargo por Tasación</th>
+                </tr>
+                <tr>
+                    <td><span t-esc="o.total_mercancias()"/></td>
+                    <td>KGM</td>
+                    <td></td>
+                    <td><span t-field="o.weight"/> Kg</td>
+                    <td></td>
+                </tr>
+            </table>
+            <t t-foreach="o.move_ids_without_package+o.l10n_mx_edi_children_moves.move_ids_without_package" t-as="line">
+                <div class="bneg">
+                    <div class="row" style="width: 100%; margin-left: 1px;">
+                        <div class="col-6">
+                            <strong>Nombre de unidad de peso: </strong> Kilogramo<br/>
+                            <strong>Material o residuo peligroso: </strong><br/><span t-esc="'No' if line.product_id.unspsc_code_id.peligroso == '0,1' else None"/>
+                        </div>
+                        <div class="col-6">
+                            <strong>Bienes transportados: </strong><span t-field="line.product_id.unspsc_code_id.code"/>
+                        </div>
+                    </div>
+                    <!-- titles -->
+                    <div class="row smallfont bb" style="width: 100%; margin-left: 1px;">
+                        <div class="col-1 ht neg">Piezas</div>
+                        <div class="col-1 ht neg">Cantidad</div>
+                        <div class="col-1 ht neg">Clave STCC</div>
+                        <div class="col-1 ht neg">Clave Unidad</div>
+                        <div class="col-3 ht neg">Descripción</div>
+                        <div class="col-5 ht neg">
+                            <div class="row">
+                                <div class="col-12 ht">
+                                    <center>Estimados</center>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3 ht">Unidad</div>
+                                <div class="col-3 ht">Peso Kg</div>
+                                <div class="col-3 ht">P. Neto</div>
+                                <div class="col-3 ht">P. Bruto</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Values -->
+                    <div class="row smallfont" style="width: 100%; margin-left: 1px;">
+                    <div class="col-1">-</div>
+                    <div class="col-1">
+                        <span t-if="line.quantity_done>0" t-field="line.quantity_done"/>
+                        <span t-if="line.quantity_done==0" t-field="line.product_uom_qty"/>
+                    </div>
+                    <div class="col-1">-</div>
+                    <div class="col-1"><span t-field="line.product_uom.unspsc_code_id.code"/></div>
+                    <div class="col-3"><span t-field="line.product_id.name"/></div>
+                    <div class="col-5">
+                        <div class="row">
+                            <div class="col-3"><span t-field="line.product_uom"/></div>
+                            <div class="col-3"><span t-field="line.peso"/></div>
+                            <div class="col-3">-</div>
+                            <div class="col-3">-</div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </t>
+        </div>
+        <!-- Autotransporte federal -->
+        <br/>
+        <div class="bneg">
+            <h4>Autotransporte Federeal</h4>
+            <div class="row smallfont" style="width: 100%; margin-left: 1px;">
+                <div class="col-2 nopadding"><!--title-->
+                    <strong>Nombre de permiso SCT: </strong>
+                </div>
+                <div class="col-6 nopadding"><!--value-->
+                    <span t-field="o.l10n_mx_edi_vehicle_id.transport_perm_sct"/>
+                </div>
+                <div class="col-2 nopadding"><!--title-->
+                    <strong>No. de permiso SCT: </strong>
+                </div>
+                <div class="col-2 nopadding"><!--value-->
+                    <span t-field="o.l10n_mx_edi_vehicle_id.name"/>
+                </div>
+
+            </div>
+            <div class="row smallfont" style="width: 100%; margin-left: 1px;">
+                <div class="col-2 nopadding"><!--title-->
+                    <strong>Configuración vehicular: </strong>
+                </div>
+                <div class="col-6 nopadding"><!--value-->
+                    <span t-field="o.l10n_mx_edi_vehicle_id.vehicle_config"/>
+                </div>
+                <div class="col-2 nopadding"><!--title-->
+                    <strong>Placa: </strong>
+                </div>
+                <div class="col-2 nopadding"><!--value-->
+                    <span t-field="o.l10n_mx_edi_vehicle_id.vehicle_licence"/>
+                </div>
+
+            </div>
+            <div class="row smallfont" style="width: 100%; margin-left: 1px;">
+                <div class="col-2 nopadding"><!--title-->
+                    <strong>Compañia Aseguradora: </strong>
+                </div>
+                <div class="col-6 nopadding"><!--value-->
+                    <span t-field="o.l10n_mx_edi_vehicle_id.transport_insurer"/>
+                </div>
+                <div class="col-2 nopadding"><!--title-->
+                    <strong>Año/Modelo: </strong>
+                </div>
+                <div class="col-2 nopadding"><!--value-->
+                    <span t-field="o.l10n_mx_edi_vehicle_id.vehicle_model"/>
+                </div>
+
+            </div>
+            <div class="row smallfont" style="width: 100%; margin-left: 1px;">
+                <div class="col-2 nopadding"><!--title-->
+                </div>
+                <div class="col-6 nopadding"><!--value-->
+                </div>
+                <div class="col-2 nopadding"><!--title-->
+                    <strong>No. Poliza de Resp. Civil: </strong>
+                </div>
+                <div class="col-2 nopadding"><!--value-->
+                    <span t-field="o.l10n_mx_edi_vehicle_id.transport_insurance_policy"/>
+                </div>
+
+            </div>
+        </div>
+        <!-- Figura del transporte -->
+        <br/>
+        <div class="bneg">
+            <h4>Figura del transporte</h4>
+            <div class="row smallfont">
+                    <div class="col-6">
+                        <strong>Operador</strong><br/>
+                        <strong>Nombre: </strong><span t-field="o.l10n_mx_edi_operador"/><br/>
+                        <strong>Licencia: </strong><span t-field="o.l10n_mx_edi_operador.l10n_mx_edi_operator_licence"/><br/>
+                    </div>
+                </div>
+            <t t-foreach="o.l10n_mx_edi_vehicle_id.figure_ids" t-as="inter">
+                <div class="row smallfont">
+                    <div class="col-6">
+                        <strong><span t-field="inter.type"/></strong><br/>
+                        <strong>Nombre: </strong><span t-field="inter.operator_id"/><br/>
+                        <strong>Licencia: </strong><span t-field="inter.operator_id.l10n_mx_edi_operator_licence"/><br/>
+                    </div>
+                    <div class="col-6">
+                        <t t-if="inter.part_ids">
+                            Partes:<br/>
+                            <t t-foreach="inter.part_ids" t-as="part">
+                                <strong>Nombre: </strong><span t-field="part.name"/><br/>
+                            </t>
+                        </t>
+
+                    </div>
+                </div>
+            </t>
+        </div>
+    </template>
+
     <template id="report_carta_porte_document">
 
         <t t-call="web.html_container">
@@ -115,216 +317,19 @@
             <t t-call="web.external_layout">
                 <t t-set="cfdi_vals" t-value="o._l10n_mx_edi_decode_cfdi()"/>
                 <t t-if="o.l10n_mx_edi_status == 'sent'">
-                    <t t-set="o" t-value="o.with_context(lang=o.partner_id.lang)" />
+
+                    <t t-if="o.l10n_mx_edi_parent_move">
+                        <t t-set="o" t-value="o.l10n_mx_edi_parent_move.with_context(lang=o.partner_id.lang)" />
+                    </t>
+                    <t t-else="">
+                        <t t-set="o" t-value="o.with_context(lang=o.partner_id.lang)" />
+                    </t>
+
                     <div class="page">
                         <t t-call="l10n_mx_edi_stock.carta_porte_styles"/>
-                        <div class="row">
-                            <div class="col-6"><h3>Complemento Carta Porte 2.0</h3></div>
-                            <div class="col-6"/>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <strong>Total de distancia recorrida: </strong><span t-field="o.l10n_mx_edi_distance"/><br/>
-                                <strong>Transporte internacional: </strong>No
-                            </div>
-                        </div>
-                        <!-- Ubicaciones -->
-                        <br/>
-
-                        <div class="row" style="width: 100%; margin-left: 1px;">
-                            <div class="col-6 nopadding">
-                                <h4>Origen</h4>
-                                <strong>Fecha: </strong><span t-field="o.l10n_mx_edi_fecha_salida" t-options='{"widget": "date"}'/><br/>
-                                <strong>Domicilio: </strong><address t-field="o.l10n_mx_edi_origen" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}' />
-                                <strong>R.F.C: </strong><t t-esc="cfdi_vals.get('supplier_rfc')"/><br/>
-                                <strong>ID Ubicación: </strong><span t-esc="'OR' + str(o.location_id.id).rjust(6,'0')"/><br/>
-                            </div>
-                            <div class="col-6 nopadding">
-                                <h4>Destino</h4>
-                                <strong>Fecha </strong><span t-field="o.l10n_mx_edi_fecha_llegada" t-options='{"widget": "date"}'/><br/>
-                                <strong>Domicilio: </strong><address t-field="o.l10n_mx_edi_destino" t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": True}' />
-                                <strong>R.F.C: </strong><t t-esc="cfdi_vals.get('customer_rfc')"/><br/>
-                                <strong>ID Ubicación: </strong><span t-esc="'DE' + str(o.location_dest_id.id).rjust(6,'0')"/><br/>
-                                <strong>Distancia recorrida: </strong><span t-field="o.l10n_mx_edi_distance"/><br/>
-                            </div>
-                        </div>
-                        <br/>
-
-                       <!-- <div class="row" style="border: 1px;">
-                            <div class="col-6">
-
-                            </div>
-                            <div class="col-6">
-
-                            </div>
-                        </div>-->
-                        <br/>
-                        <!-- MERCANCIAS -->
-                        <div class="bneg smallfont">
-                            <h4>Mercancias</h4><br/>
-                            <table class="table">
-                                <tr>
-                                    <th>Núm. Total de Mercancias</th>
-                                    <th>Unidad</th>
-                                    <th>Peso Neto total</th>
-                                    <th>Peso Bruto total</th>
-                                    <th>Cargo por Tasación</th>
-                                </tr>
-                                <tr>
-                                    <td><span t-esc="o.total_mercancias()"/></td>
-                                    <td>KGM</td>
-                                    <td></td>
-                                    <td><span t-field="o.weight"/> Kg</td>
-                                    <td></td>
-                                </tr>
-                            </table>
-                            <t t-foreach="o.move_ids_without_package+o.l10n_mx_edi_children_moves.move_ids_without_package" t-as="line">
-                                <div class="bneg">
-                                    <div class="row" style="width: 100%; margin-left: 1px;">
-                                        <div class="col-6">
-                                            <strong>Nombre de unidad de peso: </strong> Kilogramo<br/>
-                                            <strong>Material o residuo peligroso: </strong><br/><span t-esc="'No' if line.product_id.unspsc_code_id.peligroso == '0,1' else None"/>
-                                        </div>
-                                        <div class="col-6">
-                                            <strong>Bienes transportados: </strong><span t-field="line.product_id.unspsc_code_id.code"/>
-                                        </div>
-                                    </div>
-                                    <!-- titles -->
-                                    <div class="row smallfont bb" style="width: 100%; margin-left: 1px;">
-                                        <div class="col-1 ht neg">Piezas</div>
-                                        <div class="col-1 ht neg">Cantidad</div>
-                                        <div class="col-1 ht neg">Clave STCC</div>
-                                        <div class="col-1 ht neg">Clave Unidad</div>
-                                        <div class="col-3 ht neg">Descripción</div>
-                                        <div class="col-5 ht neg">
-                                            <div class="row">
-                                                <div class="col-12 ht">
-                                                    <center>Estimados</center>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-3 ht">Unidad</div>
-                                                <div class="col-3 ht">Peso Kg</div>
-                                                <div class="col-3 ht">P. Neto</div>
-                                                <div class="col-3 ht">P. Bruto</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- Values -->
-                                    <div class="row smallfont" style="width: 100%; margin-left: 1px;">
-                                    <div class="col-1">-</div>
-                                    <div class="col-1">
-                                        <span t-if="line.quantity_done>0" t-field="line.quantity_done"/>
-                                        <span t-if="line.quantity_done==0" t-field="line.product_uom_qty"/>
-                                    </div>
-                                    <div class="col-1">-</div>
-                                    <div class="col-1"><span t-field="line.product_uom.unspsc_code_id.code"/></div>
-                                    <div class="col-3"><span t-field="line.product_id.name"/></div>
-                                    <div class="col-5">
-                                        <div class="row">
-                                            <div class="col-3"><span t-field="line.product_uom"/></div>
-                                            <div class="col-3"><span t-field="line.peso"/></div>
-                                            <div class="col-3">-</div>
-                                            <div class="col-3">-</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                </div>
-                            </t>
-                        </div>
-                        <!-- Autotransporte federal -->
-                        <br/>
-                        <div class="bneg">
-                            <h4>Autotransporte Federeal</h4>
-                            <div class="row smallfont" style="width: 100%; margin-left: 1px;">
-                                <div class="col-2 nopadding"><!--title-->
-                                    <strong>Nombre de permiso SCT: </strong>
-                                </div>
-                                <div class="col-6 nopadding"><!--value-->
-                                    <span t-field="o.l10n_mx_edi_vehicle_id.transport_perm_sct"/>
-                                </div>
-                                <div class="col-2 nopadding"><!--title-->
-                                    <strong>No. de permiso SCT: </strong>
-                                </div>
-                                <div class="col-2 nopadding"><!--value-->
-                                    <span t-field="o.l10n_mx_edi_vehicle_id.name"/>
-                                </div>
-
-                            </div>
-                            <div class="row smallfont" style="width: 100%; margin-left: 1px;">
-                                <div class="col-2 nopadding"><!--title-->
-                                    <strong>Configuración vehicular: </strong>
-                                </div>
-                                <div class="col-6 nopadding"><!--value-->
-                                    <span t-field="o.l10n_mx_edi_vehicle_id.vehicle_config"/>
-                                </div>
-                                <div class="col-2 nopadding"><!--title-->
-                                    <strong>Placa: </strong>
-                                </div>
-                                <div class="col-2 nopadding"><!--value-->
-                                    <span t-field="o.l10n_mx_edi_vehicle_id.vehicle_licence"/>
-                                </div>
-
-                            </div>
-                            <div class="row smallfont" style="width: 100%; margin-left: 1px;">
-                                <div class="col-2 nopadding"><!--title-->
-                                    <strong>Compañia Aseguradora: </strong>
-                                </div>
-                                <div class="col-6 nopadding"><!--value-->
-                                    <span t-field="o.l10n_mx_edi_vehicle_id.transport_insurer"/>
-                                </div>
-                                <div class="col-2 nopadding"><!--title-->
-                                    <strong>Año/Modelo: </strong>
-                                </div>
-                                <div class="col-2 nopadding"><!--value-->
-                                    <span t-field="o.l10n_mx_edi_vehicle_id.vehicle_model"/>
-                                </div>
-
-                            </div>
-                            <div class="row smallfont" style="width: 100%; margin-left: 1px;">
-                                <div class="col-2 nopadding"><!--title-->
-                                </div>
-                                <div class="col-6 nopadding"><!--value-->
-                                </div>
-                                <div class="col-2 nopadding"><!--title-->
-                                    <strong>No. Poliza de Resp. Civil: </strong>
-                                </div>
-                                <div class="col-2 nopadding"><!--value-->
-                                    <span t-field="o.l10n_mx_edi_vehicle_id.transport_insurance_policy"/>
-                                </div>
-
-                            </div>
-                        </div>
-                        <!-- Figura del transporte -->
-                        <br/>
-                        <div class="bneg">
-                            <h4>Figura del transporte</h4>
-                            <div class="row smallfont">
-                                    <div class="col-6">
-                                        <strong>Operador</strong><br/>
-                                        <strong>Nombre: </strong><span t-field="o.l10n_mx_edi_operador"/><br/>
-                                        <strong>Licencia: </strong><span t-field="o.l10n_mx_edi_operador.l10n_mx_edi_operator_licence"/><br/>
-                                    </div>
-                                </div>
-                            <t t-foreach="o.l10n_mx_edi_vehicle_id.figure_ids" t-as="inter">
-                                <div class="row smallfont">
-                                    <div class="col-6">
-                                        <strong><span t-field="inter.type"/></strong><br/>
-                                        <strong>Nombre: </strong><span t-field="inter.operator_id"/><br/>
-                                        <strong>Licencia: </strong><span t-field="inter.operator_id.l10n_mx_edi_operator_licence"/><br/>
-                                    </div>
-                                    <div class="col-6">
-                                        <t t-if="inter.part_ids">
-                                            Partes:<br/>
-                                            <t t-foreach="inter.part_ids" t-as="part">
-                                                <strong>Nombre: </strong><span t-field="part.name"/><br/>
-                                            </t>
-                                        </t>
-
-                                    </div>
-                                </div>
-                            </t>
-                        </div>
+                        <t t-if="o.l10n_mx_edi_transport_type == '01'">
+                            <t t-call="l10n_mx_edi_stock.complement_carta_porte"/>
+                        </t>
                         <!-- Sellos fiscales. -->
                         <div class="row border-bottom mt-3 pt-2 pb-3" id='complement'>
                             <div t-if="cfdi_vals.get('sello')" class="barcode col-3">

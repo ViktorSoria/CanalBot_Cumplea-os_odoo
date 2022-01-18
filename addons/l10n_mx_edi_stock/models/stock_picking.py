@@ -436,6 +436,6 @@ class Picking(models.Model):
 
     def total_mercancias(self):
         total = 0
-        for line in self.move_ids_without_package:
+        for line in self.move_ids_without_package + self.l10n_mx_edi_children_moves.move_ids_without_package:
             total += line.quantity_done or line.product_uom_qty
         return total

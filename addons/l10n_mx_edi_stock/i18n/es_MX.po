@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 14.0-20210803\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-10 19:29+0000\n"
-"PO-Revision-Date: 2022-01-10 19:29+0000\n"
+"POT-Creation-Date: 2022-01-18 19:18+0000\n"
+"PO-Revision-Date: 2022-01-18 19:18+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,114 +16,246 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: l10n_mx_edi_stock
-#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.l10n_mx_edi_cartaporte_report_delivery_document
+#: model:ir.actions.report,print_report_name:l10n_mx_edi_stock.action_report_cartaporte
+msgid ""
+"'Carta porte - %s' % (object.l10n_mx_edi_parent_move.name or object.name)"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid ""
+"<br/>\n"
+"                        <strong>Licencia: </strong>"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid ""
+"<br/>\n"
+"                        <strong>Nombre: </strong>"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid ""
+"<br/>\n"
+"                <strong>Distancia recorrida: </strong>"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid ""
+"<br/>\n"
+"                <strong>Domicilio: </strong>"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid ""
+"<br/>\n"
+"                <strong>ID Ubicación: </strong>"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid ""
+"<br/>\n"
+"                <strong>Transporte internacional: </strong>No"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.report_carta_porte_document
 msgid "<span> | Certification Date:</span>"
 msgstr "<span> | Fecha de certificación:</span>"
 
 #. module: l10n_mx_edi_stock
-#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.l10n_mx_edi_cartaporte_report_delivery_document
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.report_carta_porte_document
 msgid "<span> | Emission Date:</span>"
 msgstr "<span> | Fecha de emisión:</span>"
 
 #. module: l10n_mx_edi_stock
-#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.l10n_mx_edi_cartaporte_report_delivery_document
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.report_carta_porte_document
 msgid "<span> | Expedition place:</span>"
 msgstr "<span> | Lugar expedición:</span>"
 
 #. module: l10n_mx_edi_stock
-#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.l10n_mx_edi_cartaporte_report_delivery_document
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.report_carta_porte_document
 msgid "<span> | Fiscal Folio:</span>"
 msgstr "<span> | Folio Fiscal:</span>"
 
 #. module: l10n_mx_edi_stock
-#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.l10n_mx_edi_cartaporte_report_delivery_document
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.report_carta_porte_document
 msgid "<span> | Fiscal Regime:</span>"
 msgstr "<span> | Regimen Fiscal:</span>"
 
 #. module: l10n_mx_edi_stock
-#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.l10n_mx_edi_cartaporte_report_delivery_document
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.report_carta_porte_document
 msgid "<span> | SAT Certificate:</span>"
 msgstr "<span> | Certificado SAT:</span>"
 
 #. module: l10n_mx_edi_stock
-#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.l10n_mx_edi_cartaporte_report_delivery_document
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.report_carta_porte_document
+msgid "<span>Cantidad</span>"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.report_carta_porte_document
+msgid "<span>Clave Producto /Servicio</span>"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.report_carta_porte_document
+msgid "<span>Clave unidad</span>"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.report_carta_porte_document
+msgid "<span>Descripción del producto</span>"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.report_carta_porte_document
+msgid "<span>Descuento</span>"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.report_carta_porte_document
 msgid "<span>Digital stamp SAT</span>"
 msgstr "<span>Sello digital SAT</span>"
 
 #. module: l10n_mx_edi_stock
-#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.l10n_mx_edi_cartaporte_report_delivery_document
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.report_carta_porte_document
 msgid "<span>Digital stamp of the emitter</span>"
 msgstr "<span>Sello digital del emisor</span>"
 
 #. module: l10n_mx_edi_stock
-#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.l10n_mx_edi_cartaporte_report_delivery_document
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.report_carta_porte_document
 msgid "<span>Emitter certificate:</span>"
 msgstr "<span>Certificado emisor:</span>"
 
 #. module: l10n_mx_edi_stock
-#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.l10n_mx_edi_cartaporte_report_delivery_document
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.report_carta_porte_document
 msgid "<span>Extra Info</span>"
 msgstr ""
 
 #. module: l10n_mx_edi_stock
-#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.l10n_mx_edi_cartaporte_report_delivery_document
-msgid "<span>Original chain complement of digital certification SAT</span>"
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.report_carta_porte_document
+msgid "<span>Importe</span>"
 msgstr ""
 
 #. module: l10n_mx_edi_stock
-#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.l10n_mx_edi_cartaporte_report_delivery_document
-msgid "<strong>Distance (KM)</strong>"
-msgstr "<strong>Distancia (KM)</strong>"
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.report_carta_porte_document
+msgid "<span>No Identificación</span>"
+msgstr ""
 
 #. module: l10n_mx_edi_stock
-#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.l10n_mx_edi_cartaporte_report_delivery_document
-msgid "<strong>Insurer</strong>"
-msgstr "<strong>Aseguradora</strong>"
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.report_carta_porte_document
+msgid "<span>Original chain complement of digital certification SAT</span>"
+msgstr "<span>Complemento cadena original del certificado digital SAT</span>"
 
 #. module: l10n_mx_edi_stock
-#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.l10n_mx_edi_cartaporte_report_delivery_document
-msgid "<strong>Intermediaries</strong>"
-msgstr "<strong>Intermediarios</strong>"
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.report_carta_porte_document
+msgid "<span>Unidad</span>"
+msgstr ""
 
 #. module: l10n_mx_edi_stock
-#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.l10n_mx_edi_cartaporte_report_delivery_document
-msgid "<strong>Licence Plate</strong>"
-msgstr "<strong>Placa</strong>"
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.report_carta_porte_document
+msgid "<span>Valor unitario</span>"
+msgstr ""
 
 #. module: l10n_mx_edi_stock
-#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.l10n_mx_edi_cartaporte_report_delivery_document
-msgid "<strong>Model</strong>"
-msgstr "<strong>Modelo</strong>"
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "<strong>Año/Modelo: </strong>"
+msgstr ""
 
 #. module: l10n_mx_edi_stock
-#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.l10n_mx_edi_cartaporte_report_delivery_document
-msgid "<strong>Policy No</strong>"
-msgstr "<strong>Num poliza</strong>"
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "<strong>Bienes transportados: </strong>"
+msgstr ""
 
 #. module: l10n_mx_edi_stock
-#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.l10n_mx_edi_cartaporte_report_delivery_document
-msgid "<strong>SCT Permit No</strong>"
-msgstr "<strong>Permiso SCT</strong>"
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "<strong>Compañia Aseguradora: </strong>"
+msgstr ""
 
 #. module: l10n_mx_edi_stock
-#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.l10n_mx_edi_cartaporte_report_delivery_document
-msgid "<strong>SCT Permit Type</strong>"
-msgstr "<strong>Tipo permiso SCT</strong>"
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "<strong>Configuración vehicular: </strong>"
+msgstr ""
 
 #. module: l10n_mx_edi_stock
-#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.l10n_mx_edi_cartaporte_report_delivery_document
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "<strong>Fecha </strong>"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.report_carta_porte_document
+msgid "<strong>Fecha de envio:</strong>"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "<strong>Fecha: </strong>"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "<strong>No. Poliza de Resp. Civil: </strong>"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "<strong>No. de permiso SCT: </strong>"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "<strong>Nombre de permiso SCT: </strong>"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid ""
+"<strong>Nombre de unidad de peso: </strong> Kilogramo<br/>\n"
+"                            <strong>Material o residuo peligroso: </strong><br/>"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "<strong>Nombre: </strong>"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid ""
+"<strong>Operador</strong><br/>\n"
+"                        <strong>Nombre: </strong>"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.report_carta_porte_document
+msgid "<strong>Pedido:</strong>"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "<strong>Placa: </strong>"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "<strong>R.F.C: </strong>"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.report_carta_porte_document
 msgid "<strong>This document is a printed representation of a CFDI</strong>"
 msgstr "<strong>Este documento es una representación impresa de un CFDI</strong>"
 
 #. module: l10n_mx_edi_stock
-#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.l10n_mx_edi_cartaporte_report_delivery_document
-msgid "<strong>Trailers</strong>"
-msgstr "<strong>Remolques</strong>"
-
-#. module: l10n_mx_edi_stock
-#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.l10n_mx_edi_cartaporte_report_delivery_document
-msgid "<strong>Vehicle Configuration</strong>"
-msgstr "<strong>Configuración del vehículo</strong>"
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "<strong>Total de distancia recorrida: </strong>"
+msgstr ""
 
 #. module: l10n_mx_edi_stock
 #: code:addons/l10n_mx_edi_stock/models/l10n_mx_edi_vehicle.py:0
@@ -145,7 +277,8 @@ msgstr "Activo"
 #. module: l10n_mx_edi_stock
 #: model_terms:ir.actions.act_window,help:l10n_mx_edi_stock.l10n_mx_edi_vehicle_actions
 msgid "Add a new vehicle setup for MX delivery guide"
-msgstr "Agrega una nueva configuracion de vehículo para la guía de entrega MX "
+msgstr ""
+"Agrega una nueva configuracion de vehículo para la guía de entrega MX "
 
 #. module: l10n_mx_edi_stock
 #: code:addons/l10n_mx_edi_stock/models/stock_picking.py:0
@@ -202,6 +335,11 @@ msgid "Autotransporte Federal de carga general."
 msgstr ""
 
 #. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "Autotransporte Federeal"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
 #: model:ir.model.fields.selection,name:l10n_mx_edi_stock.selection__l10n_mx_edi_vehicle__transport_perm_sct__tpaf08
 msgid "Autotransporte internacional de carga de largo recorrido."
 msgstr ""
@@ -214,7 +352,7 @@ msgid ""
 msgstr ""
 
 #. module: l10n_mx_edi_stock
-#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.l10n_mx_edi_cartaporte_report_delivery_document
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.report_carta_porte_document
 msgid "Barcode"
 msgstr "Código de barras"
 
@@ -319,6 +457,22 @@ msgid "Cancelled"
 msgstr "Cancelado"
 
 #. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "Cantidad"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "Cargo por Tasación"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model:ir.actions.report,name:l10n_mx_edi_stock.action_report_cartaporte
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.view_picking_edi_form
+msgid "Carta Porte"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
 #: model:ir.model.fields.selection,name:l10n_mx_edi_stock.selection__l10n_mx_edi_trailer__sub_type__ctr010
 msgid "Chasis Portacontenedor"
 msgstr ""
@@ -329,14 +483,24 @@ msgid "Check SAT"
 msgstr "Revisar SAT"
 
 #. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "Clave STCC"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "Clave Unidad"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
 #: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_l10n_mx_edi_part__code
 msgid "Code"
 msgstr "Código"
 
 #. module: l10n_mx_edi_stock
-#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.view_picking_edi_form
-msgid "Compute Distance"
-msgstr "Distancia calculada"
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "Complemento Carta Porte 2.0"
+msgstr ""
 
 #. module: l10n_mx_edi_stock
 #: model:ir.model.fields.selection,name:l10n_mx_edi_stock.selection__l10n_mx_edi_vehicle__transport_perm_sct__tpta01
@@ -382,6 +546,11 @@ msgid "Created on"
 msgstr "Creado el"
 
 #. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "Descripción"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
 #: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_stock_picking__l10n_mx_edi_des_lat
 msgid "Destination Latitude"
 msgstr "Latitud destino"
@@ -392,33 +561,37 @@ msgid "Destination Longitude"
 msgstr "Longitud destino"
 
 #. module: l10n_mx_edi_stock
+#: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_stock_picking__l10n_mx_edi_destino
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "Destino"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
 #: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_l10n_mx_edi_figure__display_name
 #: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_l10n_mx_edi_part__display_name
 #: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_l10n_mx_edi_trailer__display_name
 #: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_l10n_mx_edi_vehicle__display_name
 #: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_res_partner__display_name
+#: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_stock_move__display_name
 #: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_stock_move_line__display_name
 #: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_stock_picking__display_name
 msgid "Display Name"
 msgstr "Nombre en pantalla"
 
 #. module: l10n_mx_edi_stock
-#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.view_picking_edi_form
-msgid "Distance"
-msgstr "Distancia"
-
-#. module: l10n_mx_edi_stock
 #: code:addons/l10n_mx_edi_stock/models/stock_picking.py:0
 #, python-format
 msgid ""
 "Distance calculation requires both the source and destination coordinates"
-msgstr "El cálculo de la distancia requiere ambas coordenadas de origien y destino."
+msgstr ""
+"El cálculo de la distancia requiere ambas coordenadas de origien y destino."
 
 #. module: l10n_mx_edi_stock
 #: code:addons/l10n_mx_edi_stock/models/stock_picking.py:0
 #, python-format
 msgid "Distance in KM must be specified when using federal transport"
-msgstr "Distancia en KM debe ser especificada cuando se usa transporte federal"
+msgstr ""
+"Distancia en KM debe ser especificada cuando se usa transporte federal"
 
 #. module: l10n_mx_edi_stock
 #: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_stock_picking__l10n_mx_edi_distance
@@ -456,15 +629,40 @@ msgid "Estacas"
 msgstr ""
 
 #. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "Estimados"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
 #: code:addons/l10n_mx_edi_stock/models/stock_picking.py:0
 #, python-format
 msgid "Failure during update of the SAT status: %(msg)s"
 msgstr "Fallo durante la actualización del estado del SAT: %(msg)s"
 
 #. module: l10n_mx_edi_stock
+#: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_stock_picking__l10n_mx_edi_fecha_salida
+msgid "Fecha Salida"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_stock_picking__date_cfdi
+msgid "Fecha de timbrado"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_stock_picking__l10n_mx_edi_fecha_llegada
+msgid "Fecha llegada"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
 #: model:ir.model.fields.selection,name:l10n_mx_edi_stock.selection__stock_picking__l10n_mx_edi_transport_type__01
 msgid "Federal Transport"
 msgstr "Transporte Federal"
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "Figura del transporte"
+msgstr ""
 
 #. module: l10n_mx_edi_stock
 #: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_stock_picking__l10n_mx_edi_cfdi_uuid
@@ -478,7 +676,8 @@ msgid ""
 "            you need to supply lots of information about the vehicle setup you are using.\n"
 "            It defines not only the vehicle itself, but also which trailers or drivers you\n"
 "            are using, so you could have multiple setups for the same vehicle."
-msgstr "Para las guías de entrega que usan carreteras federales (transporte federal,\n"
+msgstr ""
+"Para las guías de entrega que usan carreteras federales (transporte federal,\n"
 "            Tu necesitas proveer más información acerca de la configuración de vehículo que estas usando.\n"
 "            No define únicamente el vehículo, si no también los remolques o conductores que tu\n"
 "            estás usando, entonces tu podrías tener multiples configuraciones para un mismo vehículo."
@@ -487,11 +686,6 @@ msgstr "Para las guías de entrega que usan carreteras federales (transporte fed
 #: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.view_picking_edi_form
 msgid "Generate Delivery Guide"
 msgstr "Generar guía de entrega"
-
-#. module: l10n_mx_edi_stock
-#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.view_picking_edi_form
-msgid "Get Coordinates"
-msgstr "Obtener coordenadas"
 
 #. module: l10n_mx_edi_stock
 #: model:ir.model.fields.selection,name:l10n_mx_edi_stock.selection__l10n_mx_edi_trailer__sub_type__ctr016
@@ -554,6 +748,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_l10n_mx_edi_trailer__id
 #: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_l10n_mx_edi_vehicle__id
 #: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_res_partner__id
+#: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_stock_move__id
 #: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_stock_move_line__id
 #: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_stock_picking__id
 msgid "ID"
@@ -597,6 +792,16 @@ msgid "Jaula"
 msgstr ""
 
 #. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "KGM"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "Kg"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
 #: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_stock_picking__l10n_mx_edi_content
 msgid "L10N Mx Edi Content"
 msgstr ""
@@ -617,6 +822,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_l10n_mx_edi_trailer____last_update
 #: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_l10n_mx_edi_vehicle____last_update
 #: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_res_partner____last_update
+#: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_stock_move____last_update
 #: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_stock_move_line____last_update
 #: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_stock_picking____last_update
 msgid "Last Modified on"
@@ -639,17 +845,13 @@ msgid "Last Updated on"
 msgstr "Última actualización el"
 
 #. module: l10n_mx_edi_stock
-#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.l10n_mx_edi_cartaporte_report_delivery_document
-msgid "License"
-msgstr "Licencia"
-
-#. module: l10n_mx_edi_stock
 #: model:ir.model.fields,help:l10n_mx_edi_stock.field_l10n_mx_edi_vehicle__vehicle_licence
 msgid ""
 "License plate number of the vehicle in which the goods are transferred. "
 "Alphanumeric characters only, no dashes and/or spaces"
-msgstr "El número de placa del vehículo en el cual los bienes son transferidos"
-"Solo carácteres alfanuméricos, sin guiones ni espacios."
+msgstr ""
+"El número de placa del vehículo en el cual los bienes son transferidosSolo "
+"carácteres alfanuméricos, sin guiones ni espacios."
 
 #. module: l10n_mx_edi_stock
 #: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.view_picking_edi_form
@@ -687,6 +889,12 @@ msgid "Media Redila"
 msgstr ""
 
 #. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "Mercancias"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: code:addons/l10n_mx_edi_stock/models/stock_picking.py:0
 #: code:addons/l10n_mx_edi_stock/models/stock_picking.py:0
 #, python-format
 msgid "Mexican Delivery Guide CFDI generated for the %s document."
@@ -696,6 +904,21 @@ msgstr "CFDI de guía de entrega Mexicana generado por el documento %s"
 #: model:ir.ui.menu,name:l10n_mx_edi_stock.menu_stock_config_settings_mx
 msgid "Mexico"
 msgstr "México"
+
+#. module: l10n_mx_edi_stock
+#: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_stock_picking__l10n_mx_edi_children_moves
+msgid "Movimiento hijas"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_stock_picking__l10n_mx_edi_parent_move
+msgid "Movimiento padre"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.view_picking_edi_form
+msgid "Movimientos relacionados"
+msgstr ""
 
 #. module: l10n_mx_edi_stock
 #: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_l10n_mx_edi_part__name
@@ -723,14 +946,15 @@ msgid "Number Plate"
 msgstr "Número de placa"
 
 #. module: l10n_mx_edi_stock
-#: model:ir.model.fields.selection,name:l10n_mx_edi_stock.selection__l10n_mx_edi_figure__type__01
-msgid "Operador"
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "Núm. Total de Mercancias"
 msgstr ""
 
 #. module: l10n_mx_edi_stock
-#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.l10n_mx_edi_cartaporte_report_delivery_document
-msgid "Operator"
-msgstr "Operador"
+#: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_stock_picking__l10n_mx_edi_operador
+#: model:ir.model.fields.selection,name:l10n_mx_edi_stock.selection__l10n_mx_edi_figure__type__01
+msgid "Operador"
+msgstr ""
 
 #. module: l10n_mx_edi_stock
 #: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_res_partner__l10n_mx_edi_operator_licence
@@ -739,8 +963,29 @@ msgid "Operator Licence"
 msgstr "Licencia de operador"
 
 #. module: l10n_mx_edi_stock
+#: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_stock_picking__l10n_mx_edi_origen
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "Origen"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "P. Bruto"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "P. Neto"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
 #: model:ir.model.fields.selection,name:l10n_mx_edi_stock.selection__l10n_mx_edi_trailer__sub_type__ctr020
 msgid "Pallet o Celdillas"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "Partes:<br/>"
 msgstr ""
 
 #. module: l10n_mx_edi_stock
@@ -750,7 +995,6 @@ msgstr "Operador"
 
 #. module: l10n_mx_edi_stock
 #: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_l10n_mx_edi_figure__part_ids
-#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.l10n_mx_edi_cartaporte_report_delivery_document
 msgid "Parts"
 msgstr "Partes"
 
@@ -782,6 +1026,31 @@ msgid "Permiso temporal para navegación de cabotaje"
 msgstr ""
 
 #. module: l10n_mx_edi_stock
+#: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_stock_move__peso
+msgid "Peso"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "Peso Bruto total"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "Peso Kg"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "Peso Neto total"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "Piezas"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
 #: model:ir.model.fields.selection,name:l10n_mx_edi_stock.selection__l10n_mx_edi_trailer__sub_type__ctr021
 msgid "Plataforma"
 msgstr ""
@@ -795,11 +1064,6 @@ msgstr ""
 #: model:ir.model.fields.selection,name:l10n_mx_edi_stock.selection__l10n_mx_edi_trailer__sub_type__ctr023
 msgid "Plataforma Encortinada"
 msgstr ""
-
-#. module: l10n_mx_edi_stock
-#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.l10n_mx_edi_cartaporte_report_delivery_document
-msgid "Plate"
-msgstr "Placa"
 
 #. module: l10n_mx_edi_stock
 #: code:addons/l10n_mx_edi_stock/models/stock_picking.py:0
@@ -816,6 +1080,11 @@ msgstr "Movimientos de producto (línea de movimiento de inventario)"
 #. module: l10n_mx_edi_stock
 #: model:ir.model.fields.selection,name:l10n_mx_edi_stock.selection__l10n_mx_edi_figure__type__02
 msgid "Propietario"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.view_picking_edi_form
+msgid "Recalcular peso"
 msgstr ""
 
 #. module: l10n_mx_edi_stock
@@ -839,6 +1108,14 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.view_picking_edi_form
 msgid "Retry"
 msgstr "Reintentar"
+
+#. module: l10n_mx_edi_stock
+#: code:addons/l10n_mx_edi_stock/models/stock_picking.py:0
+#, python-format
+msgid ""
+"Revise el peso de los productos, el total no puede ser 0. Si ya ajusto los "
+"pesos, presione el boton Recalcular peso."
+msgstr ""
 
 #. module: l10n_mx_edi_stock
 #: model:ir.model.fields.selection,name:l10n_mx_edi_stock.selection__l10n_mx_edi_trailer__sub_type__ctr026
@@ -918,13 +1195,19 @@ msgstr "Especifica el Folio Fiscal a reemplazar. Iniciando con '04|'"
 msgid ""
 "Specify the transportation method. The Delivery Guide will contain the "
 "Complemento Carta Porte only when federal transport is used"
-msgstr "Especifica el método de transporte. La guía de entrega contendrá el"
-"Complemento Carta Porte únicamente cuando seleccione 'Transporte federal'"
+msgstr ""
+"Especifica el método de transporte. La guía de entrega contendrá "
+"elComplemento Carta Porte únicamente cuando seleccione 'Transporte federal'"
 
 #. module: l10n_mx_edi_stock
 #: model:ir.model.fields.selection,name:l10n_mx_edi_stock.selection__stock_picking__l10n_mx_edi_sat_status__none
 msgid "State not defined"
 msgstr "Estado no definido"
+
+#. module: l10n_mx_edi_stock
+#: model:ir.model,name:l10n_mx_edi_stock.model_stock_move
+msgid "Stock Move"
+msgstr "Movimiento de inventario"
 
 #. module: l10n_mx_edi_stock
 #: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_l10n_mx_edi_trailer__sub_type
@@ -944,6 +1227,7 @@ msgstr "El CFDI de la guía de entrega a sido cancelado."
 
 #. module: l10n_mx_edi_stock
 #: code:addons/l10n_mx_edi_stock/models/stock_picking.py:0
+#: code:addons/l10n_mx_edi_stock/models/stock_picking.py:0
 #, python-format
 msgid "The CFDI Delivery Guide has been successfully signed."
 msgstr "El CFDI de la guía de entrega a sido correctamente firmado"
@@ -954,7 +1238,8 @@ msgstr "El CFDI de la guía de entrega a sido correctamente firmado"
 msgid ""
 "The Delivery Guide is only available for shipping in MX. You might want to "
 "install comex features"
-msgstr "La guía de entrega solo está disponible para envíos en MX. Tendrás que "
+msgstr ""
+"La guía de entrega solo está disponible para envíos en MX. Tendrás que "
 "instalar características comex"
 
 #. module: l10n_mx_edi_stock
@@ -983,14 +1268,6 @@ msgstr ""
 #: model:ir.model.fields,help:l10n_mx_edi_stock.field_l10n_mx_edi_vehicle__vehicle_config
 msgid "The type of vehicle used"
 msgstr "Tipo de vehículo usado"
-
-#. module: l10n_mx_edi_stock
-#: code:addons/l10n_mx_edi_stock/models/l10n_mx_edi_vehicle.py:0
-#, python-format
-msgid ""
-"The vehicle intermediaries must contain at least one intermediary of type: "
-"Operator"
-msgstr ""
 
 #. module: l10n_mx_edi_stock
 #: model:ir.model.fields,help:l10n_mx_edi_stock.field_stock_picking__l10n_mx_edi_vehicle_id
@@ -1196,7 +1473,6 @@ msgstr ""
 
 #. module: l10n_mx_edi_stock
 #: model:ir.model.fields,field_description:l10n_mx_edi_stock.field_l10n_mx_edi_figure__type
-#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.l10n_mx_edi_cartaporte_report_delivery_document
 msgid "Type"
 msgstr ""
 
@@ -1204,6 +1480,11 @@ msgstr ""
 #: code:addons/l10n_mx_edi_stock/models/stock_picking.py:0
 #, python-format
 msgid "Unable to connect to mapbox"
+msgstr ""
+
+#. module: l10n_mx_edi_stock
+#: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.complement_carta_porte
+msgid "Unidad"
 msgstr ""
 
 #. module: l10n_mx_edi_stock
@@ -1273,7 +1554,9 @@ msgstr ""
 #: code:addons/l10n_mx_edi_stock/models/stock_picking.py:0
 #, python-format
 msgid "You must select a transport type to generate the delivery guide"
-msgstr "Tu debes seleccionar un tipo de transporte para poder generar la guía de entrega."
+msgstr ""
+"Tu debes seleccionar un tipo de transporte para poder generar la guía de "
+"entrega."
 
 #. module: l10n_mx_edi_stock
 #: model_terms:ir.ui.view,arch_db:l10n_mx_edi_stock.vehicle_form_view
