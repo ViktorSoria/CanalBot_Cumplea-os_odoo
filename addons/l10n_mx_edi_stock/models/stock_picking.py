@@ -7,18 +7,24 @@ import re
 import requests
 from lxml import etree, objectify
 from werkzeug.urls import url_quote
+import logging
 
 from odoo import api, models, fields, tools, _
 from odoo.exceptions import UserError
+
+_log = logging.getLogger("STOCK.PICKING.PY[%s]==============>>" % __name__)
 
 CFDI_XSLT_CADENA = 'l10n_mx_edi_stock/data/cadenaoriginal_cartaporte.xslt'
 ATTACHMENT_NAME = 'CFDI_DeliveryGuide_{}.xml'
 MAPBOX_GEOCODE_URL = 'https://api.mapbox.com/geocoding/v5/mapbox.places/'
 MAPBOX_MATRIX_URL = 'https://api.mapbox.com/directions-matrix/v1/mapbox/driving/'
 
+
 class Picking(models.Model):
     _inherit = 'stock.picking'
 
+    l10n_mx_edi_children_moves = fields.One2many('stock.picking', 'l10n_mx_edi_parent_move', string="Movimiento hijas")
+    l10n_mx_edi_parent_move = fields.Many2one('stock.picking', string="Movimiento padre")
     country_code = fields.Char(related='company_id.country_id.code')
     l10n_mx_edi_is_export = fields.Char(compute='_l10n_mx_edi_compute_is_export')
     l10n_mx_edi_content = fields.Binary(compute='_l10n_mx_edi_compute_edi_content', compute_sudo=True)
@@ -100,6 +106,10 @@ class Picking(models.Model):
     def cal_weight(self):
         self.move_lines._cal_move_weight()
         self._cal_weight()
+        # add children moves weight
+        for cm in self.l10n_mx_edi_children_moves:
+            cm.cal_weight()
+            self.weight += cm.weight
 
     @api.depends('partner_id')
     def _l10n_mx_edi_compute_is_export(self):
@@ -161,6 +171,11 @@ class Picking(models.Model):
                 if len(split_origin) == 2:
                     origin_type = split_origin[0]
                     origin_uuids = split_origin[1].split(',')
+            move_lines = record.move_lines.filtered(lambda ml: ml.quantity_done > 0)
+            # Add children move lines
+            for cm in record.l10n_mx_edi_children_moves:
+                move_lines += cm.move_lines.filtered(lambda ml: ml.quantity_done > 0)
+            _log.info('LINEAS %s ' % move_lines)
             values = {
                 # 'cfdi_date': record.date_done.astimezone(mx_tz).strftime(date_fmt),
                 # 'scheduled_date': record.scheduled_date.astimezone(mx_tz).strftime(date_fmt),
@@ -175,12 +190,14 @@ class Picking(models.Model):
                 'origin': record.l10n_mx_edi_origen,
                 'supplier': record.company_id,
                 'customer': record.l10n_mx_edi_destino,
-                'moves': record.move_lines.filtered(lambda ml: ml.quantity_done > 0),
+                'moves': move_lines,
                 'record': record,
                 'format_float': format_float,
                 'weight_uom': self.env['product.template']._get_weight_uom_id_from_ir_config_parameter(),
             }
+
             xml = self.env.ref('l10n_mx_edi_stock.cfdi_cartaporte')._render(values)
+            _log.info("XML:: %s" % xml)
             certificate = record.company_id.l10n_mx_edi_certificate_ids.sudo().get_valid_certificate()
             if certificate:
                 xml = certificate._certify_and_stamp(xml, CFDI_XSLT_CADENA)
@@ -353,7 +370,7 @@ class Picking(models.Model):
                 record.l10n_mx_edi_error = '\n'.join(credentials['errors'])
                 continue
 
-            cfdi_str = record._l10n_mx_edi_create_delivery_guide()
+            cfdi_str = record._l10n_mx_edi_create_delivery_guide() # XML
             res = getattr(self.env['account.edi.format'], '_l10n_mx_edi_%s_sign_service' % pac_name)(credentials, cfdi_str)
             if res.get('errors'):
                 record.l10n_mx_edi_error = '\n'.join(res['errors'])
@@ -377,6 +394,21 @@ class Picking(models.Model):
             message = _("The CFDI Delivery Guide has been successfully signed.")
             record._message_log(body=message, attachment_ids=cfdi_attachment.ids)
             record.write({'l10n_mx_edi_cfdi_uuid': uuid, 'l10n_mx_edi_error': False, 'l10n_mx_edi_status': 'sent'})
+            # Add attachment and change cfdi state to children moves.
+            for cm in record.l10n_mx_edi_children_moves:
+                cfdi_attachment = self.env['ir.attachment'].create({
+                    'name': ATTACHMENT_NAME.format(uuid),
+                    'res_id': cm.id,
+                    'res_model': cm._name,
+                    'type': 'binary',
+                    'raw': cfdi_signed,
+                    'mimetype': 'application/xml',
+                    'description': _('Mexican Delivery Guide CFDI generated for the %s document.', record.name), # Nombre del padre o del hijo ?
+                })
+                cm.l10n_mx_edi_cfdi_file_id = cfdi_attachment.id
+                message = _("The CFDI Delivery Guide has been successfully signed.")
+                cm._message_log(body=message, attachment_ids=cfdi_attachment.ids)
+                cm.write({'l10n_mx_edi_cfdi_uuid': uuid, 'l10n_mx_edi_error': False, 'l10n_mx_edi_status': 'sent'})
 
     def l10n_mx_edi_action_update_sat_status(self):
         '''Synchronize both systems: Odoo & SAT to make sure the delivery guide is valid.

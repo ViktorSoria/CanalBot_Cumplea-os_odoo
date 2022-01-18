@@ -1,184 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
-<!--
-
-    <template id="l10n_mx_edi_cartaporte_report_delivery_document" inherit_id="stock.report_delivery_document">
-        <xpath expr="//div[@name='signature']" position="after">
-            <t t-set="cfdi_vals" t-value="o._l10n_mx_edi_decode_cfdi()"/>
-            <t t-if="o.l10n_mx_edi_status == 'sent'">
-                <div class="row border-top mt-3" t-if="o.l10n_mx_edi_transport_type == '01' and o.l10n_mx_edi_vehicle_id" id="delivery_guide_details">
-                    <div class="col-12">
-                        <div class="row pt-3" id="mx_edi_row_1">
-                            <div class="col-2">
-                                <strong>Licence Plate</strong>
-                                <p t-field="o.l10n_mx_edi_vehicle_id.vehicle_licence"/>
-                            </div>
-                            <div class="col-2">
-                                <strong>SCT Permit No</strong>
-                                <p t-field="o.l10n_mx_edi_vehicle_id.name"/>
-                            </div>
-                            <div class="col-2">
-                                <strong>Insurer</strong>
-                                <p t-field="o.l10n_mx_edi_vehicle_id.transport_insurer"/>
-                            </div>
-                            <div class="col-2">
-                                <strong>Policy No</strong>
-                                <p t-field="o.l10n_mx_edi_vehicle_id.transport_insurance_policy"/>
-                            </div>
-                            <div class="col-2">
-                                <strong>Model</strong>
-                                <p t-field="o.l10n_mx_edi_vehicle_id.vehicle_model"/>
-                            </div>
-                            <div class="col-2">
-                                <strong>Distance (KM)</strong>
-                                <p t-field="o.l10n_mx_edi_distance"/>
-                            </div>
-                        </div>
-                        <div class="row mt-3" id="mx_edi_row_2">
-                            <div t-att-class="'col-6' if not o.l10n_mx_edi_is_export else 'col-4'">
-                                <strong>SCT Permit Type</strong>
-                                <p t-field="o.l10n_mx_edi_vehicle_id.transport_perm_sct"/>
-                            </div>
-                            <div t-att-class="'col-6' if not o.l10n_mx_edi_is_export else 'col-5'">
-                                <strong>Vehicle Configuration</strong>
-                                <p t-field="o.l10n_mx_edi_vehicle_id.vehicle_config"/>
-                            </div>
-                        </div>
-                        <div class="row mt-3" id="mx_edi_row_3">
-                            <div class="col-5">
-                                <strong>Trailers</strong>
-                                <table class="table">
-                                    <tr>
-                                        <th>Plate</th>
-                                        <th>Type</th>
-                                    </tr>
-                                    <t t-foreach="o.l10n_mx_edi_vehicle_id.trailer_ids" t-as="trailer">
-                                        <tr>
-                                            <td><t t-esc="trailer.name"/></td>
-                                            <td><t t-esc="trailer.sub_type"/></td>
-                                        </tr>
-                                    </t>
-                                </table>
-                            </div>
-                            <div class="col-7">
-                                <strong>Intermediaries</strong>
-                                <table class="table">
-                                    <tr>
-                                        <th>Type</th>
-                                        <th>Operator</th>
-                                        <th>License</th>
-                                        <th>Parts</th>
-                                    </tr>
-                                    <t t-foreach="o.l10n_mx_edi_vehicle_id.figure_ids" t-as="figure">
-                                        <tr>
-                                            <td><t t-esc="figure.type"/></td>
-                                            <td><t t-esc="figure.operator_id.display_name"/></td>
-                                            <td><t t-esc="figure.operator_id.l10n_mx_edi_operator_licence" t-if="figure.type == '01'"/></td>
-                                            <td><t t-esc="', '.join(figure.part_ids.mapped('code'))" t-if="figure.type in ('02', '03')"/></td>
-                                        </tr>
-                                    </t>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row border-bottom mt-3 pt-2 pb-3" id='complement'>
-                    <div t-if="cfdi_vals.get('sello')" class="barcode col-3">
-                        <img alt="Barcode" t-att-src="'/report/barcode/?type=QR&amp;value=%s&amp;width=180&amp;height=180' % quote_plus(
-                            'https://verificacfdi.facturaelectronica.sat.gob.mx/default.aspx?' + keep_query(
-                                re=cfdi_vals.get('supplier_rfc'), rr=cfdi_vals.get('customer_rfc'), tt=0.00, id=cfdi_vals.get('uuid'))
-                                + '&amp;fe=%s' % quote_plus(cfdi_vals['sello'][-8:], 'utf-8', 'strict', '=/').replace('%2B', '+'))"/>
-                    </div>
-                    <div class="complement-details col-9">
-                        <div class="digital-stamp">
-                            <span>Digital stamp of the emitter</span>
-                        </div>
-                        <div class="digital-stamp-content">
-                            <span t-esc="cfdi_vals.get('sello')"/>
-                        </div>
-                        <div class="digital-stamp">
-                            <span>Digital stamp SAT</span>
-                        </div>
-                        <div class="digital-stamp-content">
-                            <span t-esc="cfdi_vals.get('sello_sat')"/>
-                        </div>
-                        <div class="digital-stamp">
-                            <span>Original chain complement of digital certification SAT</span>
-                        </div>
-                        <div class="digital-stamp-content">
-                            <span class="nowrap" t-esc="cfdi_vals.get('cadena')"/>
-                        </div>
-                        <div class="digital-stamp">
-                            <span>Extra Info</span>
-                        </div>
-                        <div class="digital-stamp-content">
-                            <span>Emitter certificate:</span> <span t-esc="cfdi_vals.get('certificate_number')"/>
-                            <span> | SAT Certificate:</span> <span t-esc="cfdi_vals.get('certificate_sat_number')"/>
-                            <span> | Expedition place:</span> <span t-esc="cfdi_vals.get('expedition')"/>
-                            <span> | Fiscal Regime:</span><span t-esc="cfdi_vals.get('fiscal_regime')"/>
-                            <span> | Emission Date:</span> <span t-esc="cfdi_vals.get('emission_date_str')"/>
-                            <span> | Certification Date:</span> <span t-esc="cfdi_vals.get('stamp_date')"/>
-                            <span> | Fiscal Folio:</span> <span t-esc="cfdi_vals.get('uuid')"/>
-                        </div>
-                        <div class="digital-stamp-content text-center">
-                            <strong>This document is a printed representation of a CFDI</strong>
-                        </div>
-                    </div>
-                </div>
-            </t>
-        </xpath>
-    </template>
--->
-
     <!--
-    <template id="l10n_mx_edi_cartaporte_report_delivery_has_serial_move_line" inherit_id="stock.stock_report_delivery_has_serial_move_line">
-         <xpath expr="//td" position="before">
-            <t t-if="o.l10n_mx_edi_status == 'sent'">
-                <td>
-                    <span t-field="move_line.product_id.unspsc_code_id.code"/>
-                </td>
-            </t>
-        </xpath>
-        <xpath expr="//td[last()]" position="after">
-            <t t-if="o.l10n_mx_edi_status == 'sent'">
-                <td>
-                    <span t-field="move_line.product_uom_id.unspsc_code_id.code"/>
-                </td>
-                <td>
-                    <span t-field="move_line.move_id.weight"/>
-                </td>
-            </t>
-        </xpath>
-    </template>
+    TESTING::
 
-   <template id="l10n_mx_edi_cartaporte_report_delivery_aggregated_move_lines" inherit_id="stock.stock_report_delivery_aggregated_move_lines">
-        <xpath expr="//td" position="before">
-            <t t-if="o.l10n_mx_edi_status == 'sent'">
-                <td>
-                    <span t-esc="aggregated_lines[line]['product'].unspsc_code_id.code"/>
-                </td>
-            </t>
-        </xpath>
-        <xpath expr="//td[last()]" position="after">
-            <t t-if="o.l10n_mx_edi_status == 'sent'">
-                <td>
-                    <span t-esc="aggregated_lines[line]['product_uom_rec'].unspsc_code_id.code"/>
-                </td>
-                <td>
-                    <span t-esc="aggregated_lines[line]['weight']" t-options='{"widget": "float", "decimal_precision": "Stock Weight"}'/>
-                    <span t-field="o.weight_uom_name"/>
-                </td>
-            </t>
-        </xpath>
-    </template>
+    COA/POS/00008
+    (Parent) CDPUE/PICK/01357
     -->
-
 
     <!-- Carta porte report -->
     <template id="carta_porte_styles">
         <style>
             .smallfont{
                 font-size: 13px !important;
+            }
+            .smallerfont{
+                font-size: 10px !important;
             }
             .neg{
                 font-weight: bold;
@@ -194,7 +30,7 @@
                 text-align: center;
             }
             .nopadding{
-                padding: 0px;
+                padding: 0px !important;
             }
         </style>
     </template>
@@ -203,7 +39,15 @@
 
         <t t-call="web.html_container">
             <t t-call="web.external_layout">
-                <t t-set="o" t-value="o.with_context(lang=o.partner_id.lang)" />
+                <!--
+                Si tiene establecido un parent, sustituimos o por o.parent try?
+                -->
+                <t t-if="o.l10n_mx_edi_parent_move">
+                    <t t-set="o" t-value="o.l10n_mx_edi_parent_move.with_context(lang=o.partner_id.lang)" />
+                </t>
+                <t t-else="">
+                    <t t-set="o" t-value="o.with_context(lang=o.partner_id.lang)" />
+                </t>
                 <t t-set="partner" t-value="o.partner_id or (o.move_lines and o.move_lines[0].partner_id) or False"/>
                 <t t-if="partner" name="partner_header">
                     <t t-set="address">
@@ -233,10 +77,10 @@
                         </div>
                     </div>
                     <!-- Table: like a invoice -->
-                    <table class="table table-sm o_main_table table-striped smallfont nopadding" name="cartaporte_table">
+                    <table class="table table-sm o_main_table table-striped smallerfont" name="cartaporte_table">
                         <thead>
                             <tr>
-                                <th name="th_clav_prod_serv" class="text-left" style="width: 20px !important;"><span>Clave Producto/Servicio</span></th>
+                                <th name="th_clav_prod_serv" class="text-left" style="width: 20px !important;"><span>Clave Producto /Servicio</span></th>
                                 <th name="th_claveunidad" class="text-right"><span>Clave unidad</span></th>
                                 <th name="th_unidad" class="text-right"><span>Unidad</span></th>
                                 <th name="th_noIdentificacion" class="text-right"><span>No Identificación</span></th>
@@ -248,10 +92,10 @@
                             </tr>
                         </thead>
                         <tbody class="invoice_tbody">
-                            <t t-set="lines" t-value="o.move_line_ids_without_package"/>
+                            <t t-set="lines" t-value="o.move_line_ids_without_package+o.l10n_mx_edi_children_moves.move_line_ids_without_package"/>
                             <t t-foreach="lines" t-as="line">
                                 <tr>
-                                    <td name="sat_code" class="text-right nopadding" style="width: 20px !important;"><span t-field="line.product_id.unspsc_code_id.code"/></td>
+                                    <td name="sat_code" class="text-left nopadding" style="width: 20px !important;"><span t-field="line.product_id.unspsc_code_id.code"/></td>
                                     <td name="sat_uom_code" class="text-right nopadding"><span t-field="line.product_uom_id.unspsc_code_id.code"/></td>
                                     <td name="uom_name" class="text-right nopadding"><span t-field="line.product_uom_id.unspsc_code_id.name"/></td>
                                     <td name="int_ref" class="text-right nopadding"><span t-field="line.product_id.default_code"/></td>
@@ -334,7 +178,7 @@
                                     <td></td>
                                 </tr>
                             </table>
-                            <t t-foreach="o.move_ids_without_package" t-as="line">
+                            <t t-foreach="o.move_ids_without_package+o.l10n_mx_edi_children_moves.move_ids_without_package" t-as="line">
                                 <div class="bneg">
                                     <div class="row" style="width: 100%; margin-left: 1px;">
                                         <div class="col-6">
@@ -534,7 +378,7 @@
         <field name="report_type">qweb-pdf</field>
         <field name="report_name">l10n_mx_edi_stock.report_carta_porte</field>
         <field name="report_file">l10n_mx_edi_stock.report_carta_porte</field>
-        <field name="print_report_name">'Carta porte - %s' % (object.name)</field>
+        <field name="print_report_name">'Carta porte - %s' % (object.l10n_mx_edi_parent_move.name or object.name)</field>
         <field name="binding_model_id" ref="model_stock_picking"/>
         <field name="binding_type">report</field>
     </record>
