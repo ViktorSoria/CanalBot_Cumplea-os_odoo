@@ -59,6 +59,14 @@ class Order(models.Model):
         except:
             return False
 
+    @api.model
+    def recibev2(self):
+        domain = [['state', '=', 'paid']]
+        model = 'pos.order'
+        fields = ['display_name', 'name', 'config_id']
+        res = self.env[model].search_read(domain=domain, fields=fields)
+        return res
+
 
 class Pospaymentm(models.Model):
     _inherit = "pos.payment.method"
@@ -107,15 +115,39 @@ class PosSession(models.Model):
             data['session'] = self.name
             data['unpaid_orders'][0]['pos_session_id'] = self.id
             data['unpaid_orders'][0]['user_id'] = self.user_id.id
-            self.env['pos.order.temp'].create({'session_id':self.id,'json':json.dumps(data)})
+            dic = {
+                'session_id': self.id,
+                'json': json.dumps(data),
+                'orden': data['unpaid_orders'][0]['name'],
+                'cajero': self.env['hr.employee'].browse(data['unpaid_orders'][0]['employee_id']).name if data['unpaid_orders'][0]['employee_id'] else "",
+                'pos_name': self.config_id.display_name
+            }
+            self.env['pos.order.temp'].create(dic)
         except Exception as e:
             _logger.warning(e)
             return False
         return True
 
-    def recibe(self):
-        data = self.orders.mapped('json')
-        self.orders.unlink()
+    def ver(self):
+        lista = [{
+            'id': order.id,
+            'orden': order.orden,
+            'cajero': order.cajero if order.cajero else "",
+            'pos_name': order.pos_name
+        } for order in self.orders]
+        return lista
+
+    def recibe(self, id=False):
+        orders = self.orders
+        if id and orders.browse(int(id)):
+            order = orders.browse(int(id))
+            data = order.mapped('json')
+            order.received = True
+            return data
+        if not id:
+            orders_filt = orders.filtered(lambda x: not x.received)
+            orders_filt.write({'received': True})
+            data = orders_filt.mapped('json')
         return data
 
 
@@ -124,3 +156,7 @@ class PosOrderTemp(models.TransientModel):
 
     session_id = fields.Many2one("pos.session","Sesion")
     json = fields.Text("Json")
+    received = fields.Boolean("Ha sido recibido")
+    orden = fields.Char('Referencia de orden')
+    cajero = fields.Char('Cajero')
+    pos_name = fields.Char('Nombre punto de ventaa')
