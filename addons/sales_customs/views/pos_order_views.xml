@@ -55,7 +55,7 @@
             <attribute name="attrs">{'invisible': ['|', '|',('state', '!=', 'posted'),('move_type', 'in', ('out_receipt', 'in_receipt')),('permiso_saldo_aFavor','=',False)]}</attribute>
             </xpath>
             <xpath expr="//field[@name='team_id']" position="after">
-                <field name="pricelist_id"/>
+                <field name="pricelist_id" readonly="True"/>
             </xpath>
         </field>
     </record>
