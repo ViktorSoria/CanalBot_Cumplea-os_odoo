@@ -129,6 +129,7 @@ class PosOrder(models.Model):
         vals = super(PosOrder, self)._prepare_invoice_vals()
         vals['l10n_mx_edi_payment_method_id'] = self.payment_method_id.l10n_mx_edi_payment_method_id.id
         vals['l10n_mx_edi_usage'] = self.l10n_mx_edi_usage
+        vals['pricelist_id'] = self.pricelist_id
         return vals
 
     def action_pos_order_invoice(self):
