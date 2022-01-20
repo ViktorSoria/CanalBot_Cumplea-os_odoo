@@ -56,6 +56,17 @@ class PermisoFacturascreditos(models.Model):
     _inherit = "account.move"
 
     permiso_saldo_aFavor = fields.Boolean(string="Aplicacion de saldos a favor en facturas", compute="creditInvoicePermission")
+    pricelist_id = fields.Many2one('product.pricelist', string="Tarifa")
 
     def creditInvoicePermission(self):
         self.permiso_saldo_aFavor = self.env.user.has_group('sales_customs.group_edition_invoices_credits')
+
+
+class SaleAdvanceInvoiceCustom(models.TransientModel):
+    _inherit = "sale.advance.payment.inv"
+
+    def _prepare_invoice_values(self,order,name,amount, so_line):
+        res = super(SaleAdvanceInvoiceCustom, self)._prepare_invoice_values(order,name,amount, so_line)
+        res['pricelist_id'] = order.pricelist_id.id if order.pricelist_id else None
+        return res
+
