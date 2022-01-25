@@ -8,18 +8,41 @@
                     <div class="page">
                         <div class="oe_structure"/>
                         <center>
-                            <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" class="float-left" alt="Logo" style="max-height:100px; max-width:200px;"/>
-                            <h4 t-esc="o.company_id.name" />
-                            <br/>
-                            <h3>Orden a Surtir obtenida de:</h3>
-                            <h3 t-field="o.name"/>
+<!--                            <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" class="float-left" alt="Logo" style="max-height:100px; max-width:200px;"/>-->
+                            <h5 t-esc="o.company_id.name" />
+                            <h6>Orden a Surtir obtenida de:</h6>
+                            <h6 t-field="o.name"/>
                             <t t-if="o.date_done">
-                                <h5 t-field="o.date_done"/>
+                                <h6 t-field="o.date_done"/>
                             </t>
                             <t t-if="o.date_done == false">
-                                <h4>
+                                <h6>
                                 <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M')"/>
-                                </h4>
+                                </h6>
+                            </t>
+                            <t t-if="o.sale_id">
+                                <h6>Pedido de Venta:
+                                <span t-field="o.sale_id.display_name"/>
+                                </h6>
+                                <h6>Cliente:
+                                <span t-field="o.sale_id.partner_id.display_name"/>
+                                </h6>
+                            </t>
+                            <t t-if="o.pos_order_id">
+                                <h6>Pedido del Punto de Venta:
+                                <span t-field="o.pos_order_id.display_name"/>
+                                </h6>
+                                <h6>Cliente:
+                                <span t-field="o.pos_order_id.partner_id.display_name"/>
+                                </h6>
+                            </t>
+                            <t t-if="o.purchase_id">
+                                <h6>Pedido de Compra:
+                                <span t-field="o.purchase_id.display_name"/>
+                                </h6>
+                                <h6>Proveedor:
+                                <span t-field="o.purchase_id.partner_id.display_name"/>
+                                </h6>
                             </t>
                         </center>
 
@@ -62,7 +85,7 @@
                                     </t>
                               </tbody>
                         </table>
-                        <h3>Surtido por:</h3>
+                        <h5>Surtido por:</h5>
                     </div>
                 </t>
             </t>
