@@ -46,7 +46,7 @@
                             </t>
                         </center>
 
-                        <table class="table table-sm table-striped" t-if="o.move_ids_without_package">
+                        <table class="table table-sm" t-if="o.move_ids_without_package">
                             <thead>
                                 <tr>
                                     <th class="text-center">
@@ -66,26 +66,27 @@
                             <tbody>
                                 <t t-foreach="o.move_ids_without_package" t-as="ml">
                                         <tr>
-                                            <td style="font-size: 12px;">
+                                            <td style="font-size: 13px;">
                                                 <t t-set="name_short" t-value="ml.product_id.display_name[:60]"/>
                                                     <span t-esc="name_short"/>
                                             </td>
-                                            <td style="font-size: 12px;">
+                                            <td style="font-size: 13px;">
                                                 <span t-field="ml.product_uom_qty"/>
                                                 <span t-field="ml.product_uom.name" groups="uom.group_uom"/>
 
                                             </td>
-                                            <td style="font-size: 12px;">
+                                            <td style="font-size: 13px;">
                                                 <span t-esc="ml.reserved_availability"/>
                                             </td>
-                                            <td style="font-size: 12px;">
+                                            <td style="font-size: 13px;">
                                                 <span></span>
                                             </td>
                                         </tr>
                                     </t>
                               </tbody>
                         </table>
-                        <h5>Surtido por:</h5>
+                        <h6>Surtido por:</h6>
+                        <h6>No. de Paquetes:</h6>
                     </div>
                 </t>
             </t>
