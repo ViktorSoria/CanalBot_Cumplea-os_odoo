@@ -7,7 +7,7 @@
         <field name="arch" type="xml">
             <group>
                 <group>
-                    <field name="credit" invisible="0"/>
+                    <field name="credit" invisible="0" string="Total por cobrar (old)"/>
                     <field name="credit_real" readonly="1" force_save="1"/>
                     <field name="amount_due" string="DEBE.. " invisible="1"/>
                 </group>
