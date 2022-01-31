@@ -66,19 +66,19 @@
                             <tbody>
                                 <t t-foreach="o.move_ids_without_package" t-as="ml">
                                         <tr>
-                                            <td style="font-size: 13px;">
+                                            <td style="font-size: 14px;">
                                                 <t t-set="name_short" t-value="ml.product_id.display_name[:60]"/>
                                                     <span t-esc="name_short"/>
                                             </td>
-                                            <td style="font-size: 13px;">
+                                            <td style="font-size: 14px;">
                                                 <span t-field="ml.product_uom_qty"/>
                                                 <span t-field="ml.product_uom.name" groups="uom.group_uom"/>
 
                                             </td>
-                                            <td style="font-size: 13px;">
+                                            <td style="font-size: 14px;">
                                                 <span t-esc="ml.reserved_availability"/>
                                             </td>
-                                            <td style="font-size: 13px;">
+                                            <td style="font-size: 14px;">
                                                 <span></span>
                                             </td>
                                         </tr>
