@@ -148,7 +148,7 @@ class PosSession(models.Model):
             orders_filt = orders.filtered(lambda x: not x.received)
             orders_filt.write({'received': True})
             data = orders_filt.mapped('json')
-            return data
+        return data
 
 
 class PosOrderTemp(models.TransientModel):
