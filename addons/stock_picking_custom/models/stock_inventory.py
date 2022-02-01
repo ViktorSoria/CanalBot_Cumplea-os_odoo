@@ -312,3 +312,18 @@ class StockQuantWizard(models.TransientModel):
                 rec.money_diff = rec.difference_qty * rec.product_id.standard_price
 
 
+class ReportRotationWizard(models.TransientModel):
+    _name = "wizard.report.rotation"
+
+    location_id = fields.Many2one('stock.location', string='Ubicación')
+
+    def search_records(self):
+        return {
+            'name': _('Reporte de Existencias (Rotación)'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'list',
+            'view_mode': 'list',
+            'res_model': 'stock.quant',
+            'views': [(self.env.ref('stock_picking_custom.view_report_rotation_tree').id, 'list')],
+            'domain': [('location_id', 'in', self.location_id.ids)]
+        }

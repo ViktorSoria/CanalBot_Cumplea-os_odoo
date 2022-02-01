@@ -15,6 +15,7 @@
         "views/stock_picking.xml",
         "views/stock_inventory_wizard.xml",
         "views/stock_inventory_views.xml",
+        "views/stock_rotation_views.xml",
         # "views/stock_templates.xml"
     ],
     'qweb': [
