@@ -159,7 +159,7 @@ class InvoiceOrder(models.TransientModel):
     def generate_orders_random(self,total,pos_conf):
         data = {p.name:[] for p in pos_conf}
         names = pos_conf.mapped('name')
-        minimo,maximo = 100,max(total//5,200,50000)
+        minimo,maximo = 100,max(min(total//5,50000),200)
         sequence = random.randrange(0,100)
         while total > 0:
             ran = random.randrange(minimo,maximo)
@@ -180,5 +180,8 @@ class Invoice(models.Model):
     @api.depends('posted_before', 'state', 'journal_id', 'date')
     def _compute_name(self):
         super()._compute_name()
-        for move in self.filtered(lambda m: m.is_global and 'GLOB' not in m.name):
+        is_global = self.filtered(lambda m: m.is_global)
+        for move in is_global.filtered(lambda m: 'GLOB' not in m.name):
             move.name = move.name.replace("INV/","INV/GLOB/")
+        for move in self-is_global:
+            move.name = move.name.replace("INV/GLOB/","INV/")
