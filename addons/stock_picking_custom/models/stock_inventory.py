@@ -332,8 +332,8 @@ class ReportRotationWizard(models.TransientModel):
 class StockInventoryProductMenus(models.Model):
     _inherit="product.template"
 
-    marca=fields.Many2one('product.marca',string="Marca")
-    aplicacion=fields.Many2one('product.aplicacion', string="Aplicación")
+    product_template_marca=fields.Many2one('product.marca',string="Marca")
+    product_template_aplicacion=fields.Many2one('product.aplicacion', string="Aplicación")
 
 
 class StockInventoryAplicacion(models.Model):
