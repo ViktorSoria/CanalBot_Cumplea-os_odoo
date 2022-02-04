@@ -180,4 +180,36 @@
             </table>
         </xpath>
     </template>
+
+    <template id="stock_inventory_report_add_origin_destiny" inherit_id="report_picking">
+        <xpath expr="//div[@class='page']/h1[@class='mt0 float-left']" position="after">
+            <t t-if="o.is_transfer">
+                <div class="row mt48 mb32">
+                    <div class="col-auto">
+                        <strong>Origen: </strong>
+                        <t t-esc="o.location_id.complete_name"/>
+                    </div>
+                    <div class="col-auto">
+                        <strong>Destino: </strong>
+                        <t t-esc="o.location_transfer_id.complete_name"/>
+                    </div>
+                </div>
+            </t>
+
+            <t t-set="orig" t-value="o.search([('name','=',o.origin)])"/>
+            <t t-if="not o.is_transfer and o.origin == orig.name">
+                <div class="row mt48 mb32">
+                    <div class="col-auto">
+                        <strong>Origen: </strong>
+                        <t t-esc="orig.location_id.complete_name"/>
+                    </div>
+                    <div class="col-auto">
+                        <strong>Destino: </strong>
+                        <t t-esc="orig.location_transfer_id.complete_name"/>
+                    </div>
+                </div>
+            </t>
+            <br/>
+        </xpath>
+    </template>
 </odoo>

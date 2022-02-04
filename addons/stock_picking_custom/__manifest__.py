@@ -15,7 +15,8 @@
         "views/stock_picking.xml",
         "views/stock_inventory_wizard.xml",
         "views/stock_inventory_views.xml",
-        # "views/stock_templates.xml"
+        "views/stock_inventory_product_menus.xml",
+        # "views/stock_templates.xml",
     ],
     'qweb': [
         # 'static/src/xml/stock_template_button.xml',
