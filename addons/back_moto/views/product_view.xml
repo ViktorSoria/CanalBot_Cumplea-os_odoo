@@ -17,6 +17,9 @@
                     </field>
                 </page>
             </xpath>
+            <xpath expr="//div[@name='standard_price_uom']" position="after">
+                <field name="price_avg"/>
+            </xpath>
         </field>
     </record>
 
