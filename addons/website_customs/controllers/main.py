@@ -94,7 +94,9 @@ class WebsiteSaleP(http.Controller):
         monetary_options = {
             'display_currency': request.website.get_current_pricelist().currency_id,
         }
-        viewed_products = request.env['product.product'].sudo().search(domain,limit=16)
+        domain.append(['virtual_available', '>', 0])
+        # Improve query using SQL. Filter by stock.
+        viewed_products = request.env['product.product'].sudo().search(domain, limit=32)
         for product in viewed_products:
             combination_info = product._get_combination_info_variant()
             res_product = product.read(['id', 'name', 'website_url'])[0]
