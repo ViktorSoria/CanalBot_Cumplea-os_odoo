@@ -4,7 +4,8 @@ from odoo import fields, models, api
 import random
 import werkzeug.urls
 from datetime import datetime
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
+from collections import defaultdict
 import logging
 
 _logger = logging.getLogger("Pos global")
@@ -138,7 +139,8 @@ class InvoiceOrder(models.TransientModel):
             'partner_shipping_id': partner_id.id,  # REQUIRED
             'journal_id': journal.id,
             'company_id': company_id.id,
-            'l10n_mx_edi_usage':'P01'
+            'l10n_mx_edi_usage':'P01',
+            "is_global":True
         }
         return data
 
@@ -168,3 +170,15 @@ class InvoiceOrder(models.TransientModel):
             data[pos].append({'total':cantidad,'name':name})
             total -= cantidad
         return data
+
+
+class Invoice(models.Model):
+    _inherit = "account.move"
+
+    is_global = fields.Boolean("Es factura global")
+
+    @api.depends('posted_before', 'state', 'journal_id', 'date')
+    def _compute_name(self):
+        super()._compute_name()
+        for move in self.filtered(lambda m: m.is_global and 'GLOB' not in m.name):
+            move.name = move.name.replace("INV/","INV/GLOB/")

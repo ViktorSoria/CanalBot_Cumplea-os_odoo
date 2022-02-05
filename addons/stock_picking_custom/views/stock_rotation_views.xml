@@ -1,0 +1,47 @@
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="wizard_report_rotation_view">
+            <field name="name">wizard_report_rotation_view</field>
+            <field name="model">wizard.report.rotation</field>
+            <field name="arch" type="xml">
+                <form string="Reporte de Rotacion">
+                    <group>
+                        <field name="location_id" required="True"
+                               options="{'no_create': True, 'no_create_edit':True, 'no_quick_create': True, 'no_open': True}"
+                               domain="[('usage', '=', 'internal')]"/>
+                    </group>
+                    <footer>
+                        <button name="search_records" type="object" string="Aceptar" class="oe_highlight"/>
+                        <button special="cancel" string="Cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_report_rotation_tree" model="ir.ui.view">
+        <field name="name">view.report.rotation.tree</field>
+        <field name="model">stock.quant</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="Existencias">
+                <field name='product_id'/>
+                <field name='available_quantity'/>
+                <field name='quantity'/>
+                <field name='product_uom_id'/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="act_menu_rotation_view" model="ir.actions.act_window">
+        <field name="name">Reporte de Rotacion</field>
+        <field name="res_model">wizard.report.rotation</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="stock_picking_custom.wizard_report_rotation_view"/>
+        <field name="target">new</field>
+    </record>
+
+        <menuitem id="menu_rotation_view" parent="stock.menu_warehouse_report" name="Reporte de Rotación" sequence="1001"
+                  action="act_menu_rotation_view" groups="stock.group_stock_manager,stock.group_stock_user"/>
+    </data>
+</odoo>

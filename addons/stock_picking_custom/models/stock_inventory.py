@@ -312,3 +312,62 @@ class StockQuantWizard(models.TransientModel):
                 rec.money_diff = rec.difference_qty * rec.product_id.standard_price
 
 
+class ReportRotationWizard(models.TransientModel):
+    _name = "wizard.report.rotation"
+
+    location_id = fields.Many2one('stock.location', string='Ubicación')
+
+    def search_records(self):
+        return {
+            'name': _('Reporte de Existencias (Rotación)'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'list',
+            'view_mode': 'list',
+            'res_model': 'stock.quant',
+            'views': [(self.env.ref('stock_picking_custom.view_report_rotation_tree').id, 'list')],
+            'domain': [('location_id', 'in', self.location_id.ids)]
+        }
+
+
+class StockInventoryProductMenus(models.Model):
+    _inherit="product.template"
+
+    product_template_marca=fields.Many2one('product.marca',string="Marca")
+    product_template_aplicacion=fields.Many2one('product.aplicacion', string="Aplicación")
+
+
+class StockInventoryAplicacion(models.Model):
+    _name="product.aplicacion"
+
+    sequence=fields.Integer(default=1)
+    name=fields.Char(string="Aplicación")
+
+
+class StockInventoryMarca(models.Model):
+    _name="product.marca"
+
+    sequence=fields.Integer(default=1)
+    name=fields.Char(string="Marca")
+
+
+class StockInventoryTransferReport(models.Model):
+    _inherit="stock.picking"
+
+    def getOriginTransferReport(self):
+        if self.is_transfer:
+            self.transfer_origin=self.location_id.complete_name
+        else:
+            orig=self.search([('name','=',self.origin)],limit=1)
+            self.transfer_origin=orig.location_id.complete_name
+        return True
+
+    def getDestinyTransferReport(self):
+        if self.is_transfer:
+            dest=self.search([('origin','=',self.name)],limit=1)
+            self.transfer_destiny=dest.location_dest_id.complete_name
+        else:
+            self.transfer_destiny=self.location_dest_id.complete_name
+        return True
+
+    transfer_origin=fields.Char(string="Origen de transferencia entre sucursales", compute=getOriginTransferReport)
+    transfer_destiny=fields.Char(string="Destino de transferencia entre sucursales", compute=getDestinyTransferReport)
