@@ -17,6 +17,20 @@
                     </field>
                 </page>
             </xpath>
+            <xpath expr="//div[@name='standard_price_uom']" position="after">
+                <field name="price_avg"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_price_tree_view" model="ir.ui.view">
+        <field name="name">product.price.tree.view</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='standard_price']" position="after">
+                <field name="price_avg" widget="monetary" options="{'currency_field': 'cost_currency_id'}" optional="show" readonly="1"/>
+            </xpath>
         </field>
     </record>
 
