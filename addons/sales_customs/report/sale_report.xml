@@ -165,7 +165,10 @@
     <menuitem id="menu_report_pos_custom_view" parent="point_of_sale.menu_point_rep" name="Reporte de Ventas por Cliente" sequence="30"
               action="act_menu_report_sale_view" groups="sales_team.group_sale_manager"/>
 
-    <menuitem id="menu_report_comision_view" parent="sale.menu_sale_report" name="Reporte de Comisiones" sequence="10001"
+    <menuitem id="menu_report_comision_view" parent="sale.menu_sale_report" name="Reporte de Comisiones" sequence="1010"
+              action="act_menu_report_comision_view" groups="sales_team.group_sale_manager"/>
+
+    <menuitem id="menu_report_pos_comision_view" parent="point_of_sale.menu_point_rep" name="Reporte de Comisiones" sequence="40"
               action="act_menu_report_comision_view" groups="sales_team.group_sale_manager"/>
 
     </data>
