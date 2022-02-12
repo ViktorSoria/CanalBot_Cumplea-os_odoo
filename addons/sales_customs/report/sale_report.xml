@@ -1,0 +1,172 @@
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="wizard_report_sale_custom_view">
+            <field name="name">wizard_report_sale_custom_view</field>
+            <field name="model">wizard.report.sales.custom</field>
+            <field name="arch" type="xml">
+                <form string="Reporte de Ventas">
+                    <group>
+                    <group>
+                        <field name="date_start" required="True"/>
+                        <field name="date_end" required="True"/>
+                    </group>
+                    <group>
+                        <field name="options" required="True"/>
+                    </group>
+                    </group>
+                    <footer>
+                        <button name="search_records" type="object" string="Aceptar" class="oe_highlight"/>
+                        <button special="cancel" string="Cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="wizard_report_sale_comision_view">
+            <field name="name">wizard_report_sale_comision_view</field>
+            <field name="model">wizard.report.sales.comision</field>
+            <field name="arch" type="xml">
+                <form string="Reporte de Comisión">
+                    <group>
+                    <group>
+                        <field name="date_start" required="True"/>
+                        <field name="date_end" required="True"/>
+                    </group>
+                    <group>
+                        <field name="options" required="True"/>
+                    </group>
+                    </group>
+                    <footer>
+                        <button name="search_records" type="object" string="Aceptar" class="oe_highlight"/>
+                        <button special="cancel" string="Cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_report_sale_custom_tree" model="ir.ui.view">
+        <field name="name">view.report.sale.custom.tree</field>
+        <field name="model">report.sales.custom</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="Reporte de Ventas">
+                <field name="partner_id"/>
+                <field name='month'/>
+                <field name='sale_team'/>
+                <field name='total'/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_report_sale_custom_pivot" model="ir.ui.view">
+        <field name="name">view.report.sale.custom.pivot</field>
+        <field name="model">report.sales.custom</field>
+        <field name="type">pivot</field>
+        <field name="arch" type="xml">
+            <pivot string="Reporte de Ventas" default_order='partner_id asc'>
+                <field name="partner_id" type="row"/>
+                <field name="sale_team" type="row"/>
+                <field name='month' type="col"/>
+                <field name='total' type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_report_sale_comision_tree" model="ir.ui.view">
+        <field name="name">view.report.sale.comision.tree</field>
+        <field name="model">report.sales.comision</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="Reporte de Comision">
+                <field name="name"/>
+                <field name="user_id"/>
+                <field name='sale_team'/>
+                <field name='date'/>
+                <field name="partner_id"/>
+                <field name='total'/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_report_sale_comision_pivot" model="ir.ui.view">
+        <field name="name">view.report.sale.comision.pivot</field>
+        <field name="model">report.sales.comision</field>
+        <field name="type">pivot</field>
+        <field name="arch" type="xml">
+            <pivot string="Reporte de Ventas" default_order='partner_id asc'>
+                <field name="sale_team" type="row"/>
+                <field name="user_id" type="row"/>
+<!--                <field name="partner_id" type="row"/>-->
+                <field name="name" type="row"/>
+                <field name="date" type="col"/>
+                <field name='total' type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_report_sale_custom_search" model="ir.ui.view">
+        <field name="name">view.report.sale.custom.search</field>
+        <field name="model">report.sales.custom</field>
+        <field name="type">search</field>
+        <field name="arch" type="xml">
+        <search string="Busqueda de Reporte Clientes">
+            <field name="partner_id"/>
+            <field name="sale_team"/>
+            <field name="month"/>
+            <group expand="0" string="Group By" colspan="4" col="4">
+                <filter string="Cliente" name="client" domain="[]" context="{'group_by':'partner_id'}"/>
+                <filter string="Mes" name="date_month" domain="[]" context="{'group_by':'month'}"/>
+                <filter string="Equipo de Ventas" name="sale_t" domain="[]" context="{'group_by':'sale_team'}"/>
+            </group>
+        </search>
+        </field>
+    </record>
+
+    <record id="view_report_sale_comision_search" model="ir.ui.view">
+        <field name="name">view.report.sale.comision.search</field>
+        <field name="model">report.sales.comision</field>
+        <field name="type">search</field>
+        <field name="arch" type="xml">
+        <search string="Busqueda de Reporte Comisión">
+            <field name="name"/>
+            <field name="partner_id"/>
+            <field name="user_id"/>
+            <field name="sale_team"/>
+            <group expand="0" string="Group By" colspan="4" col="4">
+                <filter string="Vendedor" name="client" domain="[]" context="{'group_by':'user_id'}"/>
+                <filter string="Cliente" name="client" domain="[]" context="{'group_by':'partner_id'}"/>
+                <filter string="Mes" name="date_month" domain="[]" context="{'group_by':'date:month'}"/>
+                <filter string="Equipo de Ventas" name="sale_t" domain="[]" context="{'group_by':'sale_team'}"/>
+            </group>
+        </search>
+        </field>
+    </record>
+
+    <record id="act_menu_report_sale_view" model="ir.actions.act_window">
+        <field name="name">Reporte de Ventas</field>
+        <field name="res_model">wizard.report.sales.custom</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="sales_customs.wizard_report_sale_custom_view"/>
+        <field name="target">new</field>
+    </record>
+
+    <record id="act_menu_report_comision_view" model="ir.actions.act_window">
+        <field name="name">Reporte de Comisiones</field>
+        <field name="res_model">wizard.report.sales.comision</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="sales_customs.wizard_report_sale_comision_view"/>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_report_sale_custom_view" parent="sale.menu_sale_report" name="Reporte de Ventas por Cliente" sequence="1000"
+              action="act_menu_report_sale_view" groups="sales_team.group_sale_manager"/>
+
+    <menuitem id="menu_report_pos_custom_view" parent="point_of_sale.menu_point_rep" name="Reporte de Ventas por Cliente" sequence="30"
+              action="act_menu_report_sale_view" groups="sales_team.group_sale_manager"/>
+
+    <menuitem id="menu_report_comision_view" parent="sale.menu_sale_report" name="Reporte de Comisiones" sequence="10001"
+              action="act_menu_report_comision_view" groups="sales_team.group_sale_manager"/>
+
+    </data>
+</odoo>

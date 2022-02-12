@@ -399,38 +399,3 @@ class StockQuantRotation(models.TransientModel):
     out_qty = fields.Float("Salida")
     rotation_perc = fields.Float("% Rotación")
     total_qty = fields.Float("Total Disponible")
-
-    # def search_records(self):
-    #     stock_quant = self.location_id.quant_ids
-    #     stock_lines = self.env['stock.move.line'].search(['&', ('date', '>', self.date_start), ('date', '<', self.date_end),
-    #                                                       '|', ('location_id', '=', self.location_id.id),('location_dest_id', '=', self.location_id.id)
-    #                                                       ])
-    #     _log.info(stock_lines)
-    #     # _log.info(stock_quant)
-    #     lista= []
-    #     for product in stock_lines.mapped('product_id'):
-    #         lineas = stock_lines.filtered(lambda x: x.product_id == product)
-    #         lineas_in = lineas.filtered(lambda x: x.location_id == self.location_id)
-    #         qty_in = sum(lineas_in.mapped('qty_done'))
-    #         lineas_out = lineas.filtered(lambda x: x.location_dest_id == self.location_id)
-    #         qty_out = sum(lineas_out.mapped('qty_done'))
-    #         quant_product = stock_quant.filtered(lambda x: x.product_id == product)
-    #         act_qty = sum(quant_product.mapped('quantity'))
-    #         qty_prev = act_qty+qty_out-qty_in
-    #         qty_prev_plus_entry = qty_prev+qty_in
-    #         lista.append({
-    #             'code': product.default_code,
-    #             'desc': product.name,
-    #             'act_qty': qty_prev,
-    #             'in_qty': qty_in,
-    #             'total_in_qty': qty_prev_plus_entry,
-    #             'out_qty': qty_out,
-    #             'rotation_perc': qty_out/qty_prev_plus_entry if qty_prev_plus_entry else 0.0,
-    #             'total_qty': act_qty,
-    #         })
-    #     _log.info(lista)
-    #     recs = self.env['stock.quant.rotation'].create(lista[:2])
-
-
-
-
