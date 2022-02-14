@@ -4,6 +4,7 @@ from odoo import api, models, fields, _
 import datetime
 import calendar
 import logging
+from odoo.exceptions import UserError
 
 _log = logging.getLogger("stock_picking (%s) -------> " % __name__)
 
@@ -35,8 +36,18 @@ class StockPickingCustom(models.Model):
             record.seller = None
             record.team_sale = None
 
-    is_transfer = fields.Boolean("Es Transferencia entre Sucursales")
+    def confirmTransfer(self):
+        active_id = self.env.context.get('active_id')
+        sucursales = self.env['stock.picking.type'].search([('id','=',active_id)])
+        return sucursales._es_transferencia
+
+    is_transfer = fields.Boolean("Es Transferencia entre Sucursales",default=confirmTransfer)
     location_transfer_id = fields.Many2one('stock.location', string="Ubicación de destino")
+
+    @api.constrains('location_id','location_dest_id')
+    def nombresDiferentes(self):
+        if self.location_id == self.location_dest_id:
+            raise UserError(_("El lugar de destino no debe ser igual al de origen"))
 
     @api.onchange('location_transfer_id')
     def _change_location_dest(self):
@@ -53,3 +64,8 @@ class StockLocationCustom(models.Model):
 
     virtual_location = fields.Many2one('stock.location', string="Ubicación Virtual")
 
+
+class StockPickingOperationTypes(models.Model):
+    _inherit="stock.picking.type"
+
+    _es_transferencia = fields.Boolean("Es transferencia entre sucursales ")
