@@ -3,3 +3,5 @@ accces_wizard_download_data,accces.wizard.download.data,model_wizard_download_da
 accces_wizard_warning,accces.wizard.warning,model_wizard_warning,base.group_user,1,1,1,1
 accces_wizard_report_rotation,accces.wizard.report.data,model_wizard_report_rotation,stock.group_stock_manager,1,1,1,1
 accces_stock_quant_rotation,accces.stock.quant.rotation,model_stock_quant_rotation,stock.group_stock_manager,1,1,1,1
+access_product_aplicacion,access.product.aplicacion,model_product_aplicacion,,1,1,1,1
+access_product_marca,access.product.marca,model_product_marca,,1,1,1,1

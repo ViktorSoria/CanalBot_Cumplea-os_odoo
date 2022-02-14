@@ -331,4 +331,16 @@
             </tr>
         </xpath>
     </template>
+
+    <!-- Detalles del contacto -->
+    <template id="portal_layout" inherit_id="portal.portal_layout">
+        <xpath expr="//div[@class='o_portal_my_details']" position="after">
+            <t t-if="user_id.acomula_puntos">
+                <div class="user_points">
+                    <strong>Puntos acumulados: </strong>
+                    <span t-esc="user_id.puntos"/>
+                </div>
+            </t>
+        </xpath>
+    </template>
 </odoo>
