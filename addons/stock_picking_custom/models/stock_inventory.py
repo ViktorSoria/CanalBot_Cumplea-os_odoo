@@ -316,17 +316,88 @@ class ReportRotationWizard(models.TransientModel):
     _name = "wizard.report.rotation"
 
     location_id = fields.Many2one('stock.location', string='Ubicación')
+    date_start = fields.Datetime(string='Hasta')
+    # all_locations = fields.Boolean(string='Todas Las ubicaciones')
+    # date_end = fields.Datetime(string='Fecha Final')
 
     def search_records(self):
+        query = """select m.product_id, l.id, sum(case when m.location_dest_id = l.id then m.qty_done else 0 end)
+                    - sum(case when m.location_id = l.id then m.qty_done else 0 end) cantidad from stock_move_line as m 
+                    inner join stock_location as l on l.id = m.location_id or l.id = m.location_dest_id 
+                    inner join product_product as p on m.product_id = p.id
+                    where p.active='True' and {} group by m.product_id,l.id"""
+        location_id = "(%d)"%self.location_id.id
+        date = str(self.date_start)
+        where = "m.state = 'done' and m.date <= '{}' and l.id in {}".format(date, location_id)
+        query = query.format(where)
+        self.env.cr.execute(query)
+        productos_ant = self.env.cr.fetchall()
+        query2 = """select m.product_id, l.id, sum(case when m.location_dest_id = l.id then m.qty_done else 0 end) entradas,
+                    sum(case when m.location_id = l.id then m.qty_done else 0 end) salidas from stock_move_line as m 
+                    inner join stock_location as l on l.id = m.location_id or l.id = m.location_dest_id 
+                    inner join product_product as p on m.product_id = p.id
+                    where p.active='True' and {} group by m.product_id,l.id"""
+        date_now = str(fields.Datetime.now())
+        where = "m.state = 'done' and m.date > '{}' and m.date <= '{}' and l.id in {}".format(date, date_now, location_id)
+        query2 = query2.format(where)
+        self.env.cr.execute(query2)
+        productos_act = self.env.cr.fetchall()
+        lineas = {}
+        for p in productos_ant:
+            lineas[str(p[0])] = {
+                "product_id": p[0],
+                "location_id": p[1],
+                "act_qty": p[2],
+                "in_qty": 0.0,
+                "total_in_qty": p[2],
+                "out_qty": 0.0,
+                "rotation_perc": 0.0,
+                "total_qty": p[2],
+            }
+        for p in productos_act:
+            if str(p[0]) in lineas:
+                lineas[str(p[0])].update({
+                    "in_qty": p[2],
+                    "total_in_qty": lineas[str(p[0])]['act_qty'] + p[2],
+                    "out_qty": p[3],
+                    "rotation_perc": p[3] / (lineas[str(p[0])]['act_qty'] + p[2]) * 100 if (lineas[str(p[0])]['act_qty'] + p[2]) != 0.0 else 0.0,
+                    "total_qty": lineas[str(p[0])]['act_qty'] + p[2] - p[3],
+                })
+            else:
+                lineas[str(p[0])] = {
+                    "product_id": p[0],
+                    "location_id": p[1],
+                    "act_qty": 0.0,
+                    "in_qty": p[2],
+                    "total_in_qty": p[2],
+                    "out_qty": p[3],
+                    "rotation_perc": (p[3] / p[2]) * 100 if p[2] != 0.0 else 0.0,
+                    "total_qty": p[2] - p[3],
+                }
+        recs = self.env['stock.quant.rotation'].create(lineas.values())
         return {
             'name': _('Reporte de Existencias (Rotación)'),
             'type': 'ir.actions.act_window',
             'view_type': 'list',
             'view_mode': 'list',
-            'res_model': 'stock.quant',
+            'res_model': 'stock.quant.rotation',
             'views': [(self.env.ref('stock_picking_custom.view_report_rotation_tree').id, 'list')],
-            'domain': [('location_id', 'in', self.location_id.ids)]
+            'domain': [('id', 'in', recs.ids)],
         }
+
+class StockQuantRotation(models.TransientModel):
+    _name = "stock.quant.rotation"
+
+    code = fields.Char("Codigo", related="product_id.default_code")
+    desc = fields.Char("Descripción", related="product_id.name")
+    product_id = fields.Many2one('product.product','Producto')
+    location_id = fields.Many2one('stock.location','Ubicación')
+    act_qty = fields.Float("Existencia")
+    in_qty = fields.Float("Entrada")
+    total_in_qty = fields.Float("Total Existencia mas entrada")
+    out_qty = fields.Float("Salida")
+    rotation_perc = fields.Float("% Rotación")
+    total_qty = fields.Float("Total Disponible")
 
 
 class StockInventoryProductMenus(models.Model):
@@ -372,3 +443,4 @@ class StockInventoryTransferReport(models.Model):
 
     transfer_origin=fields.Char(string="Origen de transferencia entre sucursales", compute=getOriginTransferReport)
     transfer_destiny=fields.Char(string="Destino de transferencia entre sucursales", compute=getDestinyTransferReport)
+

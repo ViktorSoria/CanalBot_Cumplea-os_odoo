@@ -7,9 +7,17 @@
             <field name="arch" type="xml">
                 <form string="Reporte de Rotacion">
                     <group>
+                    <group>
                         <field name="location_id" required="True"
                                options="{'no_create': True, 'no_create_edit':True, 'no_quick_create': True, 'no_open': True}"
                                domain="[('usage', '=', 'internal')]"/>
+<!--                               attrs="{'required':[('all_locations', '=', False)], 'invisible':[('all_locations', '=', True)]}"/>-->
+<!--                        <field name="all_locations"/>-->
+                    </group>
+                    <group>
+                        <field name="date_start" required="True"/>
+<!--                        <field name="date_end" required="True"/>-->
+                    </group>
                     </group>
                     <footer>
                         <button name="search_records" type="object" string="Aceptar" class="oe_highlight"/>
@@ -21,14 +29,19 @@
 
         <record id="view_report_rotation_tree" model="ir.ui.view">
         <field name="name">view.report.rotation.tree</field>
-        <field name="model">stock.quant</field>
+        <field name="model">stock.quant.rotation</field>
         <field name="type">tree</field>
         <field name="arch" type="xml">
-            <tree string="Existencias">
-                <field name='product_id'/>
-                <field name='available_quantity'/>
-                <field name='quantity'/>
-                <field name='product_uom_id'/>
+            <tree string="Existencias Rotación" default_order='rotation_perc asc'>
+                <field name='code'/>
+                <field name='desc'/>
+<!--                <field name='product_id'/>-->
+                <field name='act_qty'/>
+                <field name='in_qty'/>
+                <field name='total_in_qty'/>
+                <field name='out_qty'/>
+                <field name='rotation_perc'/>
+                <field name='total_qty'/>
             </tree>
         </field>
     </record>
