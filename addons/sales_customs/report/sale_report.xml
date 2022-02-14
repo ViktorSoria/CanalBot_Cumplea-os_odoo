@@ -136,7 +136,7 @@
             <group expand="0" string="Group By" colspan="4" col="4">
                 <filter string="Vendedor" name="client" domain="[]" context="{'group_by':'user_id'}"/>
                 <filter string="Cliente" name="client" domain="[]" context="{'group_by':'partner_id'}"/>
-                <filter string="Mes" name="date_month" domain="[]" context="{'group_by':'date:month'}"/>
+                <filter string="Fecha" name="date_month" domain="[]" context="{'group_by':'date'}"/>
                 <filter string="Equipo de Ventas" name="sale_t" domain="[]" context="{'group_by':'sale_team'}"/>
             </group>
         </search>
