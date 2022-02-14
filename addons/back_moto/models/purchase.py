@@ -8,6 +8,8 @@ import csv
 from lxml import etree
 from io import StringIO
 import base64
+from dateutil.relativedelta import relativedelta
+from odoo.tools.float_utils import float_round
 import logging
 
 _logger = logging.getLogger("Moto Control")
@@ -194,3 +196,33 @@ class wiardMessage(models.TransientModel):
         return self.env.context.get("message",False)
 
     name = fields.Text(string="Message",readonly=True,default=get_default)
+
+
+class Product(models.Model):
+    _inherit = "product.product"
+
+    price_avg = fields.Float("Costo promedio",compute="_compute_purchased_product_avg",digits='Product Price')
+
+    def _compute_purchased_product_avg(self):
+        # date_from = fields.Datetime.to_string(fields.Date.context_today(self) - relativedelta(years=1))
+        query = """select l.product_id, sum(l.price_unit * l.product_uom_qty) / sum(l.product_uom_qty) as avg
+            from purchase_order_line as l inner join purchase_order as p on l.order_id=p.id where l.product_id in %s and
+            p.state in ('purchase','done') group by product_id;"""
+        self.env.cr.execute(query,[tuple(self.ids)])
+        costos = dict(self._cr.fetchall())
+        _logger.warning(costos)
+        for product in self:
+            if not product.id:
+                product.price_avg = 0.0
+                continue
+            product.price_avg = costos.get(product.id,0)
+
+
+class ProductTemplate(models.Model):
+    _inherit = "product.template"
+
+    price_avg = fields.Float("Costo promedio",compute="_compute_purchased_product_avg",digits='Product Price')
+
+    def _compute_purchased_product_avg(self):
+        for template in self:
+            template.price_avg = sum([p.price_avg for p in template.product_variant_ids])

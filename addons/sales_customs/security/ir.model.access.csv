@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_wizard_report_sale_custom,access.wizard.report.sales.custom,model_wizard_report_sales_custom,sales_team.group_sale_manager,1,1,1,1
+access_wizard_report_sale_comision,access.wizard.report.sales.comision,model_wizard_report_sales_comision,sales_team.group_sale_manager,1,1,1,1
+access_report_sales_custom,access.report.sales.custom,model_report_sales_custom,sales_team.group_sale_manager,1,1,1,1
+access_report_sales_comision,access.report.sales.comision,model_report_sales_comision,sales_team.group_sale_manager,1,1,1,1
