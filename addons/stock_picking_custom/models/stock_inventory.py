@@ -385,7 +385,6 @@ class ReportRotationWizard(models.TransientModel):
             'domain': [('id', 'in', recs.ids)],
         }
 
-
 class StockQuantRotation(models.TransientModel):
     _name = "stock.quant.rotation"
 
@@ -399,3 +398,47 @@ class StockQuantRotation(models.TransientModel):
     out_qty = fields.Float("Salida")
     rotation_perc = fields.Float("% Rotación")
     total_qty = fields.Float("Total Disponible")
+
+
+class StockInventoryProductMenus(models.Model):
+    _inherit="product.template"
+
+    product_template_marca=fields.Many2one('product.marca',string="Marca")
+    product_template_aplicacion=fields.Many2one('product.aplicacion', string="Aplicación")
+
+
+class StockInventoryAplicacion(models.Model):
+    _name="product.aplicacion"
+
+    sequence=fields.Integer(default=1)
+    name=fields.Char(string="Aplicación")
+
+
+class StockInventoryMarca(models.Model):
+    _name="product.marca"
+
+    sequence=fields.Integer(default=1)
+    name=fields.Char(string="Marca")
+
+
+class StockInventoryTransferReport(models.Model):
+    _inherit="stock.picking"
+
+    def getOriginTransferReport(self):
+        if self.is_transfer:
+            self.transfer_origin=self.location_id.complete_name
+        else:
+            orig=self.search([('name','=',self.origin)],limit=1)
+            self.transfer_origin=orig.location_id.complete_name
+        return True
+
+    def getDestinyTransferReport(self):
+        if self.is_transfer:
+            self.transfer_destiny=self.location_transfer_id.complete_name
+        else:
+            self.transfer_destiny=self.location_dest_id.complete_name
+        return True
+
+    transfer_origin=fields.Char(string="Origen de transferencia entre sucursales", compute=getOriginTransferReport)
+    transfer_destiny=fields.Char(string="Destino de transferencia entre sucursales", compute=getDestinyTransferReport)
+

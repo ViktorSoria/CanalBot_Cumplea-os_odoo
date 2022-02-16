@@ -20,6 +20,20 @@
     text-overflow: ellipsis;
 }
 
+.text-truncate2 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    @supports (-webkit-line-clamp: 3) {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: initial;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+}
+
 @mixin multiLineEllipsis($lineHeight: 1.2em, $lineCount: 1, $bgColor: white){
   overflow: hidden;
   line-height: $lineHeight;
