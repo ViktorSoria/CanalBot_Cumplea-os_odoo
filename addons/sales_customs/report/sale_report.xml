@@ -66,8 +66,8 @@
         <field name="arch" type="xml">
             <pivot string="Reporte de Ventas" default_order='partner_id asc'>
                 <field name="partner_id" type="row"/>
-                <field name="sale_team" type="row"/>
                 <field name='month' type="col"/>
+                <field name="sale_team" type="col"/>
                 <field name='total' type="measure"/>
             </pivot>
         </field>

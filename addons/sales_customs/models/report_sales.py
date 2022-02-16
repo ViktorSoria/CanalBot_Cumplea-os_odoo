@@ -64,7 +64,7 @@ class ReportSalesCustomWizard(models.TransientModel):
             'res_model': 'report.sales.custom',
             'views': [(self.env.ref('sales_customs.view_report_sale_custom_pivot').id, 'pivot'), (self.env.ref('sales_customs.view_report_sale_custom_tree').id, 'list')],
             'search_view_id': self.env.ref('sales_customs.view_report_sale_custom_search').id,
-            'context': {'search_default_client': 1, 'search_default_sale_t': 2},
+            # 'context': {'search_default_client': 1, 'search_default_sale_t': 2},
             'domain': [('id', 'in', recs.ids)]
         }
 
@@ -140,3 +140,16 @@ class ReportSalesCustomLine(models.TransientModel):
     total = fields.Float('Total')
     sale_team = fields.Many2one('crm.team','Equipo de Ventas')
     month = fields.Selection(months, 'Mes')
+
+
+# class AccountMovePaymentDate(models.Model):
+#     _name = "account.move"
+#
+#     payment_date = fields.Datetime('Fecha de Pago')
+#
+#     @api.depends('payment_state')
+#     def _change_payment_date(self):
+#         if self.payment_state == 'paid':
+#             self.payment_date = datetime.now()
+#
+#
