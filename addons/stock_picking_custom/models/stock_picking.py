@@ -45,8 +45,8 @@ class StockPickingCustom(models.Model):
     location_transfer_id = fields.Many2one('stock.location', string="Ubicación de destino")
 
     @api.constrains('location_id','location_dest_id')
-    def nombresDiferentes(self):
-        if self.location_id == self.location_dest_id:
+    def _check_different_origin_destiny(self):
+        if self.location_id.id==self.location_dest_id.id or self.location_id.id==self.location_transfer_id.id:
             raise UserError(_("El lugar de destino no debe ser igual al de origen"))
 
     @api.onchange('location_transfer_id')
