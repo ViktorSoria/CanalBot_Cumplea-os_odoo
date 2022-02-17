@@ -11,9 +11,9 @@
                         <field name="date_start" required="True"/>
                         <field name="date_end" required="True"/>
                     </group>
-                    <group>
-                        <field name="options" required="True"/>
-                    </group>
+<!--                    <group>-->
+<!--                        <field name="options" required="True"/>-->
+<!--                    </group>-->
                     </group>
                     <footer>
                         <button name="search_records" type="object" string="Aceptar" class="oe_highlight"/>
@@ -33,9 +33,9 @@
                         <field name="date_start" required="True"/>
                         <field name="date_end" required="True"/>
                     </group>
-                    <group>
-                        <field name="options" required="True"/>
-                    </group>
+<!--                    <group>-->
+<!--                        <field name="options" required="True"/>-->
+<!--                    </group>-->
                     </group>
                     <footer>
                         <button name="search_records" type="object" string="Aceptar" class="oe_highlight"/>

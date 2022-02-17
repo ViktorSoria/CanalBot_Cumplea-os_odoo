@@ -1,6 +1,7 @@
 from odoo import api, models, fields, _
 from odoo.exceptions import UserError
 from datetime import datetime
+from odoo.tools import float_is_zero
 import logging
 
 _log = logging.getLogger("sale_customs (%s) -------> " % __name__)
@@ -81,7 +82,7 @@ class ReportSalesComisionWizard(models.TransientModel):
     def search_records(self):
         dic = {}
         if self.options == 'all' or self.options == 'sale':
-            invoices = self.env['account.move'].sudo().search([('invoice_date', '>=', self.date_start), ('invoice_date', '<=', self.date_end),  ('state', '=', 'posted'), ('move_type', 'in', ['out_invoice', 'in_refund'])])
+            invoices = self.env['account.move'].sudo().search([('invoice_date', '>=', self.date_start), ('invoice_date', '<=', self.date_end),  ('state', '=', 'posted'), ('move_type', 'in', ['out_invoice', 'in_refund']),('payment_date', '!=', None)])
             for invoice in invoices:
                 key = str(invoice.id) + 'account_move'
                 dic[key] = {
@@ -89,7 +90,7 @@ class ReportSalesComisionWizard(models.TransientModel):
                     'partner_id': invoice.partner_id.id,
                     'user_id': invoice.invoice_user_id.id,
                     'total': invoice.amount_total,
-                    'date': invoice.invoice_date,
+                    'date': invoice.payment_date,
                     'sale_team': invoice.team_id.id
                 }
         if self.options == 'all' or self.options == 'pos':
@@ -142,14 +143,23 @@ class ReportSalesCustomLine(models.TransientModel):
     month = fields.Selection(months, 'Mes')
 
 
-# class AccountMovePaymentDate(models.Model):
-#     _name = "account.move"
-#
-#     payment_date = fields.Datetime('Fecha de Pago')
-#
-#     @api.depends('payment_state')
-#     def _change_payment_date(self):
-#         if self.payment_state == 'paid':
-#             self.payment_date = datetime.now()
-#
-#
+class AccountMovePaymentDate(models.Model):
+    _inherit = "account.move"
+
+    payment_date = fields.Date('Fecha de Pago')
+
+    @api.depends('amount_residual')
+    def get_last_date_payment(self):
+        for rec in self:
+            if float_is_zero(rec.amount_residual, precision_digits=rec.currency_id.decimal_places):
+                payments = rec.sudo()._get_reconciled_info_JSON_values()
+                dates = []
+                for payment in payments:
+                    dates.append(payment['date'])
+                date_max = max(dates) if len(dates) > 0 else None
+                rec.payment_date = date_max
+            else:
+                rec.payment_date = None
+
+
+

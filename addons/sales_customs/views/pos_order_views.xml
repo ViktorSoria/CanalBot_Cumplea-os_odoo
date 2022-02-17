@@ -56,6 +56,7 @@
             </xpath>
             <xpath expr="//field[@name='team_id']" position="after">
                 <field name="pricelist_id" readonly="True"/>
+                <field name="payment_date" readonly="True"/>
             </xpath>
         </field>
     </record>
