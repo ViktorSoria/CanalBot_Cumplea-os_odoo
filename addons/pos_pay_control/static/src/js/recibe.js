@@ -15,6 +15,10 @@ odoo.define("pos_pay_control.ResOrder", function (require) {
             const self = this;
             async function loop() {
                 if (self.env && self.env.pos && self.env.pos.pos_session) {
+                    if(!self.env.pos.config.es_caja){
+                        console.log("no es caja, no recibir");
+                        return
+                    }
                     try {
                         self.ReceiveOrders();
                     } catch (error) {

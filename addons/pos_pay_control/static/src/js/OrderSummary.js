@@ -9,6 +9,10 @@ odoo.define('pos_pay_control.OrderSummary', function (require) {
             let puntos = this.env.pos.get_order().get_total_with_tax()*0.04; 
             return this.env.pos.format_currency_no_symbol(puntos);
         }
+        get usa_puntos() {
+            let cliente = this.env.pos.get_order().get_client();
+            return cliente && cliente.acomula_puntos;
+        }
     }
 
 

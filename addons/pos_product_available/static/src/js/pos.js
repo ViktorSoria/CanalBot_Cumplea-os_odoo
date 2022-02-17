@@ -68,7 +68,7 @@ odoo.define("pos_product_available.PosModel", function (require) {
             useListener('onClick', this.existencias_completo);
         }
         async existencias_completo(){
-            console.log("fue existencias",Date());
+            console.log("Trae existencias",Date());
             let location = this.env.pos.config.default_location_src_id[0];
             let products;
              products = await this.rpc({
@@ -88,9 +88,9 @@ odoo.define("pos_product_available.PosModel", function (require) {
                     p.qty_available = item.available_quantity;
                 }
             });
-            console.log("Termino existencias",Date());
             this.showScreen('PaymentScreen');
             this.showScreen('ProductScreen');
+            console.log("regreso existencias",Date());
         }
     }
 
@@ -106,46 +106,43 @@ odoo.define("pos_product_available.PosModel", function (require) {
             }
             inicial() {
                 const self = this;
-                async function loop(limit,offset) {
-                    if(limit===0){
-                        setTimeout(()=>{loop(1000,0);}, 60000);
-                    }else{
-                        let newof = offset;
-                        let tam = _.size(self.env.pos.db.product_by_id);
-                        let tiempo = 30000;
-                        if(newof>tam){newof=0;}
+                async function loop(tiempo) {
+                    if(tiempo===0){
+                        setTimeout(()=>{loop(100000);}, 100000);
+                    }
+                    else{
                         try {
-                            await self.recompute_quantity(limit,newof);
-                            newof += 1000;
+                            await self.existencias_completo();
                         } catch (error) {
                             console.log(error);
-                            tiempo = 60000;
                         }
-                        setTimeout(()=>{loop(1000,newof);}, tiempo);
+                        setTimeout(()=>{loop(tiempo);}, tiempo);
                     }
                 }
-                loop(0,0);
+                loop(0);
             }
-            async recompute_quantity(limit,offset){
+            async existencias_completo(){
                 let location = this.env.pos.config.default_location_src_id[0];
-                let products = await this.rpc({
-                    model: 'product.product',
+                let products;
+                 products = await this.rpc({
+                    model: 'stock.quant',
                     method: 'search_read',
-                    fields: ["qty_available"],
-                    context: {location:location},
-                    domain:[['type','=','product'],['available_in_pos','=',true]],
-                    limit: limit,
-                    offset: offset,
-                    orderBy: _.map(['id'], function (name) { return {name: name}; }),
-                });
+                    fields: ["product_id","available_quantity"],
+                    domain:[['location_id','=',location]],
+                 });
                 let p;
+                let list = this.env.pos.db.product_by_id;
+                for(const prod in list){
+                    list[prod].qty_available = 0;
+                }
                 products.forEach(item => {
-                    p = this.env.pos.db.product_by_id[item.id];
+                    p = this.env.pos.db.product_by_id[item.product_id[0]];
                     if(p){
-                        p.qty_available = item.qty_available;
+                        p.qty_available = item.available_quantity;
                     }
                 });
-                this.render();
+                this.showScreen('PaymentScreen');
+                this.showScreen('ProductScreen');
             }
 
         }

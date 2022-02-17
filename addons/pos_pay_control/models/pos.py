@@ -88,6 +88,7 @@ class Posconfig(models.Model):
     producto_cargo = fields.Many2one('product.product',"Producto Cargo")
     datos_ubicacion = fields.Char("Datos ubicacion",compute="get_datos")
     default_client = fields.Many2one("res.partner", string="Cliente por default")
+    es_caja = fields.Boolean("Es caja")
 
     def get_datos(self):
         for rec in self:
