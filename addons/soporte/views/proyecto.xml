@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?> 
+
+<!--Modificacion de la vista de formulario de los proyectos-->
+<odoo> 
+
+	<!--Modificacion de la vista de lista de las tareas -->
+	<record id="view_task_tree2_inherit" model="ir.ui.view">
+		<field name="name">project.task.inherited2</field>
+		<field name="model">project.task</field>				<!-- especificacion del modulo del que vamos a heredar (MODEL)-->
+		<field name="inherit_id" ref="project.view_task_tree2"/>
+		<field name="arch" type="xml">
+			<xpath expr="//field[@name='project_id']" position="attributes">
+				<attribute name="string">Area</attribute>
+			</xpath>
+		</field>
+	</record>	
+
+	<record id="view_task_form2_inherit" model="ir.ui.view">
+		<field name="name">project.task.inherited</field>
+		<field name="model">project.task</field>				<!-- especificacion del modulo del que vamos a heredar (MODEL)-->
+		<field name="inherit_id" ref="project.view_task_form2"/>
+		<field name="arch" type="xml">
+
+
+			<!-- Indica quien creo el nuevo registro-->
+			<xpath expr="//field[@name='project_id']" position="after">
+				<field name="create_uid"/>	
+				<field name="user_areas" invisible="True"/>			
+			</xpath>
+
+			<xpath expr="//field[@name='user_id']" position="replace">		
+			</xpath>
+
+			<xpath expr="//field[@name='project_id']" position="before">
+				<field name="user_id"/>		
+			</xpath>
+
+			<xpath expr="//field[@name='user_id']" position="attributes">
+				<attribute name="domain">[('soporte','=',True)]</attribute>
+				<attribute name="required">True</attribute>
+				<attribute name="default">False</attribute> <!--No funciona el default -->
+			</xpath>
+
+			<!-- Establece el dominio del project_id -->
+			<xpath expr="//field[@name='project_id']" position="attributes">
+				<attribute name="string">Area</attribute>
+				<attribute name="domain">[('id','in',user_areas)]</attribute>
+				<!-- Areas seleccionables del usuario-->
+			</xpath>
+
+
+			<!-- Oculto el campo del cliente-->
+			<xpath expr="//field[@name='partner_id']" position="attributes"> 
+     			<attribute name="invisible">True</attribute>
+			</xpath> 
+		</field>
+	</record>	
+
+
+	<!-- Heredo la accion correspondiente a la vista del menu "Tickets" y cambio su dominio -->
+	<record id="project.action_view_all_task" model="ir.actions.act_window">
+		<!-- <field name="domain">[('project_id','=',"Almacen")]</field> -->
+		<!-- muestra los tickets creados por el usuario o asignados al usuario, en caso de ser el administrador, entonces muestra todos los tickets-->
+		<field name="domain">['|','|',('create_uid','=',uid), ('user_id','=',uid), ('id','=',1)]</field>
+	</record>	
+
+	
+	<!-- Al hacer clic en algun area, solo se mostraran los tickets asignados o creados por el usuario, a menos de que sea el administrador, en dado caso se muestran todos los tickets-->
+	<record id="project.act_project_project_2_project_task_all" model="ir.actions.act_window">
+		<field name="domain">['&amp;',('project_id', '=', active_id),'|',('create_uid','=',uid),'|',('user_id','=',uid), ('id','=',1)]</field>
+	</record>	
+
+	<!-- ************************** -->
+	<!-- Hace que noupdate=False-->
+	<function name="write" model="ir.model.data">
+	    <function name="search" model="ir.model.data">
+	        <value eval="[('module', '=', 'project'), ('name', '=', 'project_public_members_rule')]"/>
+	    </function>
+	    <value eval="{'noupdate': False}"/>
+	</function>
+
+	<!-- Modifica el dominio de la regla Project: Only invited users -->
+	<record model="ir.rule" id="project.project_public_members_rule">
+		<field name="domain_force">[('id','in',user.User_Areas_ids.ids),
+        '|',
+            ('privacy_visibility', '!=', 'followers'),
+            ('allowed_internal_user_ids', 'in', user.ids),
+        ]</field>
+	</record>
+	
+	
+
+	<!-- Hace que noupdate=True-->
+	<function name="write" model="ir.model.data">
+	    <function name="search" model="ir.model.data">
+	        <value eval="[('module', '=', 'project'), ('name', '=', 'project_public_members_rule')]"/>
+	    </function>
+	    <value eval="{'noupdate': True}"/>
+	</function>
+
+	<!-- ************************** -->
+
+
+	<!-- Esta vista no fuciona porque no hay ningun campo 'user_id' en la vista kanban-->
+	<record id="view_task_kanban_inherit" model="ir.ui.view">
+		<field name="name">project.task.inherited3</field>
+		<field name="model">project.project</field>
+		<field name="inherit_id" ref="project.view_project_kanban"/>
+		<field name="arch" type="xml">
+			<!-- Quita el boton de + en la vista kanban-->
+			<!--<kanban position="attributes">-->	
+                <!--<attribute name="quick_create">false</attribute>-->
+            <!--</kanban> --> 
+
+            <xpath expr="//field[@name='partner_id']" position="after"> 
+				<attribute name="user_areas" invisible="False"/>
+			</xpath>
+
+		</field>
+	</record >	
+
+
+
+	<!-- Heredo la accion correspondiente a la vista del menu "Soporte" y cambio su dominio -->
+	<record id="project.open_view_project_all" model="ir.actions.act_window">
+		<!-- muestra los tickets creados por el usuario ó asignados al usuario-->
+		<!-- <field name="domain">[('id','in',user.user_areas.ids)]</field> -->
+	</record>
+
+
+	<!-- Modifica el dominio del campo many2one del quick_create (al presionar el boton +)-->
+	<record id="quick_create_task_form_inherit" model="ir.ui.view">
+		<field name="name">project.task.inherited4</field>
+		<field name="model">project.task</field>
+		<field name="inherit_id" ref="project.quick_create_task_form"/>
+		<field name="arch" type="xml">
+			<xpath expr="//field[@name='user_id']" position="attributes">
+				<attribute name="domain">[('soporte','=',True)]</attribute>
+				<attribute name="invisible">True</attribute>
+			</xpath>
+		</field>
+	</record>	
+	<!-- Reemplazar por este dominio (como identificar 'area_actual') u ocultar el campo: [('area_actual','in','user_areas')]-->
+
+	<record id="task_type_edit_inherit" model="ir.ui.view">
+		<field name="name">project.task.type.inherited5</field>
+		<field name="model">project.task.type</field>
+		<field name="inherit_id" ref="project.task_type_edit"/>
+		<field name="arch" type="xml">
+			<xpath expr="//field[@name='project_ids']" position="attributes">
+				<attribute name="string">Areas</attribute>
+			</xpath>
+		</field>
+	</record>	
+
+
+	<record id="task_type_tree_inherit" model="ir.ui.view">
+		<field name="name">project.task.type.inherited6</field>
+		<field name="model">project.task.type</field>
+		<field name="inherit_id" ref="project.task_type_tree"/>
+		<field name="arch" type="xml">
+			<xpath expr="//field[@name='project_ids']" position="attributes">
+				<attribute name="string">Areas</attribute>
+			</xpath>
+		</field>
+	</record>	
+
+
+	<!-- Añade el campo "soporte" (booleano) dentro de una nueva pagina en los usuarios-->
+	<record id="view_users_form_inherit" model="ir.ui.view">
+		<field name="name">res.users.inherited</field>
+		<field name="model">res.users</field>	
+		<field name="inherit_id" ref="base.view_users_form"/>
+		<field name="arch" type="xml">
+			<xpath expr="//field[@name='partner_id']" position="after"> <!-- No funciono-->
+				<field name="soporte"/>				
+			</xpath>
+			<notebook position="inside"> <!-- Crea un nuevo notebook y añade un campo-->
+				<page string="Soporte" name="soporte">
+					<group>
+						<field name="soporte"/>
+						<field name="User_Areas_ids" widget="many2many_tags"/>
+					</group>
+				</page>
+			</notebook>
+		</field>
+	</record>	
+	
+</odoo>

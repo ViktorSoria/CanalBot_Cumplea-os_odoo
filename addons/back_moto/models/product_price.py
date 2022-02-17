@@ -25,7 +25,9 @@ class ProductTemplate(models.Model):
         for p in self:
             prices = [{'name':"Precio del Producto",'precio':p.list_price,"product_id": p.id}]
             data_p = data[p.id]
+            _logger.info(data_p)
             for tarifa,precio in data_p.items():
+                _logger.info(precio)
                 prices.append({
                     'name': tarifas[tarifa],
                     "precio": precio[0],
@@ -75,6 +77,7 @@ class ProducPrice(models.TransientModel):
     item_id = fields.Many2one("product.pricelist.item","Item")
     list_price_id = fields.Many2one("product.pricelist","Lista")
     product_id = fields.Many2one("product.template")
+    utili_perc = fields.Float("Utilidad (%)")
 
     def change_price(self):
         if self.item_id and self.item_id.product_tmpl_id.id == self.product_id.id:
@@ -178,3 +181,9 @@ class Line(models.Model):
     #         location = ware.lot_stock_id.id
     #         obj = self.with_context(location=location)
     #     super(Line,obj)._compute_qty_at_date()
+
+
+class PriceListItem(models.Model):
+    _inherit="product.pricelist.item"
+
+    utili_perc = fields.Float("Utilidad (%)")

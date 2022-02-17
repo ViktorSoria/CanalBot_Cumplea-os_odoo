@@ -11,9 +11,9 @@
                         <field name="date_start" required="True"/>
                         <field name="date_end" required="True"/>
                     </group>
-                    <group>
-                        <field name="options" required="True"/>
-                    </group>
+<!--                    <group>-->
+<!--                        <field name="options" required="True"/>-->
+<!--                    </group>-->
                     </group>
                     <footer>
                         <button name="search_records" type="object" string="Aceptar" class="oe_highlight"/>
@@ -33,9 +33,9 @@
                         <field name="date_start" required="True"/>
                         <field name="date_end" required="True"/>
                     </group>
-                    <group>
-                        <field name="options" required="True"/>
-                    </group>
+<!--                    <group>-->
+<!--                        <field name="options" required="True"/>-->
+<!--                    </group>-->
                     </group>
                     <footer>
                         <button name="search_records" type="object" string="Aceptar" class="oe_highlight"/>
@@ -66,8 +66,8 @@
         <field name="arch" type="xml">
             <pivot string="Reporte de Ventas" default_order='partner_id asc'>
                 <field name="partner_id" type="row"/>
-                <field name="sale_team" type="row"/>
                 <field name='month' type="col"/>
+                <field name="sale_team" type="col"/>
                 <field name='total' type="measure"/>
             </pivot>
         </field>
