@@ -34,7 +34,8 @@
             <form>
                 <sheet>
                     <div class="oe_title">
-                        <h1><field name="name"/></h1>
+                        <strong>Marca:</strong>
+                        <h3><field name="name"/></h3>
                     </div>
                 </sheet>
             </form>
@@ -48,7 +49,8 @@
             <form>
                 <sheet>
                     <div class="oe_title">
-                        <h1><field name="name"/></h1>
+                        <strong>Aplicación:</strong>
+                        <h3><field name="name"/></h3>
                     </div>
                 </sheet>
             </form>

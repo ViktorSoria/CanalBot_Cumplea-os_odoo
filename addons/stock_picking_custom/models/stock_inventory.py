@@ -434,8 +434,7 @@ class StockInventoryTransferReport(models.Model):
 
     def getDestinyTransferReport(self):
         if self.is_transfer:
-            dest=self.search([('origin','=',self.name)],limit=1)
-            self.transfer_destiny=dest.location_dest_id.complete_name
+            self.transfer_destiny=self.location_transfer_id.complete_name
         else:
             self.transfer_destiny=self.location_dest_id.complete_name
         return True
