@@ -73,24 +73,24 @@
         </field>
     </record>
 
-    <template id="stock_inventory_report_add_origin_destiny" inherit_id="report_picking">
-        <xpath expr="//div[@class='page']/h1[@class='mt0 float-left']" position="after">
-            <br/><br/><br/>
-            <t t-if="o.is_transfer">
-                <span><strong>Origen: </strong></span>
-                <div t-esc="o.location_id.complete_name"/>
-                <span><strong>Destino: </strong></span>
-                <div t-esc="o.location_transfer_id.complete_name"/>
-            </t>
+<!--    <template id="stock_inventory_report_add_origin_destiny" inherit_id="report_picking">-->
+<!--        <xpath expr="//div[@class='page']/h1[@class='mt0 float-left']" position="after">-->
+<!--            <br/><br/><br/>-->
+<!--            <t t-if="o.is_transfer">-->
+<!--                <span><strong>Origen: </strong></span>-->
+<!--                <div t-esc="o.location_id.complete_name"/>-->
+<!--                <span><strong>Destino: </strong></span>-->
+<!--                <div t-esc="o.location_transfer_id.complete_name"/>-->
+<!--            </t>-->
 
-            <t t-set="orig" t-value="o.search([('name','=',o.origin)])"/>
-            <t t-if="not o.is_transfer and o.origin == orig.name">
-                <span><strong>Origen: </strong></span>
-                <div t-esc="orig.location_id.complete_name"/>
-                <span><strong>Destino: </strong></span>
-                <div t-esc="orig.location_transfer_id.complete_name"/>
-            </t>
-            <br/>
-        </xpath>
-    </template>
+<!--            <t t-set="orig" t-value="o.search([('name','=',o.origin)])"/>-->
+<!--            <t t-if="not o.is_transfer and o.origin == orig.name">-->
+<!--                <span><strong>Origen: </strong></span>-->
+<!--                <div t-esc="orig.location_id.complete_name"/>-->
+<!--                <span><strong>Destino: </strong></span>-->
+<!--                <div t-esc="orig.location_transfer_id.complete_name"/>-->
+<!--            </t>-->
+<!--            <br/>-->
+<!--        </xpath>-->
+<!--    </template>-->
 </odoo>
