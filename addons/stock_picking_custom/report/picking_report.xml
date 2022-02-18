@@ -181,38 +181,38 @@
         </xpath>
     </template>
 
-<!--    <template id="stock_inventory_report_add_origin_destiny">-->
-<!--        <t t-set="orig" t-value="o.search([('name','=',o.origin)])"/>-->
-<!--        <t t-if="o.is_transfer or orig.is_transfer and orig.location_dest_id == o.location_id">-->
-<!--            <div class="row mt48 mb32">-->
-<!--                <div class="col-auto">-->
-<!--                    <strong>Origen: </strong>-->
-<!--                    <p t-field="o.transfer_origin"/>-->
-<!--                </div>-->
-<!--                <div class="col-auto">-->
-<!--                    <strong>Destino: </strong>-->
-<!--                    <p t-field="o.transfer_destiny"/>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </t>-->
-<!--        <br/>-->
-<!--    </template>-->
+    <template id="stock_picking_custom.stock_inventory_report_add_origin_destiny">
+        <t t-set="orig" t-value="o.search([('name','=',o.origin)])"/>
+        <t t-if="o.is_transfer or orig.is_transfer and orig.location_dest_id == o.location_id">
+            <div class="row mt48 mb32">
+                <div class="col-auto">
+                    <strong>Origen: </strong>
+                    <p t-field="o.transfer_origin"/>
+                </div>
+                <div class="col-auto">
+                    <strong>Destino: </strong>
+                    <p t-field="o.transfer_destiny"/>
+                </div>
+            </div>
+        </t>
+        <br/>
+    </template>
 
-<!--    <template id="stock_inventory_report_recolection_operations_add_origin_destiny" inherit_id="report_picking">-->
-<!--        <xpath expr="//div[@class='page']/h1[@class='mt0 float-left']" position="after">-->
-<!--            <t t-call="stock_picking_custom.stock_inventory_report_add_origin_destiny"/>-->
-<!--        </xpath>-->
-<!--    </template>-->
+    <template id="stock_inventory_report_recolection_operations_add_origin_destiny" inherit_id="report_picking">
+        <xpath expr="//div[@class='page']/h1[@class='mt0 float-left']" position="after">
+            <t t-call="stock_picking_custom.stock_inventory_report_add_origin_destiny"/>
+        </xpath>
+    </template>
 
-<!--    <template id="stock_inventory_report_deliveryslip_add_origin_destiny" inherit_id="stock.report_delivery_document">-->
-<!--        <xpath expr="//div[@class='page']/h2" position="after">-->
-<!--            <t t-call="stock_picking_custom.stock_inventory_report_add_origin_destiny"/>-->
-<!--        </xpath>-->
-<!--    </template>-->
+    <template id="stock_inventory_report_deliveryslip_add_origin_destiny" inherit_id="stock.report_delivery_document">
+        <xpath expr="//div[@class='page']/h2" position="after">
+            <t t-call="stock_picking_custom.stock_inventory_report_add_origin_destiny"/>
+        </xpath>
+    </template>
 
-<!--    <template id="stock_inventory_report_carta_porte_add_origin_destiny" inherit_id="l10n_mx_edi_stock.report_carta_porte_document">-->
-<!--        <xpath expr="//div[@class='page']/h2" position="after">-->
-<!--            <t t-call="stock_picking_custom.stock_inventory_report_add_origin_destiny"/>-->
-<!--        </xpath>-->
-<!--    </template>-->
+    <template id="stock_inventory_report_carta_porte_add_origin_destiny" inherit_id="l10n_mx_edi_stock.report_carta_porte_document">
+        <xpath expr="//div[@class='page']/h2" position="after">
+            <t t-call="stock_picking_custom.stock_inventory_report_add_origin_destiny"/>
+        </xpath>
+    </template>
 </odoo>
