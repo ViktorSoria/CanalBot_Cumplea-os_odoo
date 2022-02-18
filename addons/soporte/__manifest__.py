@@ -2,7 +2,7 @@
     'name': 'Soporte', 
     'description': 'Cambios al modulo de Proyectos', 
     'author': 'Daniel Reis', 
-    'depends': ['base','project','mail','website_slides','hr'], 
+    'depends': ['base','project'],
     'application': False, 
     
     'data': [

@@ -82,7 +82,7 @@ class ReportSalesComisionWizard(models.TransientModel):
     def search_records(self):
         dic = {}
         if self.options == 'all' or self.options == 'sale':
-            invoices = self.env['account.move'].sudo().search([('invoice_date', '>=', self.date_start), ('invoice_date', '<=', self.date_end),  ('state', '=', 'posted'), ('move_type', 'in', ['out_invoice', 'in_refund']),('payment_date', '!=', None)])
+            invoices = self.env['account.move'].sudo().search([('payment_date', '>=', self.date_start), ('payment_date', '<=', self.date_end),  ('state', '=', 'posted'), ('move_type', 'in', ['out_invoice', 'in_refund'])])
             for invoice in invoices:
                 key = str(invoice.id) + 'account_move'
                 dic[key] = {
