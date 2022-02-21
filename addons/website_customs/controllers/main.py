@@ -50,8 +50,14 @@ class WebsiteBackend(Home):
     def index(self, **kw):
         # prefetch all menus (it will prefetch website.page too)
         ip = request.env['ir.config_parameter'].sudo().get_param('public_domain')
-        if ip and ip not in request.httprequest.url_root:
-            return request.redirect(request.httprequest.url_root+"web")
+        redir = True
+        if ip:
+            ips = ip.split(",")
+            for ip in ips:
+                if ip in request.httprequest.url_root:
+                    redir = False
+        if redir:
+            return request.redirect(request.httprequest.url_root + "web")
         top_menu = request.website.menu_id
 
         homepage = request.website.homepage_id
