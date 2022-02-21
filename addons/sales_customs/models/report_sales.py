@@ -20,8 +20,27 @@ class ReportSalesCustomWizard(models.TransientModel):
 
     def search_records(self):
         dic = {}
+        invoices = []
+        if self.options == 'all' or self.options == 'pos':
+            pos_orders = self.env['pos.order'].sudo().search([('date_order', '>=', self.date_start), ('date_order', '<=', self.date_end), ('state', 'in', ['paid','done','invoiced'])])
+            for order in pos_orders:
+                if order.account_move:
+                    invoices.append(order.account_move.id)
+                partner_id = order.partner_id.id
+                key = str(partner_id) + " - " + str(order.date_order.month) + " - " + str(order.crm_team_id.id)
+                if key in dic:
+                    dic[key].update({
+                        'total': dic[key]['total'] + order.amount_total
+                    })
+                else:
+                    dic[key] = {
+                        'partner_id': partner_id,
+                        'total': order.amount_total,
+                        'month': str(order.date_order.month),
+                        'sale_team': order.crm_team_id.id
+                    }
         if self.options == 'all' or self.options == 'sale':
-            invoices = self.env['account.move'].sudo().search([('invoice_date', '>=', self.date_start), ('invoice_date', '<=', self.date_end),  ('state', '=', 'posted'), ('move_type', 'in', ['out_invoice', 'in_refund'])])
+            invoices = self.env['account.move'].sudo().search([('invoice_date', '>=', self.date_start), ('invoice_date', '<=', self.date_end),  ('state', '=', 'posted'), ('move_type', 'in', ['out_invoice', 'in_refund']), ('id', 'not in', invoices)])
             for invoice in invoices:
                 partner_id = invoice.partner_id.id
                 key = str(partner_id) + " - " + str(invoice.invoice_date.month) + " - " + str(invoice.team_id.id)
@@ -35,22 +54,6 @@ class ReportSalesCustomWizard(models.TransientModel):
                         'total': invoice.amount_total,
                         'month': str(invoice.invoice_date.month),
                         'sale_team': invoice.team_id.id
-                    }
-        if self.options == 'all' or self.options == 'pos':
-            pos_orders = self.env['pos.order'].sudo().search([('date_order', '>=', self.date_start), ('date_order', '<=', self.date_end), ('state', 'in', ['paid','done'])])
-            for order in pos_orders:
-                partner_id = order.partner_id.id
-                key = str(partner_id) + " - " + str(order.date_order.month) + " - " + str(order.crm_team_id.id)
-                if key in dic:
-                    dic[key].update({
-                        'total': dic[key]['total'] + order.amount_total
-                    })
-                else:
-                    dic[key] = {
-                        'partner_id': partner_id,
-                        'total': order.amount_total,
-                        'month': str(order.date_order.month),
-                        'sale_team': order.crm_team_id.id
                     }
         return self.with_context(dic=dic).create_view()
 
@@ -81,8 +84,23 @@ class ReportSalesComisionWizard(models.TransientModel):
 
     def search_records(self):
         dic = {}
+        invoices = []
+        if self.options == 'all' or self.options == 'pos':
+            pos_orders = self.env['pos.order'].sudo().search([('date_order', '>=', self.date_start), ('date_order', '<=', self.date_end), ('state', 'in', ['paid','done', 'invoiced'])])
+            for order in pos_orders:
+                if order.account_move:
+                    invoices.append(order.account_move.id)
+                key = str(order.id) + "pos_order"
+                dic[key] = {
+                    'name': order.name,
+                    'partner_id': order.partner_id.id,
+                    'user_id': order.user_id.id,
+                    'total': order.amount_total,
+                    'date': order.date_order.date(),
+                    'sale_team': order.crm_team_id.id
+                }
         if self.options == 'all' or self.options == 'sale':
-            invoices = self.env['account.move'].sudo().search([('payment_date', '>=', self.date_start), ('payment_date', '<=', self.date_end),  ('state', '=', 'posted'), ('move_type', 'in', ['out_invoice', 'in_refund'])])
+            invoices = self.env['account.move'].sudo().search([('payment_date', '>=', self.date_start), ('payment_date', '<=', self.date_end),  ('state', '=', 'posted'), ('move_type', 'in', ['out_invoice', 'in_refund']), ('id', 'not in', invoices)])
             for invoice in invoices:
                 key = str(invoice.id) + 'account_move'
                 dic[key] = {
@@ -92,18 +110,6 @@ class ReportSalesComisionWizard(models.TransientModel):
                     'total': invoice.amount_total,
                     'date': invoice.payment_date,
                     'sale_team': invoice.team_id.id
-                }
-        if self.options == 'all' or self.options == 'pos':
-            pos_orders = self.env['pos.order'].sudo().search([('date_order', '>=', self.date_start), ('date_order', '<=', self.date_end), ('state', 'in', ['paid','done'])])
-            for order in pos_orders:
-                key = str(order.id) + "pos_order"
-                dic[key] = {
-                    'name': order.name,
-                    'partner_id': order.partner_id.id,
-                    'user_id': order.user_id.id,
-                    'total': order.amount_total,
-                    'date': order.date_order.date(),
-                    'sale_team': order.crm_team_id.id
                 }
         return self.with_context(dic=dic).create_view()
 
@@ -160,6 +166,20 @@ class AccountMovePaymentDate(models.Model):
                 rec.payment_date = date_max
             else:
                 rec.payment_date = None
+
+    def _compute_amount(self):
+        res = super(AccountMovePaymentDate, self)._compute_amount()
+        for rec in self:
+            if float_is_zero(rec.amount_residual, precision_digits=rec.currency_id.decimal_places):
+                payments = rec.sudo()._get_reconciled_info_JSON_values()
+                dates = []
+                for payment in payments:
+                    dates.append(payment['date'])
+                date_max = max(dates) if len(dates) > 0 else None
+                rec.payment_date = date_max
+            else:
+                rec.payment_date = None
+        return res
 
 
 
