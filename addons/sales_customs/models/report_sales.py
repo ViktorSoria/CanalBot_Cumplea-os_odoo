@@ -80,13 +80,14 @@ class ReportSalesComisionWizard(models.TransientModel):
     all_partners = fields.Boolean('Todos Los clientes', default='True')
     date_start = fields.Date(string='Desde')
     date_end = fields.Date(string='Hasta')
+    sale_teams = fields.Many2many('crm.team',string='Equipos de Ventas')
     options = fields.Selection([('all','Todas (Pedidos de Venta y Punto de Venta)'),('sale','Pedidos de Ventas'),('pos','Pedidos del Punto de Venta')], string="Tipos de Pedidos", default='all')
 
     def search_records(self):
         dic = {}
         invoices = []
         if self.options == 'all' or self.options == 'pos':
-            pos_orders = self.env['pos.order'].sudo().search([('date_order', '>=', self.date_start), ('date_order', '<=', self.date_end), ('state', 'in', ['paid','done', 'invoiced'])])
+            pos_orders = self.env['pos.order'].sudo().search([('date_order', '>=', self.date_start), ('date_order', '<=', self.date_end), ('crm_team_id', 'in', self.sale_teams.ids), ('state', 'in', ['paid','done', 'invoiced'])])
             for order in pos_orders:
                 if order.account_move:
                     invoices.append(order.account_move.id)
@@ -100,7 +101,7 @@ class ReportSalesComisionWizard(models.TransientModel):
                     'sale_team': order.crm_team_id.id
                 }
         if self.options == 'all' or self.options == 'sale':
-            invoices = self.env['account.move'].sudo().search([('payment_date', '>=', self.date_start), ('payment_date', '<=', self.date_end),  ('state', '=', 'posted'), ('move_type', 'in', ['out_invoice', 'in_refund']), ('id', 'not in', invoices)])
+            invoices = self.env['account.move'].sudo().search([('payment_date', '>=', self.date_start), ('payment_date', '<=', self.date_end), ('team_id', 'in', self.sale_teams.ids), ('state', '=', 'posted'), ('move_type', 'in', ['out_invoice', 'in_refund']), ('id', 'not in', invoices)])
             for invoice in invoices:
                 key = str(invoice.id) + 'account_move'
                 dic[key] = {
