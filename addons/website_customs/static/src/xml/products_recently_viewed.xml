@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
-    <!-- Recently Viewed Products Carousel -->
-    <t t-name="website_customs.productsFilterViewed">
+    <t t-name="website_customs.productsRecentlyViewedInherit">
         <div t-att-id="uniqueId" class="carousel slide o_not_editable" data-interval="false">
             <div class="carousel-inner">
                 <t t-foreach="productsGroups" t-as="products">
