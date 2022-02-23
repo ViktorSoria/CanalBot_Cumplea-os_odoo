@@ -33,9 +33,10 @@
                         <field name="date_start" required="True"/>
                         <field name="date_end" required="True"/>
                     </group>
-<!--                    <group>-->
+                    <group>
 <!--                        <field name="options" required="True"/>-->
-<!--                    </group>-->
+                        <field name="sale_teams" required="True" widget="many2many_tags"/>
+                    </group>
                     </group>
                     <footer>
                         <button name="search_records" type="object" string="Aceptar" class="oe_highlight"/>
