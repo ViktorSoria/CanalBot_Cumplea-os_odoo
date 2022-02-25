@@ -8,6 +8,7 @@
 			<script type="text/javascript" src="/website_customs/static/src/js/stock_product_popup.js" />
 			<script type="text/javascript" src="/website_customs/static/src/js/chat.js" />
 			<script type="text/javascript" src="/website_customs/static/src/js/product.js"/>
+			<script type="text/javascript" src="/website_customs/static/src/js/product_recently_viewed.js"/>
 		</xpath>
 	</template>
 </odoo>

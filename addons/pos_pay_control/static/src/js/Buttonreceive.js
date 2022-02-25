@@ -1,20 +1,45 @@
 odoo.define('pos_product_available.Buttonreceive', function (require) {
     'use strict';
-    console.log(" ==== Si carga el js de jeho ====");
+
     const AbstractAwaitablePopup = require('point_of_sale.AbstractAwaitablePopup');
     const Registries = require('point_of_sale.Registries');
+    const OrderFetcher = require('point_of_sale.OrderFetcher');
     const { useState, useRef } = owl.hooks;
     class Buttonreceive extends AbstractAwaitablePopup {
         constructor() {
             super(...arguments);
-            this.state = useState({ inputValue: '',name: ''});
+            this.state = useState({ inputValue: '',name: '', pagado: false});
             this.inputRef = useRef('session');
         }
         selection(event){
             this.state.name = event.target.getAttribute('sname');
             this.state.inputValue = event.target.getAttribute('orderid');
+            this.state.pagado = event.target.getAttribute('orderp');
+        }
+        exist_order(name){
+            let orders = OrderFetcher.get();
+            let new_order = false;
+            orders.forEach(o => {
+                if(name === o.name){
+                    new_order = o;
+                }
+            });
+            return new_order;
         }
         async GetOrder() {
+            if(this.state.pagado==='1'){
+                let name = this.state.name;
+                this.showScreen('OrderManagementScreen');
+                setTimeout(() => {
+                    let order = this.exist_order(name);
+                    if(order){
+                        let targ = 'div.name:contains('+name+')';
+                        $(targ).click();
+                    }
+                }, 500);
+                this.trigger('close-popup');
+                return
+            }
             var orders = await this.rpc({
                 model: 'pos.session',
                 method: 'recibe',
