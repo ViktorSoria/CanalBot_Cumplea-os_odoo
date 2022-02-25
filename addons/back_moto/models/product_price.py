@@ -110,6 +110,7 @@ class Pricelist(models.Model):
     file = fields.Binary("Nuevos Precios (csv)")
     file_name = fields.Char("Nombre archivo")
     lista_precio = fields.Boolean("Lista de precio",default=True)
+    option_select = fields.Selection([('price','Precio'),('util','Utilidad')], string='Opción')
 
     def get_lines(self):
         lines = []
@@ -139,7 +140,7 @@ class Pricelist(models.Model):
             return
         lines = self.get_lines()
         if len(lines[0])>2:
-            raise UserError("Formato de archivo incorrecto")
+            raise UserError("Formato de archivo incorrecto, Ponga en una columna la referencia del producto y en otra el precio/utilidad")
         productos = self.env['product.template'].search([])
         productos = {p.default_code: p for p in productos}
         items = {i.product_tmpl_id.default_code:i for i in self.item_ids if i.product_tmpl_id}
@@ -151,15 +152,27 @@ class Pricelist(models.Model):
                 item = items.get(l[0])
                 if not p:
                     faltantes.append(str(l))
-                if self.id==1:
-                    p.list_price = float(l[1])
-                elif not item:
-                    new_items.append([0,0,{'applied_on':'1_product','compute_price':'fixed','fixed_price':float(l[1]),
-                                          'product_tmpl_id':p.id}])
+                    continue
+                float_value = float(l[1])
+                price = float_value if self.option_select == 'price' else p.standard_price * (1 + float_value/100) * 1.16
+                _logger.info(price)
+                if not item:
+                    dic = {'applied_on':'1_product','compute_price':'fixed','fixed_price':price, 'product_tmpl_id':p.id}
+                    if self.option_select == 'util':
+                        dic['utili_perc'] = float_value
+                    new_items.append([0,0,dic])
                 else:
-                    item.write({'fixed_price':float(l[1])})
+                    dic = {'fixed_price':price}
+                    if self.option_select == 'util':
+                        dic['utili_perc'] = float_value
+                    item.write(dic)
+                if self.id == 1:
+                    dic = {'list_price':price}
+                    if self.option_select == 'util':
+                        dic['utili_perc'] = float_value
+                    p.write(dic)
             except:
-                raise UserError("Erro en la linea: %s"%str(l))
+                raise UserError("Error en la linea: %s"%str(l))
         self.write({'item_ids':new_items,'file':False})
         if faltantes:
             mensaje = "Los siguientes productos no fueron encontrados\n%s"%('\n'.join(faltantes))
