@@ -143,30 +143,29 @@ class Pricelist(models.Model):
         faltantes = []
         for l in lines[1:]:
             try:
-                if self.option_select == 'price':
-                    p = productos.get(l[0])
-                    item = items.get(l[0])
-                    if not p:
-                        faltantes.append(str(l))
-                    if self.id==1:
-                        p.list_price = float(l[1])
-                    elif not item:
-                        new_items.append([0,0,{'applied_on':'1_product','compute_price':'fixed','fixed_price':float(l[1]),
-                                              'product_tmpl_id':p.id}])
-                    else:
-                        item.write({'fixed_price':float(l[1])})
-                elif self.option_select == 'util':
-                    p = productos.get(l[0])
-                    item = items.get(l[0])
-                    if not p:
-                        faltantes.append(str(l))
-                    elif not item:
-                        price = p.standar_price * (float(l[1])/100)
-                        new_items.append([0,0,{'applied_on':'1_product','compute_price':'fixed','fixed_price':float(l[1]),'fixed_price':price,
-                                              'product_tmpl_id':p.id}])
-                    else:
-                        price = p.standar_price * (float(l[1])/100)
-                        item.write({'fixed_price':price})
+                p = productos.get(l[0])
+                item = items.get(l[0])
+                if not p:
+                    faltantes.append(str(l))
+                    continue
+                float_value = float(l[1])
+                price = float_value if self.option_select == 'price' else p.standard_price * (1 + float_value/100) * 1.16
+                _logger.info(price)
+                if not item:
+                    dic = {'applied_on':'1_product','compute_price':'fixed','fixed_price':price, 'product_tmpl_id':p.id}
+                    if self.option_select == 'util':
+                        dic['utili_perc'] = float_value
+                    new_items.append([0,0,dic])
+                else:
+                    dic = {'fixed_price':price}
+                    if self.option_select == 'util':
+                        dic['utili_perc'] = float_value
+                    item.write(dic)
+                if self.id == 1:
+                    dic = {'list_price':price}
+                    if self.option_select == 'util':
+                        dic['utili_perc'] = float_value
+                    p.write(dic)
             except:
                 raise UserError("Error en la linea: %s"%str(l))
         self.write({'item_ids':new_items,'file':False})
