@@ -105,6 +105,7 @@ class Pricelist(models.Model):
     file = fields.Binary("Nuevos Precios (csv)")
     file_name = fields.Char("Nombre archivo")
     lista_precio = fields.Boolean("Lista de precio",default=True)
+    option_select = fields.Selection([('price','Precio'),('util','Utilidad')], string='Opción')
 
     def get_lines(self):
         lines = []
@@ -134,7 +135,7 @@ class Pricelist(models.Model):
             return
         lines = self.get_lines()
         if len(lines[0])>2:
-            raise UserError("Formato de archivo incorrecto")
+            raise UserError("Formato de archivo incorrecto, Ponga en una columna la referencia del producto y en otra el precio/utilidad")
         productos = self.env['product.template'].search([])
         productos = {p.default_code: p for p in productos}
         items = {i.product_tmpl_id.default_code:i for i in self.item_ids if i.product_tmpl_id}
@@ -142,19 +143,32 @@ class Pricelist(models.Model):
         faltantes = []
         for l in lines[1:]:
             try:
-                p = productos.get(l[0])
-                item = items.get(l[0])
-                if not p:
-                    faltantes.append(str(l))
-                if self.id==1:
-                    p.list_price = float(l[1])
-                elif not item:
-                    new_items.append([0,0,{'applied_on':'1_product','compute_price':'fixed','fixed_price':float(l[1]),
-                                          'product_tmpl_id':p.id}])
-                else:
-                    item.write({'fixed_price':float(l[1])})
+                if self.option_select == 'price':
+                    p = productos.get(l[0])
+                    item = items.get(l[0])
+                    if not p:
+                        faltantes.append(str(l))
+                    if self.id==1:
+                        p.list_price = float(l[1])
+                    elif not item:
+                        new_items.append([0,0,{'applied_on':'1_product','compute_price':'fixed','fixed_price':float(l[1]),
+                                              'product_tmpl_id':p.id}])
+                    else:
+                        item.write({'fixed_price':float(l[1])})
+                elif self.option_select == 'util':
+                    p = productos.get(l[0])
+                    item = items.get(l[0])
+                    if not p:
+                        faltantes.append(str(l))
+                    elif not item:
+                        price = p.standar_price * (float(l[1])/100)
+                        new_items.append([0,0,{'applied_on':'1_product','compute_price':'fixed','fixed_price':float(l[1]),'fixed_price':price,
+                                              'product_tmpl_id':p.id}])
+                    else:
+                        price = p.standar_price * (float(l[1])/100)
+                        item.write({'fixed_price':price})
             except:
-                raise UserError("Erro en la linea: %s"%str(l))
+                raise UserError("Error en la linea: %s"%str(l))
         self.write({'item_ids':new_items,'file':False})
         if faltantes:
             mensaje = "Los siguientes productos no fueron encontrados\n%s"%('\n'.join(faltantes))
