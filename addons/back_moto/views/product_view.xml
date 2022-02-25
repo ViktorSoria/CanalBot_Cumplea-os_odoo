@@ -20,6 +20,7 @@
             </xpath>
             <xpath expr="//div[@name='standard_price_uom']" position="after">
                 <field name="price_avg"/>
+                <field name="ultimo_costo"/>
             </xpath>
         </field>
     </record>
