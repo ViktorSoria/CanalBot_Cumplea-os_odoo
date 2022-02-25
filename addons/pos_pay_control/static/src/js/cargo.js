@@ -95,10 +95,12 @@ odoo.define("pos_pay_control.cargo", function (require) {
             }
 
             deletePaymentLine(event) {
+                const { cid } = event.detail;
+                const pline = this.paymentLines.find((line) => line.cid === cid);
                 super.deletePaymentLine(...arguments);
                 let order = this.currentOrder;
                 let product = this.env.pos.config.producto_cargo[0];
-                let line = order.get_orderlines().find(line => line.product.id === product);
+                let line = order.get_orderlines().find(line => line.product.id === product && line.paymentMethod === pline.payment_method.id);
                 if (line) {
                     order.remove_orderline(line);
                 }
@@ -108,17 +110,27 @@ odoo.define("pos_pay_control.cargo", function (require) {
                 let cargo = parseFloat(paymentMethod.cargo);
                 if (cargo > 0) {
                     let product = this.env.pos.db.get_product_by_id(this.env.pos.config.producto_cargo[0])
-                    let total = this.currentOrder.get_total_with_tax() + this.currentOrder.get_rounding_applied();
+                    let total = this.currentOrder.get_total_with_tax() - this.currentOrder.get_total_paid() + this.currentOrder.get_rounding_applied();
                     this.currentOrder.add_product(product, {
                         quantity: 1,
                         price: total * cargo / 100,
                         lst_price: total * cargo / 100,
-                        extras: {price_manually_set: true},
+                        extras: {price_manually_set: true,paymentMethod:paymentMethod.id},
                     });
                 }
                 return super.addNewPaymentLine(...arguments);
             }
-
+            _updateSelectedPaymentline(){
+                super._updateSelectedPaymentline(...arguments);
+                let pline = this.selectedPaymentLine;
+                let order = this.currentOrder;
+                let line = order.get_orderlines().find(line => line.paymentMethod === pline.payment_method.id);
+                if(line){
+                    let cargo = pline.payment_method.cargo;
+                    let monto = pline.amount* cargo / 100;
+                    line.set_unit_price(monto);
+                }
+            }
             async verify_price_list() {
                 let selectedPricelist = this.currentOrder.pricelist;
                 if (selectedPricelist.autorizacion) {
