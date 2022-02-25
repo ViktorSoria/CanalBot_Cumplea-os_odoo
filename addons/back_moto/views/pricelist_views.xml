@@ -11,6 +11,7 @@
                     <field name="lista_precio" groups="base.group_no_one"/>
                     <field name="file_name" invisible="1"/>
                     <field name="file" filename="file_name"/>
+                    <field name="option_select" attrs="{'required':[('file','!=',False)], 'invisible':[('file','=',False)]}"/>
                     <button type="object" name="update_price" string="Actualizar precios" class="oe_highlight"
                     attrs="{'invisible':[('file','=',False)]}"/>
                 </group>
