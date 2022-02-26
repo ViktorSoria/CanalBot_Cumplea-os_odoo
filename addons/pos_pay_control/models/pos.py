@@ -130,11 +130,14 @@ class PosSession(models.Model):
         return True
 
     def ver(self):
+        pos_order = self.env['pos.order'].search([('pos_reference','in',self.orders.mapped('orden'))])
+        pedidos_pagados = {o.pos_reference: '1' if o.state != 'draft' else '0' for o in pos_order}
         lista = [{
             'id': order.id,
             'orden': order.orden,
             'cajero': order.cajero if order.cajero else "",
-            'pos_name': order.pos_name
+            'pos_name': order.pos_name,
+            'pagado': pedidos_pagados.get(order.orden,'0'),
         } for order in self.orders]
         return lista
 

@@ -137,10 +137,10 @@
                            <th>Vendedor</th>
                        </tr>
                        <t t-foreach="props.orders" t-as="o">
-                           <tr class="tam" t-att-orderid="o.id" t-on-click="selection" t-att-sname="o.orden">
-                               <td t-esc="o.orden" t-att-orderid="o.id" t-att-sname="o.orden"/>
-                               <td t-esc="o.pos_name" t-att-orderid="o.id" t-att-sname="o.orden"/>
-                               <td t-esc="o.cajero" t-att-orderid="o.id" t-att-sname="o.orden"/>
+                           <tr class="tam" t-att-orderid="o.id" t-on-click="selection" t-att-sname="o.orden" t-att-orderp="o.pagado">
+                               <td t-esc="o.orden" t-att-orderid="o.id" t-att-sname="o.orden" t-att-orderp="o.pagado"/>
+                               <td t-esc="o.pos_name" t-att-orderid="o.id" t-att-sname="o.orden" t-att-orderp="o.pagado"/>
+                               <td t-esc="o.cajero" t-att-orderid="o.id" t-att-sname="o.orden" t-att-orderp="o.pagado"/>
                            </tr>
                        </t>
                    </table>
