@@ -14,30 +14,32 @@ _logger = logging.getLogger("Moto Control")
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
-    line_ids = fields.Many2many("product.price.transient",string="Precios",compute="compute_line_price")
+    line_ids = fields.Many2many("product.price.transient", string="Precios", compute="compute_line_price")
     utili_perc = fields.Float("Utilidad (%)")
 
     def compute_line_price(self):
-        products = [(product,False,False) for product in self]
-        data = self.env['product.pricelist'].search([('lista_precio','=',True)]).with_context(margen=True)._compute_price_rule_multi(products)
+        products = [(product, False, False) for product in self]
+        data = self.env['product.pricelist'].search([('lista_precio', '=', True)]).with_context(
+            margen=True)._compute_price_rule_multi(products)
         tarifas = self.env['product.pricelist'].search_read(fields=['id', 'name'])
-        tarifas = {d['id']:d['name'] for d in tarifas}
+        tarifas = {d['id']: d['name'] for d in tarifas}
         for p in self:
-            prices = [{'name':"Precio del Producto",'precio':p.list_price,"product_id": p.id,'utili_perc':p.utili_perc}]
+            prices = [
+                {'name': "Precio del Producto", 'precio': p.list_price, "product_id": p.id, 'utili_perc': p.utili_perc}]
             data_p = data[p.id]
-            for tarifa,precio in data_p.items():
+            for tarifa, precio in data_p.items():
                 prices.append({
                     'name': tarifas[tarifa],
                     "precio": precio[0],
                     "item_id": precio[1],
                     "list_price_id": tarifa,
                     "product_id": p.id,
-                    "utili_perc":precio[2],
+                    "utili_perc": precio[2],
                 })
             lines = self.env['product.price.transient'].create(prices)
-            p.line_ids = [(6,0,lines.ids)]
+            p.line_ids = [(6, 0, lines.ids)]
 
-    def export_data(self,fields_to_export):
+    def export_data(self, fields_to_export):
         """
         se agregan las lineas al archivo web/controllers/main.py en el metodo base(self, data, token)
         datas = records.export_data(field_names)
@@ -47,25 +49,112 @@ class ProductTemplate(models.Model):
         res = super().export_data(fields_to_export)
         if "line_ids/precio" in fields_to_export and "line_ids/display_name":
             res = res.get('datas')
-            listas = self.env['product.pricelist'].search([('lista_precio','=',True)])
+            listas = self.env['product.pricelist'].search([('lista_precio', '=', True)])
             precio_index = fields_to_export.index("line_ids/precio")
             nombre_index = fields_to_export.index("line_ids/display_name")
             fields_to_export.pop(precio_index)
             fields_to_export.pop(nombre_index)
             new_res = []
-            disp = (len(listas)+1)
-            for i in range(len(res)//disp):
+            disp = (len(listas) + 1)
+            for i in range(len(res) // disp):
                 add = []
                 for j in range(disp):
-                    precio = res[i*disp+j].pop(precio_index)
+                    precio = res[i * disp + j].pop(precio_index)
                     add.append(precio)
-                    nombre = res[i*disp+j].pop(nombre_index)
-                    if i==0:
+                    nombre = res[i * disp + j].pop(nombre_index)
+                    if i == 0:
                         fields_to_export.append(nombre)
-                    if j==disp-1:
-                        new_res.append(res[i*disp]+add)
-            res = {'datas':new_res,'columns_headers':fields_to_export}
+                    if j == disp - 1:
+                        new_res.append(res[i * disp] + add)
+            res = {'datas': new_res, 'columns_headers': fields_to_export}
         return res
+
+    def write(self, vals):
+        if 'standard_price' in vals:
+            if round(self.utili_perc, 4) != 0.0:
+                vals['list_price'] = vals['standard_price'] * 1.16 * (1 + self.utili_perc / 100)
+        res = super(ProductTemplate, self).write(vals)
+        if 'standard_price' in vals and res:
+            self.update_pricelist_items(list(vals))
+        return res
+
+    def update_pricelist_items(self, vals):
+        items = self.env['product.pricelist.item'].search(
+            [('applied_on', '=', '1_product'), ('product_id', '=', self.id)])
+        for item in items:
+            if round(item.utili_perc, 4) == 0.0:
+                continue
+            item.write({'fixed_price': vals['standard_price'] * 1.16 * (1 + item.utili_perc / 100)})
+
+
+class ProducCostMargin(models.TransientModel):
+    _name = "product.cost.transient"
+
+    file = fields.Binary("Nuevos Costos (csv)")
+    file_name = fields.Char("Nombre archivo")
+
+    def get_lines(self):
+        lines = []
+        try:
+            if 'csv' in self.file_name:
+                _logger.info('if')
+                csv_file = base64.b64decode(self.file).decode()
+                file_input = StringIO(csv_file)
+                file_input.seek(0)
+                reader = csv.reader(file_input, delimiter=',')
+                lines.extend(reader)
+                _logger.info(lines)
+            else:
+                _logger.info('else')
+                file_path = tempfile.gettempdir() + '/file.xls'
+                f = open(file_path, 'wb')
+                f.write(base64.b64decode(self.file))
+                f.close()
+                workbook = xlrd.open_workbook(file_path)
+                sh = workbook.sheet_by_index(0)
+                for i in range(1, sh.nrows):
+                    lines.append(sh.row_values(i))
+        except:
+            raise UserError("Error en formato de archivo")
+        return lines
+
+    def update_price(self):
+        if not self.file:
+            return
+        lines = self.get_lines()
+        if len(lines[0]) > 2:
+            raise UserError(
+                "Formato de archivo incorrecto, Ponga en una columna la referencia del producto y en otra el costo")
+        productos = self.env['product.template'].search([])
+        productos = {p.default_code: p for p in productos}
+        items = self.env['product.pricelist.item'].search([('applied_on', '=', '1_product')])
+        productos_items = {}
+        for i in items:
+            productos_items[i.product_tmpl_id.default_code] = productos_items.get(i.product_tmpl_id.default_code, []).append(i)
+        faltantes = []
+        for l in lines:
+            try:
+                items_p = productos_items.get(l[0])
+                p = productos.get(l[0])
+                if not p:
+                    faltantes.append(str(l))
+                    continue
+                float_value = float(l[1])
+                p.standard_price = float_value #write
+                for item in items_p:
+                    item.fixed_price = float_value * (1 + item.utili_perc / 100) * 1.16 #write
+            except:
+                raise UserError("Error en la linea: %s" % str(l))
+        if faltantes:
+            mensaje = "Los siguientes productos no fueron encontrados\n%s" % ('\n'.join(faltantes))
+            return {
+                'name': 'Error Modificar Costos',
+                'type': 'ir.actions.act_window',
+                'view_mode': 'form',
+                'res_model': 'message.wizard',
+                'target': 'new',
+                'context': mensaje
+            }
 
 
 class ProducPrice(models.TransientModel):
@@ -73,8 +162,8 @@ class ProducPrice(models.TransientModel):
 
     name = fields.Char("Descripción")
     precio = fields.Float("Precio")
-    item_id = fields.Many2one("product.pricelist.item","Item")
-    list_price_id = fields.Many2one("product.pricelist","Lista")
+    item_id = fields.Many2one("product.pricelist.item", "Item")
+    list_price_id = fields.Many2one("product.pricelist", "Lista")
     product_id = fields.Many2one("product.template")
     utili_perc = fields.Float("Utilidad (%)")
 
@@ -82,15 +171,18 @@ class ProducPrice(models.TransientModel):
     def onchange_margin(self):
         if self.utili_perc != 0:
             costo = self.product_id.standard_price
-            self.precio = costo*1.16*(1+self.utili_perc/100)
+            self.precio = costo * 1.16 * (1 + self.utili_perc / 100)
 
     def change_price(self):
         if self.item_id and self.item_id.product_tmpl_id.id == self.product_id.id:
-            self.item_id.write({'compute_price':'fixed','fixed_price':self.precio,'utili_perc':self.utili_perc})
+            self.item_id.write({'compute_price': 'fixed', 'fixed_price': self.precio, 'utili_perc': self.utili_perc})
         elif self.list_price_id:
-            self.list_price_id.write({'item_ids':[(0,0,{'compute_price':'fixed','fixed_price':self.precio,'applied_on':'1_product','product_tmpl_id':self.product_id.id,'utili_perc':self.utili_perc})]})
+            self.list_price_id.write({'item_ids': [(0, 0, {'compute_price': 'fixed', 'fixed_price': self.precio,
+                                                           'applied_on': '1_product',
+                                                           'product_tmpl_id': self.product_id.id,
+                                                           'utili_perc': self.utili_perc})]})
         else:
-            self.product_id.write({'list_price':self.precio,'utili_perc':self.utili_perc})
+            self.product_id.write({'list_price': self.precio, 'utili_perc': self.utili_perc})
 
     def edit_line(self):
         return {
@@ -109,8 +201,8 @@ class Pricelist(models.Model):
 
     file = fields.Binary("Nuevos Precios (csv)")
     file_name = fields.Char("Nombre archivo")
-    lista_precio = fields.Boolean("Lista de precio",default=True)
-    option_select = fields.Selection([('price','Precio'),('util','Utilidad')], string='Opción')
+    lista_precio = fields.Boolean("Lista de precio", default=True)
+    option_select = fields.Selection([('price', 'Precio'), ('util', 'Utilidad')], string='Opción')
 
     def get_lines(self):
         lines = []
@@ -134,16 +226,16 @@ class Pricelist(models.Model):
             raise UserError("Erro en formato de archivo")
         return lines
 
-
     def update_price(self):
         if not self.file:
             return
         lines = self.get_lines()
-        if len(lines[0])>2:
-            raise UserError("Formato de archivo incorrecto, Ponga en una columna la referencia del producto y en otra el precio/utilidad")
+        if len(lines[0]) > 2:
+            raise UserError(
+                "Formato de archivo incorrecto, Ponga en una columna la referencia del producto y en otra el precio/utilidad")
         productos = self.env['product.template'].search([])
         productos = {p.default_code: p for p in productos}
-        items = {i.product_tmpl_id.default_code:i for i in self.item_ids if i.product_tmpl_id}
+        items = {i.product_tmpl_id.default_code: i for i in self.item_ids if i.product_tmpl_id}
         new_items = []
         faltantes = []
         for l in lines[1:]:
@@ -154,28 +246,30 @@ class Pricelist(models.Model):
                     faltantes.append(str(l))
                     continue
                 float_value = float(l[1])
-                price = float_value if self.option_select == 'price' else p.standard_price * (1 + float_value/100) * 1.16
+                price = float_value if self.option_select == 'price' else p.standard_price * (
+                            1 + float_value / 100) * 1.16
                 _logger.info(price)
                 if not item:
-                    dic = {'applied_on':'1_product','compute_price':'fixed','fixed_price':price, 'product_tmpl_id':p.id}
+                    dic = {'applied_on': '1_product', 'compute_price': 'fixed', 'fixed_price': price,
+                           'product_tmpl_id': p.id}
                     if self.option_select == 'util':
                         dic['utili_perc'] = float_value
-                    new_items.append([0,0,dic])
+                    new_items.append([0, 0, dic])
                 else:
-                    dic = {'fixed_price':price}
+                    dic = {'fixed_price': price}
                     if self.option_select == 'util':
                         dic['utili_perc'] = float_value
                     item.write(dic)
                 if self.id == 1:
-                    dic = {'list_price':price}
+                    dic = {'list_price': price}
                     if self.option_select == 'util':
                         dic['utili_perc'] = float_value
                     p.write(dic)
             except:
-                raise UserError("Error en la linea: %s"%str(l))
-        self.write({'item_ids':new_items,'file':False})
+                raise UserError("Error en la linea: %s" % str(l))
+        self.write({'item_ids': new_items, 'file': False})
         if faltantes:
-            mensaje = "Los siguientes productos no fueron encontrados\n%s"%('\n'.join(faltantes))
+            mensaje = "Los siguientes productos no fueron encontrados\n%s" % ('\n'.join(faltantes))
             return {
                 'name': 'Error Crear Pagos',
                 'type': 'ir.actions.act_window',
@@ -187,7 +281,7 @@ class Pricelist(models.Model):
 
 
 class Line(models.Model):
-    _inherit="sale.order.line"
+    _inherit = "sale.order.line"
 
     # @api.depends(
     #     'product_id', 'customer_lead', 'product_uom_qty', 'product_uom', 'order_id.commitment_date',
@@ -202,7 +296,7 @@ class Line(models.Model):
 
 
 class PriceListItem(models.Model):
-    _inherit="product.pricelist.item"
+    _inherit = "product.pricelist.item"
 
     utili_perc = fields.Float("Utilidad (%)")
 
@@ -228,7 +322,8 @@ class Pricelistrule(models.Model):
         if uom_id:
             # rebrowse with uom if given
             products = [item[0].with_context(uom=uom_id) for item in products_qty_partner]
-            products_qty_partner = [(products[index], data_struct[1], data_struct[2]) for index, data_struct in enumerate(products_qty_partner)]
+            products_qty_partner = [(products[index], data_struct[1], data_struct[2]) for index, data_struct in
+                                    enumerate(products_qty_partner)]
         else:
             products = [item[0] for item in products_qty_partner]
 
@@ -253,7 +348,8 @@ class Pricelistrule(models.Model):
             prod_ids = [product.id for product in products]
             prod_tmpl_ids = [product.product_tmpl_id.id for product in products]
 
-        items = self._compute_price_rule_get_items(products_qty_partner, date, uom_id, prod_tmpl_ids, prod_ids, categ_ids)
+        items = self._compute_price_rule_get_items(products_qty_partner, date, uom_id, prod_tmpl_ids, prod_ids,
+                                                   categ_ids)
 
         results = {}
         for product, qty, partner in products_qty_partner:
@@ -268,7 +364,8 @@ class Pricelistrule(models.Model):
             qty_in_product_uom = qty
             if qty_uom_id != product.uom_id.id:
                 try:
-                    qty_in_product_uom = self.env['uom.uom'].browse([self._context['uom']])._compute_quantity(qty, product.uom_id)
+                    qty_in_product_uom = self.env['uom.uom'].browse([self._context['uom']])._compute_quantity(qty,
+                                                                                                              product.uom_id)
                 except UserError:
                     # Ignored - incompatible UoM in context, use default product UoM
                     pass
@@ -284,7 +381,8 @@ class Pricelistrule(models.Model):
                 if is_product_template:
                     if rule.product_tmpl_id and product.id != rule.product_tmpl_id.id:
                         continue
-                    if rule.product_id and not (product.product_variant_count == 1 and product.product_variant_id.id == rule.product_id.id):
+                    if rule.product_id and not (
+                            product.product_variant_count == 1 and product.product_variant_id.id == rule.product_id.id):
                         # product rule acceptable on template if has only one variant
                         continue
                 else:
@@ -303,8 +401,11 @@ class Pricelistrule(models.Model):
                         continue
 
                 if rule.base == 'pricelist' and rule.base_pricelist_id:
-                    price_tmp = rule.base_pricelist_id._compute_price_rule([(product, qty, partner)], date, uom_id)[product.id][0]  # TDE: 0 = price, 1 = rule
-                    price = rule.base_pricelist_id.currency_id._convert(price_tmp, self.currency_id, self.env.company, date, round=False)
+                    price_tmp = \
+                    rule.base_pricelist_id._compute_price_rule([(product, qty, partner)], date, uom_id)[product.id][
+                        0]  # TDE: 0 = price, 1 = rule
+                    price = rule.base_pricelist_id.currency_id._convert(price_tmp, self.currency_id, self.env.company,
+                                                                        date, round=False)
                 else:
                     # if base option is public price take sale price else cost price of product
                     # price_compute returns the price in the context UoM, i.e. qty_uom_id
@@ -326,7 +427,8 @@ class Pricelistrule(models.Model):
                 cur = product.currency_id
                 price = cur._convert(price, self.currency_id, self.env.company, date, round=False)
             if self.env.context.get("margen"):
-                results[product.id] = (price, suitable_rule and suitable_rule.id or False,suitable_rule and suitable_rule.utili_perc or 0)
+                results[product.id] = (
+                price, suitable_rule and suitable_rule.id or False, suitable_rule and suitable_rule.utili_perc or 0)
             else:
                 results[product.id] = (price, suitable_rule and suitable_rule.id or False)
         return results
