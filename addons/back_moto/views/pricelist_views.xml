@@ -63,7 +63,7 @@
         <field name="res_model">product.cost.transient</field>
         <field name="view_mode">form</field>
         <field name="view_id" ref="back_moto.wizard_product_cost_transient"/>
-        <field name="target">new</field>
+<!--        <field name="target">new</field>-->
     </record>
 
     <menuitem id="menu_product_cost_transient" parent="purchase.menu_purchase_products" name="Cargar Costos" sequence="30"

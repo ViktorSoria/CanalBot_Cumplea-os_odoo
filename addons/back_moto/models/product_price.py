@@ -70,21 +70,21 @@ class ProductTemplate(models.Model):
         return res
 
     def write(self, vals):
-        if 'standard_price' in vals:
+        if 'standard_price' in vals and self._context.get('flag_fixed', True):
             if round(self.utili_perc, 4) != 0.0:
                 vals['list_price'] = vals['standard_price'] * 1.16 * (1 + self.utili_perc / 100)
         res = super(ProductTemplate, self).write(vals)
-        if 'standard_price' in vals and res:
-            self.update_pricelist_items(list(vals))
+        if 'standard_price' in vals and res and self._context.get('flag_fixed', True):
+            self.update_pricelist_items(cost=vals['standard_price'])
         return res
 
-    def update_pricelist_items(self, vals):
+    def update_pricelist_items(self, cost):
         items = self.env['product.pricelist.item'].search(
-            [('applied_on', '=', '1_product'), ('product_id', '=', self.id)])
+            [('applied_on', '=', '1_product'), ('product_tmpl_id', '=', self.id)])
         for item in items:
             if round(item.utili_perc, 4) == 0.0:
                 continue
-            item.write({'fixed_price': vals['standard_price'] * 1.16 * (1 + item.utili_perc / 100)})
+            item.write({'fixed_price': int(cost) * 1.16 * (1 + item.utili_perc / 100)})
 
 
 class ProducCostMargin(models.TransientModel):
@@ -97,15 +97,12 @@ class ProducCostMargin(models.TransientModel):
         lines = []
         try:
             if 'csv' in self.file_name:
-                _logger.info('if')
                 csv_file = base64.b64decode(self.file).decode()
                 file_input = StringIO(csv_file)
                 file_input.seek(0)
                 reader = csv.reader(file_input, delimiter=',')
                 lines.extend(reader)
-                _logger.info(lines)
             else:
-                _logger.info('else')
                 file_path = tempfile.gettempdir() + '/file.xls'
                 f = open(file_path, 'wb')
                 f.write(base64.b64decode(self.file))
@@ -130,9 +127,10 @@ class ProducCostMargin(models.TransientModel):
         items = self.env['product.pricelist.item'].search([('applied_on', '=', '1_product')])
         productos_items = {}
         for i in items:
-            productos_items[i.product_tmpl_id.default_code] = productos_items.get(i.product_tmpl_id.default_code, []).append(i)
+            productos_items[i.product_tmpl_id.default_code] = productos_items.get(i.product_tmpl_id.default_code, []) +[i]
+            # productos_items[i.product_tmpl_id.default_code] = productos_items[i.product_tmpl_id.default_code].append(i) if i.product_tmpl_id.default_code in productos_items else [i]
         faltantes = []
-        for l in lines:
+        for l in lines[1:]:
             try:
                 items_p = productos_items.get(l[0])
                 p = productos.get(l[0])
@@ -140,21 +138,22 @@ class ProducCostMargin(models.TransientModel):
                     faltantes.append(str(l))
                     continue
                 float_value = float(l[1])
-                p.standard_price = float_value #write
+                p.with_context(flag_fixed = False).write({'standard_price' : float_value}) #write
                 for item in items_p:
-                    item.fixed_price = float_value * (1 + item.utili_perc / 100) * 1.16 #write
+                    item.write({'fixed_price' : float_value * (1 + item.utili_perc / 100) * 1.16}) #write
             except:
                 raise UserError("Error en la linea: %s" % str(l))
         if faltantes:
-            mensaje = "Los siguientes productos no fueron encontrados\n%s" % ('\n'.join(faltantes))
+            mensaje = { 'message' : "Los siguientes productos no fueron encontrados\n%s" % ('\n'.join(faltantes))}
             return {
                 'name': 'Error Modificar Costos',
                 'type': 'ir.actions.act_window',
-                'view_mode': 'form',
                 'res_model': 'message.wizard',
+                'view_mode': 'form',
                 'target': 'new',
                 'context': mensaje
             }
+        return {'type': 'ir.actions.act_window_close'}
 
 
 class ProducPrice(models.TransientModel):
@@ -269,7 +268,7 @@ class Pricelist(models.Model):
                 raise UserError("Error en la linea: %s" % str(l))
         self.write({'item_ids': new_items, 'file': False})
         if faltantes:
-            mensaje = "Los siguientes productos no fueron encontrados\n%s" % ('\n'.join(faltantes))
+            mensaje = { 'message' : "Los siguientes productos no fueron encontrados:\n%s" % ('\n'.join(faltantes))}
             return {
                 'name': 'Error Crear Pagos',
                 'type': 'ir.actions.act_window',
