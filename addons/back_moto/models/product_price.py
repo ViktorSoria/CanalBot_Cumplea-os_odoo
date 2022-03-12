@@ -138,7 +138,7 @@ class ProducCostMargin(models.TransientModel):
                     faltantes.append(str(l))
                     continue
                 float_value = float(l[1])
-                p.with_context(flag_fixed = False).write({'standard_price' : float_value}) #write
+                p.with_context(flag_fixed = False).write({'standard_price' : float_value, 'list_price': float_value * (1 + p.utili_perc / 100) * 1.16}) #write
                 for item in items_p:
                     item.write({'fixed_price' : float_value * (1 + item.utili_perc / 100) * 1.16}) #write
             except:
