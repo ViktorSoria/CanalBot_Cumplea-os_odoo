@@ -1,6 +1,7 @@
 
 
 from odoo import fields, models, api
+from datetime import datetime, timedelta
 import json
 import werkzeug.urls
 import logging
@@ -164,3 +165,112 @@ class PosOrderTemp(models.TransientModel):
     orden = fields.Char('Referencia de orden')
     cajero = fields.Char('Cajero')
     pos_name = fields.Char('Nombre punto de ventaa')
+
+
+class SyncDataPosProduct(models.Model):
+    _inherit = "product.product"
+
+    @api.model
+    def create(self,vals):
+        producto = super(SyncDataPosProduct,self).create(vals)
+        rec = self.env["pos.metadatos"].sudo()
+        rec.nuevosDatos(producto,rec.search([("modelo","=","1")]))
+        return producto
+
+class SyncDataPosProductTemplate(models.Model):
+    _inherit = "product.template"
+
+    def write(self,vals):
+        producto = super(SyncDataPosProductTemplate, self).write(vals)
+        rec = self.env["pos.metadatos"].sudo()
+        rec.nuevosDatos(self.env["product.product"].search([("name","=",self.name)],limit=1), rec.search([("modelo", "=", "1")]))
+        return producto
+
+class SyncDataPosPricelist(models.Model):
+    _inherit = "product.pricelist.item"
+
+    @api.model
+    def create(self,vals):
+        lstPrecios = super(SyncDataPosPricelist,self).create(vals)
+        rec = self.env["pos.metadatos"].sudo()
+        rec.nuevosDatos(lstPrecios,rec.search([("modelo","=","2")]))
+        return lstPrecios
+
+    def write(self,vals):
+        super(SyncDataPosPricelist, self).write(vals)
+        rec = self.env["pos.metadatos"].sudo()
+        rec.nuevosDatos(self, rec.search([("modelo", "=", "2")]))
+
+
+class SyncDataPosPartner(models.Model):
+    _inherit = "res.partner"
+
+    @api.model
+    def create(self,vals):
+        cliente = super(SyncDataPosPartner,self).create(vals)
+        rec = self.env["pos.metadatos"].sudo()
+        rec.nuevosDatos(cliente,rec.search([("modelo","=","3")]))
+        return cliente
+
+    def write(self,vals):
+        super(SyncDataPosPartner, self).write(vals)
+        rec = self.env["pos.metadatos"].sudo()
+        rec.nuevosDatos(self, rec.search([("modelo", "=", "3")]))
+
+
+
+class TemporalDataPos(models.TransientModel):
+    _name = "data.pos.metadatos"
+
+    @api.model
+    def update_data_pos(self):
+        t = fields.Datetime.now() - timedelta(seconds=25)
+        val = self.search_read([("create_date",">",t)],fields=["modelo",'rec_id','datos'],order='create_date desc')
+        print(val)
+        return val
+
+    modelo = fields.Char(string="Modelo")
+    rec_id = fields.Integer(string="Id")
+    datos = fields.Char(string="Campos")
+
+
+class ConfigSyncPos(models.Model):
+    _name = "pos.metadatos"
+
+    def nuevosDatos(self, modelo, registros):
+        vals = {}
+        for r in registros:
+            for s in r.campos:
+                x = modelo.__getattribute__(s.name)
+                if isinstance(x, models.Model):
+                    vals[s.name] = [x.id, x.name]
+                else:
+                    vals[s.name] = x
+
+        datos = {
+            'modelo': modelo._name,
+            'rec_id': modelo.id,
+            'datos': json.dumps(vals)
+        }
+
+        self.env["data.pos.metadatos"].sudo().create(datos)
+
+
+    @api.onchange('modelo')
+    def filtrarCampos(self):
+        """Obtiene el dominio para el campo 'campos' y se filtra todos los campos con 'store=True' del respectivo modelo"""
+        self.campos = None
+        dom = []
+
+        if self.modelo == "1":
+            mod = 'product.product'
+        elif self.modelo == "2":
+            mod = 'product.pricelist.item'
+        elif self.modelo == "3":
+            mod = 'res.partner'
+
+        dom.extend([('model_id','=',mod)])
+        return {'domain':{'campos':dom}}
+
+    modelo = fields.Selection([('1','Productos'),('2','Lista de precios'),('3','Clientes')],required=True, default='1')
+    campos = fields.Many2many("ir.model.fields", string="Campos")
