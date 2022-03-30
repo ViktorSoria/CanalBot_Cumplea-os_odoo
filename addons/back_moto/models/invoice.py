@@ -40,6 +40,7 @@ class Inovice(models.Model):
                         'context': {'default_name':mensaje,'default_invoice_ids':self.ids}
                     }
         docs._process_documents_web_services(with_commit=False)
+        self._compute_cfdi_values()
 
 
 class Message(models.TransientModel):

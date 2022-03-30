@@ -47,7 +47,6 @@ odoo.define("pos_product_available.PosModel", function (require) {
             }
 
             async _clickProductAvailable(event) {
-                console.log(this.props.product);
                 var stock = await this.rpc({
                     model: 'product.product',
                     method: 'available_qty',
@@ -149,21 +148,20 @@ odoo.define("pos_product_available.PosModel", function (require) {
 
             update_data() {
                 const self = this;
-                const t = 10000;
-                async function loop(tiempo) {
+                async function loop(tiempo,anterior) {
                     if(tiempo===0){
-                        setTimeout(()=>{loop(t);}, t);
+                        setTimeout(()=>{loop(40000,1000*60*3);}, 1000*60*3);
                     }
                     else{
                         try {
-                            await self.autoSync();
+                            await self.autoSync(anterior);
                         } catch (error) {
                             console.log(error);
                         }
-                        setTimeout(()=>{loop(tiempo);}, tiempo);
+                        setTimeout(()=>{loop(tiempo,tiempo);}, tiempo);
                     }
                 }
-                loop(0);
+                loop(0,0);
             }
 
             async load_new_items(mod,Id) {
@@ -202,34 +200,31 @@ odoo.define("pos_product_available.PosModel", function (require) {
                 let actualizar;
 
                 return new Promise( (resolve,reject) =>{
+                    let datos = JSON.parse(rec.datos);
                     if(rec["modelo"] === "product.product"){
                         actualizar = DB.product_by_id[rec.rec_id];
                     } else if (rec["modelo"] === "res.partner"){
                         actualizar = DB.get_partner_by_id(rec.rec_id);
                     } else if (rec["modelo"] === "product.pricelist.item"){
                         let lst = this.env.pos.pricelists;
-                        let objeto;
-
+                        let items;
                         for(let i=0; i<lst.length; i++){
-                            if(lst[i].id === JSON.parse(rec.datos).pricelist_id[0]){
-                                objeto = lst[i].items;
-                                objeto.every( item => {
-                                if(item.id === rec.rec_id){
-                                    actualizar = item; return false;
-                                }
-                                return true;
-                            });
-                                break;
+                            if(datos.pricelist_id && lst[i].id === datos.pricelist_id[0]) {
+                                items = lst[i].items;
+                                actualizar = _.filter(items,function (item){
+                                   return (item.id === rec.rec_id);
+                                });
+                                if(actualizar) actualizar = actualizar[0];
                             }
                         }
                     }
-                    console.log(actualizar);
 
                     if(actualizar){
-                        for(let p in JSON.parse(rec.datos)){
-                            actualizar[p] = JSON.parse(rec.datos)[p];
+                        for(let p in datos){
+                            actualizar[p] = datos[p];
                         }
                     } else {
+                        console.log("Es nuevo solicitando info");
                         self.load_new_items(rec["modelo"],rec.rec_id).then( () => {
                             resolve("Objeto creado");
                         }).catch( () => {
@@ -239,18 +234,17 @@ odoo.define("pos_product_available.PosModel", function (require) {
                 });
             }
 
-            async autoSync(){
+            async autoSync(tiempo){
                 let dt = await this.rpc({
                     model: 'data.pos.metadatos',
                     method: 'update_data_pos',
-                    args: []
+                    args: [tiempo/1000]
                 });
-
                 dt.forEach( (registro,index) => {
                    this.update_info(registro).then( res => {
-                        console.log(res);
-                   }).catch(() => {
-                        console.log("No se pudo actualizar");
+
+                   }).catch((e) => {
+                        console.log("No se pudo actualizar ",e);
                    });
                 });
 

@@ -3,5 +3,3 @@ access_pos_order_temp,access.pos.order.temp,model_pos_order_temp,base.group_user
 access_price_discount,access.price.discount,model_price_discount,base.group_user,1,1,1,1
 access_price_discount,access.price.discount,model_price_discount,point_of_sale.group_pos_user,1,1,1,1
 access_day_week,access.day.week,model_day_week,point_of_sale.group_pos_user,1,1,1,1
-access_pos_metadatos,access.pos.metadatos,model_pos_metadatos,,1,1,1,1
-access_data_pos_metadatos,access.data.pos.metadatos,model_data_pos_metadatos,,1,1,1,1
