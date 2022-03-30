@@ -21,5 +21,15 @@
             <field name="numbercall">-1</field>
             <field name="code">model.cron_data_pos()</field>
         </record>
+        <record model="ir.cron" id="cron_eliminar_data_pos">
+            <field name="name">Eliminar data pos</field>
+            <field name="model_id" ref="pos_product_available.model_load_data_pos"/>
+            <field name="state">code</field>
+            <field name="active">False</field>
+            <field name="interval_number">1</field> <!-- To decide clearly -->
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="code">model.cron_delete_data()</field>
+        </record>
     </data>
 </odoo>

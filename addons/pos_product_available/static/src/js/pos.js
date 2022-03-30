@@ -47,7 +47,6 @@ odoo.define("pos_product_available.PosModel", function (require) {
             }
 
             async _clickProductAvailable(event) {
-                console.log(this.props.product);
                 var stock = await this.rpc({
                     model: 'product.product',
                     method: 'available_qty',
@@ -100,9 +99,11 @@ odoo.define("pos_product_available.PosModel", function (require) {
 
     const ProductScreen2 = (ProductScreen) =>
         class extends ProductScreen {
+
             constructor() {
                 super(...arguments);
                 this.inicial();
+                this.update_data();
             }
             inicial() {
                 const self = this;
@@ -145,6 +146,111 @@ odoo.define("pos_product_available.PosModel", function (require) {
                 this.showScreen('ProductScreen');
             }
 
+            update_data() {
+                const self = this;
+                async function loop(tiempo,anterior) {
+                    if(tiempo===0){
+                        setTimeout(()=>{loop(40000,1000*60*3);}, 1000*60*3);
+                    }
+                    else{
+                        try {
+                            await self.autoSync(anterior);
+                        } catch (error) {
+                            console.log(error);
+                        }
+                        setTimeout(()=>{loop(tiempo,tiempo);}, tiempo);
+                    }
+                }
+                loop(0,0);
+            }
+
+            async load_new_items(mod,Id) {
+                var self = this;
+                var index = 20;
+                let obj;
+                return new Promise(function (resolve, reject) {
+                    var fields = _.find(self.env.pos.models, function(model){ return model.model === mod; }).fields;
+                    var domain = [['id','=', Id]];
+                    self.rpc({
+                        model: mod,
+                        method: 'search_read',
+                        args: [domain, fields],
+                    }, {
+                        timeout: 3000,
+                        shadow: true,
+                    })
+                    .then(function (items) {
+                        if (mod === "res.partner") index = 5;
+                        else if(mod === "product.product") index = 20;
+                        else if(mod === "product.pricelist.item") index = 16;
+
+                        obj = self.env.pos.models[index].loaded(self.env.pos,items);
+                        if(obj) {
+                            resolve();
+                        }else {
+                            reject();
+                        }
+                    }, function (type, err) { reject(); });
+                });
+            }
+
+            update_info(rec) {
+                var self = this;
+                let DB = self.env.pos.db;
+                let actualizar;
+
+                return new Promise( (resolve,reject) =>{
+                    let datos = JSON.parse(rec.datos);
+                    if(rec["modelo"] === "product.product"){
+                        actualizar = DB.product_by_id[rec.rec_id];
+                    } else if (rec["modelo"] === "res.partner"){
+                        actualizar = DB.get_partner_by_id(rec.rec_id);
+                    } else if (rec["modelo"] === "product.pricelist.item"){
+                        let lst = this.env.pos.pricelists;
+                        let items;
+                        for(let i=0; i<lst.length; i++){
+                            if(datos.pricelist_id && lst[i].id === datos.pricelist_id[0]) {
+                                items = lst[i].items;
+                                actualizar = _.filter(items,function (item){
+                                   return (item.id === rec.rec_id);
+                                });
+                                if(actualizar) actualizar = actualizar[0];
+                            }
+                        }
+                    }
+
+                    if(actualizar){
+                        for(let p in datos){
+                            actualizar[p] = datos[p];
+                        }
+                    } else {
+                        console.log("Es nuevo solicitando info");
+                        self.load_new_items(rec["modelo"],rec.rec_id).then( () => {
+                            resolve("Objeto creado");
+                        }).catch( () => {
+                            reject();
+                        });
+                    }
+                });
+            }
+
+            async autoSync(tiempo){
+                let dt = await this.rpc({
+                    model: 'data.pos.metadatos',
+                    method: 'update_data_pos',
+                    args: [tiempo/1000]
+                });
+                dt.forEach( (registro,index) => {
+                   this.update_info(registro).then( res => {
+
+                   }).catch((e) => {
+                        console.log("No se pudo actualizar ",e);
+                   });
+                });
+
+                this.showScreen('PaymentScreen');
+                this.showScreen('ProductScreen');
+            }
         }
 
     const CategoryButton2 = (CategoryButton) =>

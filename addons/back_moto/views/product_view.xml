@@ -11,7 +11,7 @@
                     <field name="line_ids">
                         <tree>
                             <field name="name"/>
-<!--                            <field name="utili_perc"/>-->
+                            <field name="utili_perc"/>
                             <field name="precio"/>
                             <button class="fa fa-external-link" name="edit_line" type="object"/>
                         </tree>
@@ -20,6 +20,7 @@
             </xpath>
             <xpath expr="//div[@name='standard_price_uom']" position="after">
                 <field name="price_avg"/>
+                <field name="ultimo_costo"/>
             </xpath>
         </field>
     </record>
@@ -45,7 +46,7 @@
                         <group>
                             <field name="name" readonly="True"/>
                             <field name="precio"/>
-<!--                            <field name="utili_perc"/>-->
+                            <field name="utili_perc"/>
                         </group>
                     </group>
                     <footer>
@@ -57,15 +58,15 @@
         </field>
     </record>
 
-<!--    <record id="product_pricelist_item_tree_view" model="ir.ui.view">-->
-<!--        <field name="name">product.pricelist.tree.item.view</field>-->
-<!--        <field name="model">product.pricelist</field>-->
-<!--        <field name="inherit_id" ref="product.product_pricelist_view"/>-->
-<!--        <field name="arch" type="xml">-->
-<!--            <xpath expr="//field[@name='price']" position="before">-->
-<!--&lt;!&ndash;                <field name="utili_perc"/>&ndash;&gt;-->
-<!--            </xpath>-->
-<!--        </field>-->
-<!--    </record>-->
+    <record id="product_pricelist_item_tree_view" model="ir.ui.view">
+        <field name="name">product.pricelist.tree.item.view</field>
+        <field name="model">product.pricelist</field>
+        <field name="inherit_id" ref="product.product_pricelist_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='price']" position="before">
+                <field name="utili_perc"/>
+            </xpath>
+        </field>
+    </record>
 
 </odoo>

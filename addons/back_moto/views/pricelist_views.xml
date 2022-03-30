@@ -11,11 +11,62 @@
                     <field name="lista_precio" groups="base.group_no_one"/>
                     <field name="file_name" invisible="1"/>
                     <field name="file" filename="file_name"/>
+                    <field name="option_select" attrs="{'required':[('file','!=',False)], 'invisible':[('file','=',False)]}"/>
                     <button type="object" name="update_price" string="Actualizar precios" class="oe_highlight"
                     attrs="{'invisible':[('file','=',False)]}"/>
                 </group>
             </xpath>
         </field>
     </record>
+
+    <record id="product_pricelist_item_form_view" model="ir.ui.view">
+        <field name="name">product.pricelist.item.form.view</field>
+        <field name="model">product.pricelist.item</field>
+        <field name="inherit_id" ref="product.product_pricelist_item_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='date_end']" position="after">
+                <field name="utili_perc"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_pricelist_item_form_from_product_view" model="ir.ui.view">
+        <field name="name">product.pricelist.item.form.from.product.view</field>
+        <field name="model">product.pricelist.item</field>
+        <field name="inherit_id" ref="product.product_pricelist_item_tree_view_from_product"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='fixed_price']" position="before">
+                <field name="utili_perc"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="wizard_product_cost_transient">
+    <field name="name">wizard.product.cost.transient</field>
+    <field name="model">product.cost.transient</field>
+    <field name="arch" type="xml">
+        <form string="Actualizar costos de productos">
+            <group>
+                    <field name="file" filename="file_name"/>
+                <field name="file_name" invisible="1"/>
+            </group>
+            <footer>
+                <button name="update_price" type="object" string="Cargar" class="oe_highlight"/>
+                <button special="cancel" string="Cancel"/>
+            </footer>
+        </form>
+    </field>
+    </record>
+
+    <record id="act_menu_product_cost_view" model="ir.actions.act_window">
+        <field name="name">Costos de Productos</field>
+        <field name="res_model">product.cost.transient</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="back_moto.wizard_product_cost_transient"/>
+<!--        <field name="target">new</field>-->
+    </record>
+
+    <menuitem id="menu_product_cost_transient" parent="purchase.menu_purchase_products" name="Cargar Costos" sequence="30"
+              action="act_menu_product_cost_view" groups="purchase.group_purchase_manager"/>
 
 </odoo>

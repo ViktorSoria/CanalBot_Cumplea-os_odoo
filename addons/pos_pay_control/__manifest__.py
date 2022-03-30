@@ -12,6 +12,7 @@
              "views/views.xml",
              "views/pos_views.xml",
              "views/pos_discount.xml",
+             "views/pos_dataSync_views.xml"
              ],
     "qweb": [
         "static/src/xml/pos.xml",

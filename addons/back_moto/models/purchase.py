@@ -186,6 +186,7 @@ class PurchaseOrder(models.Model):
         res = super(PurchaseOrder,self).button_confirm()
         for l in self.order_line:
             l.product_id.standard_price = l.price_unit
+            l.product_id.ultimo_costo = l.price_unit
         return res
 
 
@@ -202,6 +203,7 @@ class Product(models.Model):
     _inherit = "product.product"
 
     price_avg = fields.Float("Costo promedio",compute="_compute_purchased_product_avg",digits='Product Price')
+    ultimo_costo = fields.Float("Ultimo Costo",readonly=True)
 
     def _compute_purchased_product_avg(self):
         # date_from = fields.Datetime.to_string(fields.Date.context_today(self) - relativedelta(years=1))
@@ -222,7 +224,9 @@ class ProductTemplate(models.Model):
     _inherit = "product.template"
 
     price_avg = fields.Float("Costo promedio",compute="_compute_purchased_product_avg",digits='Product Price')
+    ultimo_costo = fields.Float("Ultimo Costo", compute="_compute_purchased_product_avg")
 
     def _compute_purchased_product_avg(self):
         for template in self:
             template.price_avg = sum([p.price_avg for p in template.product_variant_ids])
+            template.ultimo_costo = template.product_variant_ids[0].ultimo_costo
