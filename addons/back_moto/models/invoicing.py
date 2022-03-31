@@ -217,7 +217,6 @@ class Invoice(models.Model):
             where_string=where_string,)
         self.env.cr.execute(q1, param)
         pref = self.env.cr.fetchone()[0] or ''
-        _logger.warning(pref)
         query = """
             UPDATE {table} SET write_date = write_date WHERE id = (
                 SELECT id FROM {table}
