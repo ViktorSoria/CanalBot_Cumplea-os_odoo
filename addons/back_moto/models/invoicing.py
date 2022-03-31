@@ -217,6 +217,7 @@ class Invoice(models.Model):
             where_string=where_string,)
         self.env.cr.execute(q1, param)
         pref = self.env.cr.fetchone()[0] or ''
+        _logger.warning(pref)
         query = """
             UPDATE {table} SET write_date = write_date WHERE id = (
                 SELECT id FROM {table}
@@ -230,7 +231,7 @@ class Invoice(models.Model):
             table=self._table,
             where_string=where_string,
             field=self._sequence_field,
-            pref="'{}','{}' ".format(pref,pref.replace('INV/','INV/GLOB/'))
+            pref="'{}','{}','{}' ".format(pref,pref.replace('INV/','INV/GLOB/'),pref.replace('INV/GLOB/','INV/'))
         )
 
         self.flush([self._sequence_field, 'sequence_number', 'sequence_prefix'])
