@@ -36,12 +36,11 @@ class StockPickingCustom(models.Model):
             record.seller = None
             record.team_sale = None
 
+    @api.onchange("picking_type_id")
     def confirmTransfer(self):
-        active_id = self.env.context.get('active_id')
-        sucursales = self.env['stock.picking.type'].search([('id','=',active_id)])
-        return sucursales._es_transferencia
+        self.is_transfer = self.picking_type_id._es_transferencia
 
-    is_transfer = fields.Boolean("Es Transferencia entre Sucursales",default=confirmTransfer)
+    is_transfer = fields.Boolean("Es Transferencia entre Sucursales")
     location_transfer_id = fields.Many2one('stock.location', string="Ubicación de destino")
 
     @api.constrains('location_id','location_dest_id')
