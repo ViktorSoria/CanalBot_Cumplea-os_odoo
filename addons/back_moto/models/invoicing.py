@@ -216,8 +216,25 @@ class Invoice(models.Model):
         q1 = "SELECT sequence_prefix FROM {table} {where_string} ORDER BY id DESC LIMIT 1".format(table=self._table,
             where_string=where_string,)
         self.env.cr.execute(q1, param)
-        pref = self.env.cr.fetchone()[0] or ''
-        query = """
+        pref = self.env.cr.fetchone()
+        if not pref:
+            query = """
+                        UPDATE {table} SET write_date = write_date WHERE id = (
+                            SELECT id FROM {table}
+                            {where_string}
+                            AND sequence_prefix = (SELECT sequence_prefix FROM {table} {where_string} ORDER BY id DESC LIMIT 1)
+                            ORDER BY sequence_number DESC
+                            LIMIT 1
+                        )
+                        RETURNING {field};
+                    """.format(
+                    table=self._table,
+                    where_string=where_string,
+                    field=self._sequence_field,
+                    )
+        else:
+            pref = pref[0] or ''
+            query = """
             UPDATE {table} SET write_date = write_date WHERE id = (
                 SELECT id FROM {table}
                 {where_string}
