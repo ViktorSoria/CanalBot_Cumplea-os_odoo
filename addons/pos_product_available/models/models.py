@@ -59,7 +59,11 @@ class controll(DataSet):
             res = request.env['load.data.pos'].search([('name','=','product.product'),('location_id','=',kwargs.get('context').get('location'))],limit=1,order="create_date desc")
             res = json.loads(res.text) if res else False
         if not res:
+            if model == 'product.pricelist.item' and kwargs.get('context', {}).get('global'):
+                _logger.warning("carngando lista")
             res = super()._call_kw(model, method, args, kwargs)
+            if model == 'product.pricelist.item' and kwargs.get('context', {}).get('global'):
+                _logger.warning("Termino de calcular lista")
         return res
 
 
