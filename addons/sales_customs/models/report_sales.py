@@ -85,15 +85,15 @@ class ReportSalesComisionWizard(models.TransientModel):
 
     def search_records(self):
         dic = {}
-        invoices = []
+        invoices_pos = []
         if self.options == 'all' or self.options == 'pos':
             pos_orders = self.env['pos.order'].sudo().search([('date_order', '>=', self.date_start), ('date_order', '<=', self.date_end), ('crm_team_id', 'in', self.sale_teams.ids), ('state', 'in', ['paid','done', 'invoiced'])])
             for order in pos_orders:
                 if order.account_move:
-                    invoices.append(order.account_move.id)
+                    invoices_pos.append(order.account_move.id)
                 key = str(order.id) + "pos_order"
                 dic[key] = {
-                    'name': order.name,
+                    'name': order.display_name,
                     'partner_id': order.partner_id.id,
                     'user_id': order.user_id.id,
                     'total': order.amount_total,
@@ -101,14 +101,14 @@ class ReportSalesComisionWizard(models.TransientModel):
                     'sale_team': order.crm_team_id.id
                 }
         if self.options == 'all' or self.options == 'sale':
-            invoices = self.env['account.move'].sudo().search([('payment_date', '>=', self.date_start), ('payment_date', '<=', self.date_end), ('team_id', 'in', self.sale_teams.ids), ('state', '=', 'posted'), ('move_type', 'in', ['out_invoice', 'in_refund']), ('id', 'not in', invoices)])
+            invoices = self.env['account.move'].sudo().search([('payment_date', '>=', self.date_start), ('payment_date', '<=', self.date_end), ('team_id', 'in', self.sale_teams.ids), ('state', '=', 'posted'), ('move_type', 'in', ['out_invoice', 'out_refund']), ('id', 'not in', invoices_pos)])
             for invoice in invoices:
                 key = str(invoice.id) + 'account_move'
                 dic[key] = {
-                    'name': invoice.name,
+                    'name': invoice.display_name,
                     'partner_id': invoice.partner_id.id,
                     'user_id': invoice.invoice_user_id.id,
-                    'total': invoice.amount_total,
+                    'total': invoice.amount_total if invoice.move_type == 'out_invoice' else -invoice.amount_total ,
                     'date': invoice.payment_date,
                     'sale_team': invoice.team_id.id
                 }
