@@ -11,6 +11,30 @@ odoo.define("pos_pay_control.SendOrder", function (require) {
         }
 
         async onClick(event){
+            var self = this;
+            var order_is_correct = true;
+            this.env.pos.db.cache.unpaid_orders.forEach(function(order){
+                order.data.lines.forEach(function(line){
+                    var linea = line[2];
+                    if(linea.qty <= 0){
+                         self.showPopup('ErrorPopup', {
+                            title: "Error de cantidad",
+                            body: "No puedes enviar cero productos.",
+                        });
+                        order_is_correct = false;
+                    }
+                    if(linea.price_unit <= 0.01){
+                        self.showPopup('ErrorPopup', {
+                            title: "Error de precio",
+                            body: "No puedes enviar productos con precio menor o igual a cero.",
+                        });
+                        order_is_correct = false;
+                    }
+                });
+            });
+            if(order_is_correct == false){
+                return;
+            }
             var sessions = await this.rpc({
                 model: 'pos.session',
                 method: 'search_read',
@@ -60,7 +84,9 @@ odoo.define("pos_pay_control.SendOrder", function (require) {
                                 });
                             }
                 });
+
             }
+
         }
     }
 
