@@ -17,7 +17,7 @@ class loadData(models.Model):
     location_id = fields.Many2one("stock.location")
 
     def cron_delete_data(self):
-        self.env.cr.execute("Delete from load_data_pos;")
+        self.env.cr.execute("Delete from load_data_pos wher model= 'product.product';")
         self.env.cr.commit()
 
     def cron_data_pos(self):
