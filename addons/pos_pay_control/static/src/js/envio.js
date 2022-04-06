@@ -22,12 +22,6 @@ odoo.define("pos_pay_control.SendOrder", function (require) {
         }
 
         async onClick(event){
-            let valido = this.valida_lineas();
-            if(!valido){
-                this.showPopup('ErrorPopup', {
-                    title: "Error de precio",
-                    body: "No puedes enviar productos sin precio o con precio menor o igual a cero.",
-                });
             var self = this;
             var order_is_correct = true;
             this.env.pos.db.cache.unpaid_orders.forEach(function(order){
@@ -50,10 +44,14 @@ odoo.define("pos_pay_control.SendOrder", function (require) {
                 });
             });
             if(order_is_correct == false){
+            let valido = this.valida_lineas();
+            if(!valido){
+                this.showPopup('ErrorPopup', {
+                    title: "Error de precio",
+                    body: "No puedes enviar productos sin precio o con precio menor o igual a cero.",
+                });
                 return;
-            }
-            return;
-        }
+            }}
             var sessions = await this.rpc({
                 model: 'pos.session',
                 method: 'search_read',

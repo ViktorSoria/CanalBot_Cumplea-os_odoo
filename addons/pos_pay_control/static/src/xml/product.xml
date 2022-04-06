@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates id="template" xml:space="preserve">
+    <t t-name="ProductItem2" t-inherit="point_of_sale.ProductItem" t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[hasclass('product-img')]" position="inside">
+            <button class="n-tag" t-on-click="trigger('click-negado', props.product)">
+                <span class=" fa fa-external-link"/>
+            </button>
+        </xpath>
+    </t>
+</templates>
+

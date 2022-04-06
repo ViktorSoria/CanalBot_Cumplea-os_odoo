@@ -14,3 +14,15 @@
 .pos .selec{
     background-color: #7fffca;
 }
+.pos .product .n-tag {
+    position: absolute;
+    top: 70px;
+    left: 100px;
+    vertical-align: top;
+    color: white;
+    line-height: 13px;
+    background: #7f82ac;
+    padding: 2px 5px;
+    border-radius: 2px;
+    font-weight: bold;
+}

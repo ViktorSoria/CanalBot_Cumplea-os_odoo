@@ -12,10 +12,12 @@
              "views/views.xml",
              "views/pos_views.xml",
              "views/pos_discount.xml",
+             "views/product_views.xml",
              "views/pos_dataSync_views.xml"
              ],
     "qweb": [
         "static/src/xml/pos.xml",
+        "static/src/xml/product.xml",
         "static/src/xml/OrderReceiptLight.xml",
             ],
     "post_load": None,
