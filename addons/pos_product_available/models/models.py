@@ -17,7 +17,7 @@ class loadData(models.Model):
     location_id = fields.Many2one("stock.location")
 
     def cron_delete_data(self):
-        self.env.cr.execute("Delete from load_data_pos;")
+        self.env.cr.execute("Delete from load_data_pos where name= 'product.product';")
         self.env.cr.commit()
 
     def cron_data_pos(self):
@@ -69,21 +69,23 @@ class SyncDataPosProduct(models.Model):
     @api.model
     def create(self, vals):
         producto = super(SyncDataPosProduct, self).create(vals)
-        rec = self.env["pos.metadatos"].sudo()
-        rec.nuevosDatos(self, create=True)
+        if not self.env.context.get('no_registar'):
+            rec = self.env["pos.metadatos"].sudo()
+            rec.nuevosDatos(self, create=True)
         return producto
 
     def write(self, vals):
         producto = super(SyncDataPosProduct, self).write(vals)
-        rec = self.env["pos.metadatos"].sudo()
-        campos = self.env['pos.metadatos'].search([('modelo','=','1')]).mapped("campos.name")
-        campos = [c for c in campos if c in vals]
-        if campos:
-            if "list_price" in vals:
-                campos.append('lst_price')
-            if "name" in vals:
-                campos.append('display_name')
-            rec.nuevosDatos(self, campos)
+        if not self.env.context.get('no_registar'):
+            rec = self.env["pos.metadatos"].sudo()
+            campos = self.env['pos.metadatos'].search([('modelo','=','1')]).mapped("campos.name")
+            campos = [c for c in campos if c in vals]
+            if campos:
+                if "list_price" in vals:
+                    campos.append('lst_price')
+                if "name" in vals:
+                    campos.append('display_name')
+                rec.nuevosDatos(self, campos)
         return producto
 
 
@@ -92,15 +94,16 @@ class ProductTemplate(models.Model):
 
     def write(self, vals):
         producto = super(ProductTemplate, self).write(vals)
-        rec = self.env["pos.metadatos"].sudo()
-        campos = self.env['pos.metadatos'].search([('modelo','=','1')]).mapped("campos.name")
-        campos = [c for c in campos if c in vals]
-        if campos:
-            if "list_price" in vals:
-                campos.append('lst_price')
-            if "name" in vals:
-                campos.append('display_name')
-            rec.nuevosDatos(self.product_variant_id, campos)
+        if not self.env.context.get('no_registar'):
+            rec = self.env["pos.metadatos"].sudo()
+            campos = self.env['pos.metadatos'].search([('modelo','=','1')]).mapped("campos.name")
+            campos = [c for c in campos if c in vals]
+            if campos:
+                if "list_price" in vals:
+                    campos.append('lst_price')
+                if "name" in vals:
+                    campos.append('display_name')
+                rec.nuevosDatos(self.product_variant_id, campos)
         return producto
 
 
@@ -110,17 +113,19 @@ class SyncDataPosPricelist(models.Model):
     @api.model
     def create(self, vals):
         lstPrecios = super(SyncDataPosPricelist, self).create(vals)
-        rec = self.env["pos.metadatos"].sudo()
-        rec.nuevosDatos(lstPrecios, create=True)
+        if not self.env.context.get('no_registar'):
+            rec = self.env["pos.metadatos"].sudo()
+            rec.nuevosDatos(lstPrecios, create=True)
         return lstPrecios
 
     def write(self, vals):
         item = super(SyncDataPosPricelist, self).write(vals)
-        rec = self.env["pos.metadatos"].sudo()
-        campos = self.env['pos.metadatos'].search([('modelo', '=', '2')]).mapped("campos.name")
-        campos = [c for c in campos if c in vals]
-        if campos:
-            rec.nuevosDatos(self, campos+['pricelist_id'])
+        if not self.env.context.get('no_registar'):
+            rec = self.env["pos.metadatos"].sudo()
+            campos = self.env['pos.metadatos'].search([('modelo', '=', '2')]).mapped("campos.name")
+            campos = [c for c in campos if c in vals]
+            if campos:
+                rec.nuevosDatos(self, campos+['pricelist_id'])
         return item
 
 
@@ -130,17 +135,19 @@ class SyncDataPosPartner(models.Model):
     @api.model
     def create(self, vals):
         cliente = super(SyncDataPosPartner, self).create(vals)
-        rec = self.env["pos.metadatos"].sudo()
-        rec.nuevosDatos(cliente, create=True)
+        if not self.env.context.get('no_registar'):
+            rec = self.env["pos.metadatos"].sudo()
+            rec.nuevosDatos(cliente, create=True)
         return cliente
 
     def write(self, vals):
         partner = super(SyncDataPosPartner, self).write(vals)
-        rec = self.env["pos.metadatos"].sudo()
-        campos = self.env['pos.metadatos'].search([('modelo', '=', '3')]).mapped("campos.name")
-        campos = [c for c in campos if c in vals]
-        if campos:
-            rec.nuevosDatos(self, campos)
+        if not self.env.context.get('no_registar'):
+            rec = self.env["pos.metadatos"].sudo()
+            campos = self.env['pos.metadatos'].search([('modelo', '=', '3')]).mapped("campos.name")
+            campos = [c for c in campos if c in vals]
+            if campos:
+                rec.nuevosDatos(self, campos)
         return partner
 
 
