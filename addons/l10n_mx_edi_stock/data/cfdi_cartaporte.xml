@@ -83,9 +83,11 @@
                         t-att-UnidadPeso="weight_uom.unspsc_code_id.code">
                         <t t-foreach="moves" t-as="move" t-key="move_index">
                             <cartaporte20:Mercancia
+                                t-att-BienesTransp="move.product_id.unspsc_code_id.code"
                                 t-att-Cantidad="format_float(move.quantity_done or move.product_uom_qty, 6)"
                                 t-att-ClaveUnidad="move.product_uom.unspsc_code_id.code"
                                 t-att-Descripcion="move.description_picking or move.product_id.name"
+                                t-att-MaterialPeligroso="'Sí' if move.product_id.unspsc_code_id.peligroso == '1' else 'No'"
                                 t-att-PesoEnKg="format_float(move.weight, 3)">
                                 <cartaporte20:CantidadTransporta
                                     t-att-Cantidad="format_float(move.quantity_done or move.product_uom_qty, 6)"

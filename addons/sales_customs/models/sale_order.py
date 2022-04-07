@@ -31,7 +31,7 @@ class SaleOrderCust(models.Model):
         bk_lines = []
         delete_lines = []
         for line in self.order_line:
-            quant_id = all_stock_quant.filtered(lambda sq: sq.product_id.id == line.product_id.id and sq.package_id==False)
+            quant_id = all_stock_quant.filtered(lambda sq: sq.product_id.id == line.product_id.id)
             if quant_id.available_quantity <= 0:
                 delete_lines.append(line.id)
             if quant_id.available_quantity < line.product_uom_qty:
