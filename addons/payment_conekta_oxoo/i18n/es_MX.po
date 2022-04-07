@@ -38,13 +38,13 @@ msgstr "; pedido no encontrado"
 #: model_terms:ir.ui.view,arch_db:payment_conekta_oxoo.payment_confirmation_status_conekta_oxxo
 #: model_terms:ir.ui.view,arch_db:payment_conekta_oxoo.payment_confirmation_status_conekta_oxxo_website_sale
 msgid "<i class=\"fa fa-download\"/> Download Oxoo Receipt"
-msgstr ""
+msgstr "<i class=\"fa fa-download\"/> Descarga tu recibo de Oxxo"
 
 #. module: payment_conekta_oxoo
 #: model_terms:ir.ui.view,arch_db:payment_conekta_oxoo.payment_confirmation_status_conekta_oxxo
 #: model_terms:ir.ui.view,arch_db:payment_conekta_oxoo.payment_confirmation_status_conekta_oxxo_website_sale
 msgid "<i class=\"fa fa-print\"/> Print Oxoo Receipt"
-msgstr ""
+msgstr "<i class=\"fa fa-print\"/> Imprime tu recibo de Oxxo"
 
 #. module: payment_conekta_oxoo
 #: model_terms:ir.ui.view,arch_db:payment_conekta_oxoo.payment_confirmation_status_conekta_oxxo
@@ -187,7 +187,7 @@ msgstr "Realiza el pago correspondiente con dinero en efectivo."
 #. module: payment_conekta_oxoo
 #: model_terms:payment.acquirer,pre_msg:payment_conekta_oxoo.payment_acquirer_conekta_oxxo
 msgid "More information will be provided after choosing the payment method."
-msgstr ""
+msgstr "Más información será mostrada después de seleccionar el método de pago."
 
 #. module: payment_conekta_oxoo
 #: model_terms:ir.ui.view,arch_db:payment_conekta_oxoo.payment_confirmation_status_conekta_oxxo
