@@ -22,7 +22,7 @@ class PaymentAcquirer(models.Model):
 
     _inherit = 'payment.acquirer'
 
-    provider = fields.Selection(selection_add=[('conekta', 'Conekta'), ('conekta_oxxo', 'Conekta oxxo'),('conekta_spei','Conekta SPEI')],ondelete={'conekta': 'set default','conekta_oxxo': 'set default', 'conekta_spei': 'set default'})
+    provider = fields.Selection(selection_add=[('conekta_oxxo', 'Conekta oxxo'),('conekta_spei','Conekta SPEI')],ondelete={'conekta_oxxo': 'set default', 'conekta_spei': 'set default'})
     conekta_secret_key = fields.Char(string="Conekta Secret Key") #required_if_provider='conekta', 
     conekta_publishable_key = fields.Char(string="Conekta Public Key") #required_if_provider='conekta', 
     conekta_secret_key_test = fields.Char(string="Conekta Secret Key Test") #required_if_provider='conekta', 
@@ -248,6 +248,7 @@ class PaymentTransaction(models.Model):
         _logger.info('Validated conekta_oxxo payment for tx %s: set as pending' % (self.reference))
         conekta.api_key = self.acquirer_id.conekta_secret_key_test if self.acquirer_id.state=='test' else self.acquirer_id.conekta_secret_key 
         params = self.create_params('conekta_oxxo')
+        # _logger.info("======================>>>>> PARAMS ::: : %s " % params)
         try:
             response = conekta.Order.create(params)
         except conekta.ConektaError as error:
@@ -366,7 +367,7 @@ class PaymentTransaction(models.Model):
             #If price include taxes, than Amount need to pass untaxed amount
             if self.amount==total_amount and tax_lines:
                 params['amount'] = int(total_amount_untaxed)            
-        if hasattr(self,'invoice_ids'):    
+        if hasattr(self,'invoice_ids'):
             total_amount_invoice = 0
             total_amount_untaxed_invoice = 0
             
@@ -397,7 +398,33 @@ class PaymentTransaction(models.Model):
             for tax_name,amount in tax_lines.items():
                 item = {'description': tax_name[1], 'amount' : int(amount*100)}
                 tax_lines_conekta.append(item)
-    
+
+        # Completing all data
+        if 'shipping_lines' not in params:
+            carrier_id = self.env['delivery.carrier'].search([])
+            dc_id = carrier_id[:1] if carrier_id else False
+            if dc_id:
+                sl = [
+                    {
+                        "amount": int(dc_id.fixed_price), # Acepta entero.
+                        "carrier": dc_id.name
+                    }
+                ]
+                params['shipping_lines'] = sl
+            else:
+                _logger.warning(_("No es posible obtener un método de envio."))
+        if "shipping_contact" not in params:
+            # Takes the first sale order.
+            partner_shipping_id = self.sale_order_ids[:1].partner_shipping_id if self.sale_order_ids else False
+            if partner_shipping_id:
+                sp = {
+                    "address": {
+                        "street1": "%s %s %s" % (partner_shipping_id.street_name, partner_shipping_id.street_number, partner_shipping_id.street_number2),
+                        "postal_code": "%s" % partner_shipping_id.zip,
+                        "country": partner_shipping_id.country_id.code
+                    }
+                }
+                params['shipping_contact'] = sp
         return params
     
     def _create_conekta_charge(self, acquirer_ref=None, tokenid=None, email=None):
