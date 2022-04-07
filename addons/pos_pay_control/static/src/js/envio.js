@@ -20,13 +20,67 @@ odoo.define("pos_pay_control.SendOrder", function (require) {
             });
             return valido;
         }
+        async comprueba_stock(){
+            let lines = this.env.pos.get_order().get_orderlines();
+            let productos = [];
+            for (var i = 0; i < lines.length; i++) {
+                productos[i] = [lines[i].product.id,lines[i].quantity];
+            }
+            let nueva_cantidades = await this.rpc({
+                model: 'product.product',
+                method: 'validate_stock',
+                args: [productos,this.env.pos.config.default_location_src_id[0]],
+            });
+            if(nueva_cantidades){
+                let l;
+                for (var i = 0; i < nueva_cantidades.length; i++) {
+                    l = lines.find(l => l.product.id===nueva_cantidades[i][0]);
+                    l.set_quantity(nueva_cantidades[i][1]);
+                    l.product.qty_available = nueva_cantidades[i][1];
+                }
+                return false;
+            }
+            else{
+                return true;
+            }
+        }
 
         async onClick(event){
+            var self = this;
+            var order_is_correct = true;
+            this.env.pos.db.cache.unpaid_orders.forEach(function(order){
+                order.data.lines.forEach(function(line){
+                    var linea = line[2];
+                    if(linea.qty <= 0){
+                         self.showPopup('ErrorPopup', {
+                            title: "Error de cantidad",
+                            body: "No puedes enviar cero productos.",
+                        });
+                        order_is_correct = false;
+                    }
+                    if(linea.price_unit <= 0.01){
+                        self.showPopup('ErrorPopup', {
+                            title: "Error de precio",
+                            body: "No puedes enviar productos con precio menor o igual a cero.",
+                        });
+                        order_is_correct = false;
+                    }
+                });
+            });
+            if(order_is_correct == false){
             let valido = this.valida_lineas();
             if(!valido){
                 this.showPopup('ErrorPopup', {
                     title: "Error de precio",
                     body: "No puedes enviar productos sin precio o con precio menor o igual a cero.",
+                });
+                return;
+            }}
+            let valida_stock = await this.comprueba_stock();
+            if(!valida_stock){
+                this.showPopup('ErrorPopup', {
+                    title: "Error de existencias",
+                    body: "El stock de algunos productos fue actualizado, no cuentas con la cantidad suficiente, el carrito ha sido actualizado.",
                 });
                 return;
             }
@@ -79,7 +133,9 @@ odoo.define("pos_pay_control.SendOrder", function (require) {
                                 });
                             }
                 });
+
             }
+
         }
     }
 

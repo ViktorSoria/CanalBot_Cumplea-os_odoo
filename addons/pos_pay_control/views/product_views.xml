@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <record id="product_negado_tree_view" model="ir.ui.view">
+        <field name="name">product.product.negado.tree.view</field>
+        <field name="model">product.product.negado</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="cantidad"/>
+                <field name="pos_id" optional="hide"/>
+                <field name="location_id"/>
+                <field name="create_date"/>
+            </tree>
+        </field>
+    </record>
+    <record id="product_negado_pivot_view" model="ir.ui.view">
+        <field name="name">product.product.negado.pivot.view</field>
+        <field name="model">product.product.negado</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="name" type="row"/>
+                <field name="create_date" type="col"/>
+                <field name="location_id" type="col"/>
+                <field name="cantidad" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="product_negado_search_view" model="ir.ui.view">
+        <field name="name">product.product.negado.search.view</field>
+        <field name="model">product.product.negado</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="pos_id"/>
+                <filter string="Producto" name="product_product" domain="[]" context="{'group_by': 'name'}"/>
+                <filter string="Fecha" name="product_date" domain="[]" context="{'group_by': 'create_date'}"/>
+                <filter string="Almacen" name="product_locate" domain="[]" context="{'group_by': 'location_id'}"/>
+            </search>
+        </field>
+    </record>
+
+
+
+    <record id="product_negado_action" model="ir.actions.act_window">
+        <field name="name">Productos Negados</field>
+        <field name="res_model">product.product.negado</field>
+        <field name="view_mode">tree,pivot,graph</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Aqui se mostraran los productos negados del Punto de venta</p>
+        </field>
+    </record>
+
+    <menuitem name="Productos Negados" id="product_negado_menu" action="product_negado_action"
+              parent="point_of_sale.pos_config_menu_catalog" sequence="100" groups="point_of_sale.group_pos_manager"/>
+
+</odoo>
