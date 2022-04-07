@@ -194,7 +194,6 @@ class ProducPrice(models.TransientModel):
             'target': "new",
         }
 
-
 class Pricelist(models.Model):
     _inherit = "product.pricelist"
 

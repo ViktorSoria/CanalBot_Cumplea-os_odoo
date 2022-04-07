@@ -182,16 +182,17 @@
     </template>
 
     <template id="stock_picking_custom.stock_inventory_report_add_origin_destiny">
-        <t t-set="orig" t-value="o.search([('name','=',o.origin)])"/>
-        <t t-if="o.is_transfer or orig.is_transfer and orig.location_dest_id == o.location_id">
+        <t t-set="mensaje" t-value="o._get_origin_destiny()"/>
+        <t t-if="o.is_transfer or mensaje[2].is_transfer and mensaje[2].location_dest_id == o.location_id">
             <div class="row mt48 mb32">
+                <p t-esc="o.is_transfer"/>
                 <div class="col-auto">
                     <strong>Origen: </strong>
-                    <p t-field="o.transfer_origin"/>
+                    <p t-esc="mensaje[0]"/>
                 </div>
                 <div class="col-auto">
                     <strong>Destino: </strong>
-                    <p t-field="o.transfer_destiny"/>
+                    <p t-esc="mensaje[1]"/>
                 </div>
             </div>
         </t>
