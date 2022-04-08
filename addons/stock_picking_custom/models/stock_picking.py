@@ -40,6 +40,21 @@ class StockPickingCustom(models.Model):
     def confirmTransfer(self):
         self.is_transfer = self.picking_type_id._es_transferencia
 
+    def _get_origin_destiny(self):
+        origen = None
+        destino = None
+        doc_orig = None
+        if not self.origin:
+            origen = self.location_id.complete_name
+            destino = self.location_transfer_id.complete_name
+
+        else:
+            doc_orig = self.search([('name','=',self.origin)])
+            origen = doc_orig.location_id.complete_name
+            destino = doc_orig.location_transfer_id.complete_name
+
+        return [origen,destino,doc_orig]
+
     is_transfer = fields.Boolean("Es Transferencia entre Sucursales")
     location_transfer_id = fields.Many2one('stock.location', string="Ubicación de destino")
 
