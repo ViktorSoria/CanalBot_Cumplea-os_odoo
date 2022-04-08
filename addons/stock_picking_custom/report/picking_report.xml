@@ -185,7 +185,6 @@
         <t t-set="mensaje" t-value="o._get_origin_destiny()"/>
         <t t-if="o.is_transfer or mensaje[2].is_transfer and mensaje[2].location_dest_id == o.location_id">
             <div class="row mt48 mb32">
-                <p t-esc="o.is_transfer"/>
                 <div class="col-auto">
                     <strong>Origen: </strong>
                     <p t-esc="mensaje[0]"/>
@@ -211,8 +210,8 @@
         </xpath>
     </template>
 
-    <template id="stock_inventory_report_carta_porte_add_origin_destiny" inherit_id="l10n_mx_edi_stock.report_carta_porte_document">
-        <xpath expr="//div[@class='page']/h2" position="after">
+    <template id="stock_inventory_report_carta_porte_add_origin_destiny" inherit_id="stock_picking_custom.template_picking_ticket_report">
+        <xpath expr="//div[@class='page']/center/h6[2]" position="after">
             <t t-call="stock_picking_custom.stock_inventory_report_add_origin_destiny"/>
         </xpath>
     </template>
