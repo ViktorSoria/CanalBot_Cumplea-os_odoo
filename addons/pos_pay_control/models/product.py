@@ -26,3 +26,14 @@ class ProductoNegado(models.Model):
         except:
             return False
         return True
+
+
+class Product(models.Model):
+    _inherit = "product.product"
+
+    @api.model
+    def validate_stock(self,productos,location):
+        p = {a[0]:a[1] for a in productos}
+        read_prod = self.env['product.product'].with_context(location=location).search_read(domain=[('id', 'in', list(p.keys()))], fields=['qty_available'])
+        stock_falt = [[r['id'],r['qty_available']] for r in read_prod if p[r['id']] > r['qty_available']]
+        return stock_falt or False
