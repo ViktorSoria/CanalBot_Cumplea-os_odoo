@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record model="mail.channel" id="canal_cumpleanos">
+            <field name="name">Cumpleaños Empleados</field>
+            <field name="description">Envio de Felicitaciones a los Empleados =)</field>
+            <field name="group_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="image_128" type="base64" file="addons/cumple_modulo/static/description/src/img/cumple.jpg"/>            
+        </record>        
+    </data>
+</odoo>
